@@ -12,9 +12,9 @@
 class: center, middle, inverse, title-slide
 
 # ‘R de trás pra frente’
-## Aula 2: Git Hub e RMarkdown
+## Aula 3: O RMarkdown tem três partes
 ### Carolina Musso
-### 19/01/22
+### 20/01/22
 
 ---
 
@@ -23,136 +23,345 @@ class: center, middle, inverse, title-slide
 
 
 
-## Agora com a aula funcionando &amp;#128580;.... 
+class: inverse center middle
 
-*Destaques da aula passada:* 
-
- - [DataCamp](&lt;https://app.datacamp.com/learn&gt;)
- - [Curso-R](&lt;https://livro.curso-r.com/9-1-markdown.html&gt;)
- - [CheatSheets](&lt;https://www.rstudio.com/resources/cheatsheets/&gt;)
+# Continuando o Módulo:
+## Aprendendo a rodar aquele código que fizeram pra mim...
 
 ---
-## Controle de Versões
-- Falamos de reproducibilidade, então, vamos começar do jeito certo!
+## Sugestão para aprofundamento...
 
-  + Já ouviram falar de controle de versões? 
+**Quer mostrar quem manda aqui nessa parada? Se joga!**
+
+ - [Manual de R para Epidemiologistas: Capítulo Reports with RMarkdown](&lt;https://epirhandbook.com/en/reports-with-r-markdown.html&gt;)
+ 
+ - [Livro Curso-R: Capítulo 9 Relatórios](&lt;https://livro.curso-r.com/9-relatorios.html&gt;)
+ 
+ - [DataCamp: Curso Reporting with RMarkdown](&lt;https://app.datacamp.com/learn/search?q=rmarkdown&gt;)
+ 
+ &lt;center&gt;&lt;img src="https://media.giphy.com/media/26FPnj46RYsIWgYLe/giphy.gif" height=150px" /&gt;&lt;/center&gt;
+
+---
+## Vamos usufruir do que fizemos ontem?
+
+- Abra a pasta que foi criada no seu computador
+
+- Clique no ícone do projeto (a que tem um R no cubo azul)
+
+- Abra a aba do Git que aparece no painel superior direito
+
+- Confira o que está escrito "main" no canto superior direito.
+
+- Clique em **Pull** (seta azul que aponta pra baixo) 
+
+---
+
+
+&lt;center&gt;&lt;img src="img/pull.png" height=550px" /&gt;&lt;/center&gt;    
+
+---
+## Pronto, está tudo atualizado (espero ... &amp;#128517;)
+
+--
+- Agora vamos abrir o exercício da aula de hoje , que é muito parecido comm o de ontem.
+
+- Se você quiser usar o botão **Knit** (para gerar o documento de Word), talvez precise colar a função abaixo no **Console** do RStudio (é o painel onde fica a setinha azul e o cursor piscando), principalmente nos computadores no PO. 
+
+
+```r
+rmarkdown::render("Exercicios/Aula2_ex1.Rmd")
+```
+
+---
+## Exercício
+
+- Vamos analisá-lo atentamente...por 5 min (sugestão, compare com o arquivo de ontem)
+
+&lt;center&gt;&lt;img src="https://media.giphy.com/media/ePgtEFMaPueSQ/giphy.gif" height=340px" /&gt;&lt;/center&gt;  
+---
+## E aí? 
+
+- Momento partilha na roda de conversa ...
+
+
+&lt;center&gt;&lt;img src="https://media.giphy.com/media/26ufh6JPBCDsTNmqQ/giphy.gif" height=360px" /&gt;&lt;/center&gt;  
+
+---
+## Agora,  um pouquinho de teoria
+
+- RMarkdown foi criado sob o paradigma da Programação literária
+
+- Liguagem para humanos x liguagem para máquina
+
+--
+
+- Resumo: Rmardown tem o melhor dos dois mundos &amp;#127757; &amp;#127758;
+
+--
+- Ontem vocês sentiram o gostinho de um relatório automatizado &amp;#129316;
+
+--
+
+- **Curiosidade**: Quem inventou foi o [Yihui](&lt;https://yihui.org/en/&gt;) engenheiro do RStudio pra fazer o dever de casa quando tava na faculdade ... &amp;#128529;)
+---
+## O Rmarkdwon tem três partes.
+
+### Cabeçalho:
+
+- **Características:**  
+
+--
+
+  - Linguagel YAML
+
+--
+
+  - Bizarro 
+
+--
+
+  - Sensível a indentação
+
+--
+
+  - É onde estão os metadados
   
-          &amp;#128170;**Track changes on steroids**
-          
-          
- - Se você estiver vendo essa aula depois, pode querer seguir o [tutorial](&lt;https://beatrizmilz.github.io/RLadies-Git-RStudio-2019/#25&gt;) mais detalhado da Beatriz Milz
-             
-             
+--
+
+  - Vamos mexer pouco nele, mas vamos mexer...
+--
+  **COM CUIDADO!**
+--
+  pra não dar ruim
+  
+---
+# Exercício do cabeçalho
+
+- renomeie o arquivo e salve em uma subpasta com seu nome
+
+  - colocar seu nome e a data de hoje no cabeçalho 
+
+--
+
+- Será que dá pra data atualizar sozinha? &amp;#129300;
+
+--
+
+- Vamos colocar isso no lugar da data lá no cabeçalho
+
+```r
+`r Sys.Date()`
+```
+
+--
+
+- Mas esse formato de data é estranho ...&amp;#128553;
+
+--
+
+- Que tal tentar...
+
+```r
+`r format(Sys.Date(), "%d/%m/%Y")`
+```
 
 ---
-## Git Hub
-&lt;center&gt;&lt;img src="img/final.png" height="480px" /&gt;&lt;/center&gt;
 
----
-## Nosso GitHub
+## Texto:
 
-[GitHub](&lt;https://github.com/cmusso86/CursoR_tras_pra_frente_MS.git&gt;)
+- É onde está nosso diferencial!
 
-&lt;center&gt;&lt;img src="https://octodex.github.com/images/labtocat.png" height="400px" /&gt;&lt;/center&gt;
----
-## Pré-requisitos ...
+- Mas...você tem tempo de interpretar os dados?
 
-- R e RStudio ... ( acho bom...&amp;#128530; )
+--
 
-- [Vocês criaram né?](&lt;https://github.com/&gt;)
+- Ou...já passou tanto tempo copiando e colando figuras e tabelas e atualizando cabeçalhos que simplesmente não teve tempo de interpretar os dados?
 
-- [Fizeram o download e instalaram?](&lt;https://git-scm.com/downloads&gt;)
-
-&lt;center&gt;&lt;img src="img/pre.png" height=150px" /&gt;&lt;/center&gt;
-
+--
+ &lt;center&gt;&lt;img src="https://media.giphy.com/media/KJT3nsthnlkDUBPp0z/giphy.gif" height=250px" /&gt;&lt;/center&gt; 
 ---
 
-## Pacote [usethis](&lt;https://usethis.r-lib.org&gt;)
+## Texto:
+
+O texto no RMarkdown está na linguagem Markdown (daí o nome), que é  uma linguagem de marcação para possibilidar fazer umas "firulas"no texto simples. 
+
+- No fundo é o que o e-mail, whatsapp usam por exemplo...
+
+- \# Título, \#\# Subtítulo ... aí por diante
+
+- Se colocar a palavra entre asteriscos \*assim\* ela fica em *itálico*, entre dois fica **negrito** ...
+
+- Também aceita fármulas, imagens... 
+
+--
+
+- Mas o RStudio tem um macete também ...
+
+---
+
+## Exercício do texto 
+
+Vamos fazer um texto com uma breve interpretação dos dados. Algo curto só para dar um gostinho e usar algumas funcionalidades do **Markdown** ou da funcionalidade **Visual Editor**.
+
+- Vocês têm 10 minutos 
+
+ &lt;center&gt;&lt;img src="https://media.giphy.com/media/vzO0Vc8b2VBLi/giphy.gif" height=220px" /&gt;&lt;/center&gt; 
+
+
+---
+## O código &amp;#128520;
+
+--
+
+- Programação é algo bem abstrado... temos de escrever de um jeito que a máquina vai entender...
+
+--
+
+- Basicamente a vamos escrever um monte de comandos, de um jeito e em uma ordem muito específicos, porque o computador não é tão inteligente assim...
+
+--
+
+- Qual a vantagem disso? A máquina não cansa de fazer coisa repetitiva (ainda não se revoltaram)
+
+--
+
+- Liguagem R é difícil pra gente, mas por íncrível que pareça, é uma das mais amigáveis do mercado!
+
+--
+
+- Ou seja, ainda dá pra não-programadores, como nós , se aventurarem, pra aprender e usarmos a nosso favor na nossa área de atuação. 
+---
+## O chamado chunk
+
+- O chunk são esses pedaços em cinza onde os códigos estão escritos.
+
+--
+
+- Eles podem ser em várias linguagens de programação, mas nós vamos usar só o R.
+
+--
+
+- Dentro dos chunks há três coisas importantes
+  - o **código** em si, que é o que "corre"
+  
+  - os **comentários**, que servem para se organizar, melhorar a colaboração ...
+  
+  - os **parâmetros** do chunk
+
+---
+## Mas o código pode também não estár só no chunk...
+
+O chamado código *inline*
+
+--
+
+Perceberam isso no arquivo? Como estava?
+
+--
 
 
 ```r
-install.packages("usethis")
-library(usethis)
-
-usethis::use_git_config(user.name="cmusso86", #Seu nome
-        user.email="cmusso86@gmail.com") #Seu email
+`r alguma_coisa_em_R `
 ```
 
-&lt;center&gt;&lt;img src="img/usethis.png" height=200px" /&gt;&lt;/center&gt;
 
----
-## Pacote [usethis](&lt;https://usethis.r-lib.org&gt;)
+### Exercício
 
-
-```r
-usethis::create_github_token()
-```
-
-- Uma página do GitHub irá abrir
-
-- Crie um token para vincular esse computador 
-
-- **Essa será a única vez que você verá esse token!**
-
-- Deixe a aba aberta lá bunitinha e voltamos ao RStudio
+- Trocar o valor que aparece dos Estados Unidos para o Brazil
 
 ---
 
-## Pacote [usethis](&lt;https://usethis.r-lib.org&gt;)
+## Exercício chunk
+
+**No código**
+
+No chunk intitulado "manipulacoes" linha 43
+1) filtre os países que estão acima de 5 milhões de casos em vez de 10 milhões 
+  - (l. 49) -&gt; **+ fácil**
+     
+    *OU*
+    
+2) opção acima + calcular o acumulado de casos de fomrma diferente, usanso a função max() em vex de sum(), e outrá variável. 
+  - (l.48) -&gt; **+ difícil**
+---
+
+## Comentários
+
+
+- Comente com o # a alteração que você fez no fim da linha
+
+- Crie com comentário em uma nova lina e aciona ---- (quatro tracinhos) no no final dessa linha. O que aconteceu?
+
+---
+## Oh tem um íncice! &amp;#128558;
+
+**Outros parâmetros interessantes ...**
+
+- Se mantendo organizado ...
+  - Títulos nos chunks (**cuidado!**)
+  
+  - Seções de comentários
+  
+  - Seções no texto com os \#
+  
+  - **Tudo isso vai pro índice e te ajuda a navegar no código**
+  
+---
+
+## Parâmetros do chunk
+
+**Para hoje, vamos ver:**
+
+- título no chunk
+
+- *include=* (se a saída, mensagens, warnings gerados nesse chunk vão ser incluídos no arquivo compilado  )
+
+- *echo=* (se o código será incluído no arquivo compilado)
+
+- \#partiu
+
+---
+
+## Voltando ao Github
+
+- Vamos agora **subir** suas alterações
+
+- Primeiro, crie um **branch**
+  - clique no símbolo com quadradinhos roxos no canto superior direito
+  - Escolha um nome
+  - Clique em Create 
+  
+---
+## Uma das três coisas vai acontecer 
+  
+ - Um pop-up do RStudio pedindo login e senha. Essa senha é  o **token**.  
 
 
 ```r
 usethis::edit_r_environ()
 ```
- 
-- Uma aba diferentona vai abrir
+Isso é pra acontecer só hoje! Se voltar a acontecer nas próximas vezes me procure para [resolvermos](&lt;https://github.com/InseadDataAnalytics/INSEADAnalytics/issues/51&gt;)!
 
-- Digite **GITHUB_PAT=**
+- um pop-up Git-Hub, faça o login com sua conta.
 
-- Volte na aba do GitHub q você deixou aberta, copie o código e e cole depois do "="
-
-- **CTRL + SHIFT + F10**
+- alguma outra opção que não antecipei...
+  
 
 ---
-## Agora Vamos falar de projetos no R
+## Commit e Push
 
+- Fazer um **commit** 
+  - Selecione o arquivo que você criou
+  - Clique em commit
+  - Faça um comentário útil para identificar essa modificação que fez
+  - Clique em Commit
 
-&lt;center&gt;&lt;img src="https://static.appgeek.com.br/imagens/1e0a57f68f68028a4ad5bb6467474ff9.gif" height=200px" /&gt;&lt;/center&gt;
-
-- Criar
-- Clonar
-- Abrir um arquivo 
-
----
-
-## Vamos agora ao RMarkdown
-
-.left-column[
-&lt;center&gt;&lt;img src="img/rmd.png" height="180px" /&gt;&lt;/center&gt;
-]
-.right-column[ 
-- Mantido pela **RStudio**
-- Extensão **.Rmd**
-- Possibilita utilização de várias linguagens...
-]
-[&lt;center&gt;&lt;img src="img/compile.png" height="300px" /&gt;&lt;/center&gt;](&lt;https://rmarkdown.rstudio.com/lesson-1.html&gt;)
----
-
-## Mãos à massa 
-
-&lt;center&gt;&lt;img src="https://claudia.abril.com.br/wp-content/uploads/2020/01/xddxyme.gif" height="300px" /&gt;&lt;/center&gt;
-
----
-## Voltando ao Git para finalizar
-
-- Criar um **branch**
-- Fazer um **commit** e comentar
+- Faça um **Push**
 
 ---
 ## Kahoot do dia!
 
-[&lt;center&gt;&lt;img src="img/kahoot.png" height="300px" /&gt;&lt;/center&gt;](&lt;https://create.kahoot.it/share/rmarkdown-e-github/cbb7dd5f-66ff-410e-8c52-c3829a2a6f5b&gt;)
-
+[&lt;center&gt;&lt;img src="img/kahoot.png" height="300px" /&gt;&lt;/center&gt;](&lt;https://create.kahoot.it/share/aula3/452a258e-7584-4657-8f2a-fe622d282181&gt;)
 
 
 
