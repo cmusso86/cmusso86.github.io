@@ -12,9 +12,9 @@
 class: center, middle, inverse, title-slide
 
 # ‘R de trás pra frente’
-## Aula 3: O RMarkdown tem três partes
+## Aula 4: […] RMarkdown tem três partes
 ### Carolina Musso
-### 20/01/22
+### 25/01/22
 
 ---
 
@@ -29,7 +29,7 @@ class: inverse center middle
 ## Aprendendo a rodar aquele código que fizeram pra mim...
 
 ---
-## Sugestão para aprofundamento...
+## Lembrando...
 
 **Quer mostrar quem manda aqui nessa parada? Se joga!**
 
@@ -42,128 +42,61 @@ class: inverse center middle
  &lt;center&gt;&lt;img src="https://media.giphy.com/media/26FPnj46RYsIWgYLe/giphy.gif" height=150px" /&gt;&lt;/center&gt;
 
 ---
-## Vamos usufruir do que fizemos ontem?
+## Paciêcia jovem padawan!
 
-- Abra a pasta que foi criada no seu computador
+- Palavras difíceis, conceitos novos, procedimentos esquisitos...
 
-- Clique no ícone do projeto (a que tem um R no cubo azul)
-
-- Abra a aba do Git que aparece no painel superior direito
-
-- Confira o que está escrito "main" no canto superior direito.
-
-- Clique em **Pull** (seta azul que aponta pra baixo) 
-
+    - Calma! A idéia é revisitar todas essas coisas ao longo do curso e logo serão familiares &amp;#128521;! 
+    
+    - Hoje temos monitor pra ajudar! yay!
+    
+--
+    
+&lt;center&gt;&lt;img src="https://media.giphy.com/media/PQ652dp4mVviXA3cvu/giphy.gif" height=250px" /&gt;&lt;/center&gt;    
 ---
 
+## Começando!
 
-&lt;center&gt;&lt;img src="img/pull.png" height=550px" /&gt;&lt;/center&gt;    
+**Como ainda estamos alinhando as coisas**:
 
----
-## Pronto, está tudo atualizado (espero ... &amp;#128517;)
+- Apagar uma pasta: Exercícios
 
---
-- Agora vamos abrir o exercício da aula de hoje , que é muito parecido comm o de ontem.
+- Abrir projeto -&gt; aba git -&gt; main -&gt; pull
 
-- Se você quiser usar o botão **Knit** (para gerar o documento de Word), talvez precise colar a função abaixo no **Console** do RStudio (é o painel onde fica a setinha azul e o cursor piscando), principalmente nos computadores no PO. 
-
-
-```r
-rmarkdown::render("Exercicios/Aula2_ex1.Rmd")
-```
-
----
-## Exercício
-
-- Vamos analisá-lo atentamente...por 5 min (sugestão, compare com o arquivo de ontem)
-
-&lt;center&gt;&lt;img src="https://media.giphy.com/media/ePgtEFMaPueSQ/giphy.gif" height=340px" /&gt;&lt;/center&gt;  
----
-## E aí? 
-
-- Momento partilha na roda de conversa ...
-
-
-&lt;center&gt;&lt;img src="https://media.giphy.com/media/26ufh6JPBCDsTNmqQ/giphy.gif" height=360px" /&gt;&lt;/center&gt;  
-
----
-## Agora,  um pouquinho de teoria
-
-- RMarkdown foi criado sob o paradigma da Programação literária
-
-- Liguagem para humanos x liguagem para máquina
+- (a gente vai ver push no fim da aula)
 
 --
 
-- Resumo: Rmardown tem o melhor dos dois mundos &amp;#127757; &amp;#127758;
+- **Porque tem tanto arquivo professora?**
 
---
-- Ontem vocês sentiram o gostinho de um relatório automatizado &amp;#129316;
-
---
-
-- **Curiosidade**: Quem inventou foi o [Yihui](&lt;https://yihui.org/en/&gt;) engenheiro do RStudio pra fazer o dever de casa quando tava na faculdade ... &amp;#128529;)
----
-## O Rmarkdwon tem três partes.
-
-### Cabeçalho:
-
-- **Características:**  
-
---
-
-  - Linguagel YAML
-
---
-
-  - Bizarro 
-
---
-
-  - Sensível a indentação
-
---
-
-  - É onde estão os metadados
+  - As aulas compilam com eles! 
   
---
+- **Porque testá insistindo tanto nisso?**
 
-  - Vamos mexer pouco nele, mas vamos mexer...
---
-  **COM CUIDADO!**
---
-  pra não dar ruim
-  
+  - Os códigos sempre precisam de manutenção! Parece difícil, mas podia ser pior! 
+
 ---
-# Exercício do cabeçalho
-
-- renomeie o arquivo e salve em uma subpasta com seu nome
-
-  - colocar seu nome e a data de hoje no cabeçalho 
+## Tudo atualizado (espero ... &amp;#128517;)
 
 --
 
-- Será que dá pra data atualizar sozinha? &amp;#129300;
+
+- Você vai perceber que a pasta dos coleguintas está aí!
+
+- Agora vamos abrir o exercício da aula de hoje , continuando o seu da aula passada!
+
 
 --
 
-- Vamos colocar isso no lugar da data lá no cabeçalho
 
-```r
-`r Sys.Date()`
-```
+- Lembra que mexemos no cabeçalho? 
 
---
+- É tudo que faremos nele por enquanto...
 
-- Mas esse formato de data é estranho ...&amp;#128553;
+    
+&lt;center&gt;&lt;img src="https://media.giphy.com/media/l0MYzLLxlJDfYtzy0/giphy.gif"height=200px" /&gt;&lt;/center&gt; 
 
---
 
-- Que tal tentar...
-
-```r
-`r format(Sys.Date(), "%d/%m/%Y")`
-```
 
 ---
 
@@ -326,13 +259,17 @@ No chunk intitulado "manipulacoes" linha 43
 
 - Vamos agora **subir** suas alterações
 
-- Primeiro, crie um **branch**
-  - clique no símbolo com quadradinhos roxos no canto superior direito
-  - Escolha um nome
-  - Clique em Create 
+- Primeiro, salve seu arquivo. 
+  - selecione o seu **brach REMOTE**
+  - clique na caixinha **SOMENTE** da pasta com seu nome
+  - Faça um Commit com comentário **útil**
+  - Faça um **Push**
   
+- Novamente não se preocupe em entender todos os pormenores por enquanto.  
+- Se trabalhar em outros horários, faça isso! 
+
 ---
-## Uma das três coisas vai acontecer 
+## Pode ser que aconteça...
   
  - Um pop-up do RStudio pedindo login e senha. Essa senha é  o **token**.  
 
@@ -348,17 +285,7 @@ Isso é pra acontecer só hoje! Se voltar a acontecer nas próximas vezes me pro
   
 
 ---
-## Commit e Push
 
-- Fazer um **commit** 
-  - Selecione o arquivo que você criou
-  - Clique em commit
-  - Faça um comentário útil para identificar essa modificação que fez
-  - Clique em Commit
-
-- Faça um **Push**
-
----
 ## Kahoot do dia!
 
 [&lt;center&gt;&lt;img src="img/kahoot.png" height="300px" /&gt;&lt;/center&gt;](&lt;https://create.kahoot.it/share/aula3/452a258e-7584-4657-8f2a-fe622d282181&gt;)
