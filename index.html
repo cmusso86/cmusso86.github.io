@@ -12,9 +12,9 @@
 class: center, middle, inverse, title-slide
 
 # ‘R de trás pra frente’
-## Aula 4: […] RMarkdown tem três partes
+## Aula 5: Erros comuns e boas práticas
 ### Carolina Musso
-### 25/01/22
+### 27/01/22
 
 ---
 
@@ -29,229 +29,257 @@ class: inverse center middle
 ## Aprendendo a rodar aquele código que fizeram pra mim...
 
 ---
-## Lembrando...
 
-**Quer mostrar quem manda aqui nessa parada? Se joga!**
+## Recaptulando ...
 
- - [Manual de R para Epidemiologistas: Capítulo Reports with RMarkdown](&lt;https://epirhandbook.com/en/reports-with-r-markdown.html&gt;)
- 
- - [Livro Curso-R: Capítulo 9 Relatórios](&lt;https://livro.curso-r.com/9-relatorios.html&gt;)
- 
- - [DataCamp: Curso Reporting with RMarkdown](&lt;https://app.datacamp.com/learn/search?q=rmarkdown&gt;)
- 
- &lt;center&gt;&lt;img src="https://media.giphy.com/media/26FPnj46RYsIWgYLe/giphy.gif" height=150px" /&gt;&lt;/center&gt;
+&lt;center&gt;&lt;img src="img/rmarkdown_translation.png" height=420px" /&gt;&lt;/center&gt;  
+
+- **Agora, vamos atualizar a pasta de hoje!** 
 
 ---
-## Paciêcia jovem padawan!
 
-- Palavras difíceis, conceitos novos, procedimentos esquisitos...
+## Erros
 
-    - Calma! A idéia é revisitar todas essas coisas ao longo do curso e logo serão familiares &amp;#128521;! 
-    
-    - Hoje temos monitor pra ajudar! yay!
-    
---
-    
-&lt;center&gt;&lt;img src="https://media.giphy.com/media/PQ652dp4mVviXA3cvu/giphy.gif" height=250px" /&gt;&lt;/center&gt;    
+**Fazemos de tudo pra minimizar... mas nunca eliminamos completamente**
+
+- Codificação
+
+- Coisas antigas na memória
+
+- Pacotes
+
+- Parenteses e aspas abertos
+
+- Diferenças de erros no código R e erros de compilação
+
+- ...
+
+
+
 ---
-
-## Começando!
-
-**Como ainda estamos alinhando as coisas**:
-
-- Apagar uma pasta: Exercícios
-
-- Abrir projeto -&gt; aba git -&gt; main -&gt; pull
-
-- (a gente vai ver push no fim da aula)
+## Primeira coisa a fazer quando dá um erro
 
 --
 
-- **Porque tem tanto arquivo professora?**
+- Ler o erro! &amp;#128514;
 
-  - As aulas compilam com eles! 
+--
+
+  - Nem sempre ajuda muito...mas sempre comece por aí!
+
+--
+
+- Perguntar ao coleguinha (o coleguinha pode ser o ***Google!***)
+  - Simplesmente copie e cole o erro lá!
+
+--
+
+- No Google dê preferêcia resultados do: 
+  - **StackOverflow**
+  - RBloggers
+  - RStudio / RProject
   
-- **Porque testá insistindo tanto nisso?**
+---
 
-  - Os códigos sempre precisam de manutenção! Parece difícil, mas podia ser pior! 
+## StackOverflow
+
+&lt;center&gt;&lt;img src="img/preg.jpeg" height=380px" /&gt;&lt;/center&gt;  
+
+- Mas calma! Vamos ver os mais comuns aqui! 
 
 ---
-## Tudo atualizado (espero ... &amp;#128517;)
+## Erro de codificação
+
+- Resumidamente...
+
+&lt;center&gt;&lt;img src="img/encoding.png" height=150px" /&gt;&lt;/center&gt;    
 
 --
 
-
-- Você vai perceber que a pasta dos coleguintas está aí!
-
-- Agora vamos abrir o exercício da aula de hoje , continuando o seu da aula passada!
-
+- Na prática: O Caracteres especiais **no script** não são lidos corretamente
 
 --
 
+- Como resolver?
 
-- Lembra que mexemos no cabeçalho? 
+--
 
-- É tudo que faremos nele por enquanto...
-
+- **Reopen with encoding**
     
-&lt;center&gt;&lt;img src="https://media.giphy.com/media/l0MYzLLxlJDfYtzy0/giphy.gif"height=200px" /&gt;&lt;/center&gt; 
+ 
+---
 
+## "Erro de Diretório"
+
+- **O script não acha os arquivos que você quer abrir!**
+
+- Sempre abra o RStudio a partir do próprio script na  pasta que você quer que ele rode, assim ele já estará "rodando"lá.
+
+
+**OU**
+
+- Session -&gt; Set Working Directory -&gt;  To Source File Location
+
+**OU**
+
+- Com linhas de código
+
+**Calma falaremos com calma sobre quando tivermos importanto bases do disco!**
 
 
 ---
 
-## Texto:
+## Objetos antigos na memoria
 
-- É onde está nosso diferencial!
-
-- Mas...você tem tempo de interpretar os dados?
-
---
-
-- Ou...já passou tanto tempo copiando e colando figuras e tabelas e atualizando cabeçalhos que simplesmente não teve tempo de interpretar os dados?
-
---
- &lt;center&gt;&lt;img src="https://media.giphy.com/media/KJT3nsthnlkDUBPp0z/giphy.gif" height=250px" /&gt;&lt;/center&gt; 
----
-
-## Texto:
-
-O texto no RMarkdown está na linguagem Markdown (daí o nome), que é  uma linguagem de marcação para possibilidar fazer umas "firulas"no texto simples. 
-
-- No fundo é o que o e-mail, whatsapp usam por exemplo...
-
-- \# Título, \#\# Subtítulo ... aí por diante
-
-- Se colocar a palavra entre asteriscos \*assim\* ela fica em *itálico*, entre dois fica **negrito** ...
-
-- Também aceita fármulas, imagens... 
-
---
-
-- Mas o RStudio tem um macete também ...
-
----
-
-## Exercício do texto 
-
-Vamos fazer um texto com uma breve interpretação dos dados. Algo curto só para dar um gostinho e usar algumas funcionalidades do **Markdown** ou da funcionalidade **Visual Editor**.
-
-- Vocês têm 10 minutos 
-
- &lt;center&gt;&lt;img src="https://media.giphy.com/media/vzO0Vc8b2VBLi/giphy.gif" height=220px" /&gt;&lt;/center&gt; 
-
-
----
-## O código &amp;#128520;
-
---
-
-- Programação é algo bem abstrado... temos de escrever de um jeito que a máquina vai entender...
-
---
-
-- Basicamente a vamos escrever um monte de comandos, de um jeito e em uma ordem muito específicos, porque o computador não é tão inteligente assim...
-
---
-
-- Qual a vantagem disso? A máquina não cansa de fazer coisa repetitiva (ainda não se revoltaram)
-
---
-
-- Liguagem R é difícil pra gente, mas por íncrível que pareça, é uma das mais amigáveis do mercado!
-
---
-
-- Ou seja, ainda dá pra não-programadores, como nós , se aventurarem, pra aprender e usarmos a nosso favor na nossa área de atuação. 
----
-## O chamado chunk
-
-- O chunk são esses pedaços em cinza onde os códigos estão escritos.
-
---
-
-- Eles podem ser em várias linguagens de programação, mas nós vamos usar só o R.
-
---
-
-- Dentro dos chunks há três coisas importantes
-  - o **código** em si, que é o que "corre"
-  
-  - os **comentários**, que servem para se organizar, melhorar a colaboração ...
-  
-  - os **parâmetros** do chunk
-
----
-## Mas o código pode também não estár só no chunk...
-
-O chamado código *inline*
-
---
-
-Perceberam isso no arquivo? Como estava?
-
---
+**Como eu sempre começo meu código?**
 
 
 ```r
-`r alguma_coisa_em_R `
+rm(list=ls())  #limpa  o ambiente
+```
+
+- Isso vai garantir que você sempre vai começar com o "Ambiente Limpo"
+
+&lt;center&gt;&lt;img src="img/clean.gif" height=250px" /&gt;&lt;/center&gt;  
+
+---
+
+## E o contrário? 
+
+### O que deveria estar na memória não estava
+
+- Esqueci de rodar alguma coisa
+
+- Lembre-se, para o computador, você tem que falar tudo em uma ordem muito específica.
+
+- Afinal o que são os **objetos** no R?
+
+---
+class: inverse center middle
+
+# Interlúdio:
+## Vamos achar um objeto no nosso código ...
+
+---
+
+## No R, usamos muitos pacotes
+
+- Existe o chamado R base
+  - são as funções **nativas**
+
+- Mas usamos muitos pacotes!
+  - Que vem com rotinas mais **amigáveis**. 
+  - vamos usar muito um que já devem ter ouvido falar: **tidyverse**
+
+- Pra usar as funções dos pacotes precisamos antes **carregá-lo**!
+  - as funções são os que permites fazer as contas!
+  - como a que usamos para filtrar os paises com mais de 10000 casos
+---
+
+## Como geralmente fazem para carregar?
+
+**E que erro comum pode acontecer?**
+
+
+```r
+library(tidyverse)
+```
+ 
+&lt;center&gt;&lt;img src="img/pacote.png" height=250px" /&gt;&lt;/center&gt;   
+
+---
+## Como costumam resolver?
+
+
+```r
+install.packages("tidyverse")
 ```
 
 
-### Exercício
+###Esquece!!!
 
-- Trocar o valor que aparece dos Estados Unidos para o Brazil
+&lt;center&gt;&lt;img src="https://media.giphy.com/media/YfGkjrnVIk3jq/giphy.gif" height=250px" /&gt;&lt;/center&gt;  
+
+---
+
+## Faça assim
+
+
+```r
+if (!require(pacman)) install.packages("pacman") #garante que tem o pacman
+
+pacman::p_load( pacote1 , pacote2 ,  pacote3, ...)
+```
+
+
+- **Exercício**: 
+
+  - Quais os pacotes tem no seu script? 
+  
+  - Tente descobrir para que cada  um deles serve. 
+---
+
+## A louca dos pacotes!
+
+- Vamos descobrindo pacotes a cada dia
+
+--
+
+- Então vamos adicionando à lista inicial
+
+--
+
+- Na primeira vez que rodar o script ele vai instalar, então vai demorar mais
+
+- Nas próximas, vai apenas carregá-los, por isso será mais rápido. 
 
 ---
 
-## Exercício chunk
+## Objetos que o R não reconhece
 
-**No código**
+-  \# para comentários e funções para o código
 
-No chunk intitulado "manipulacoes" linha 43
-1) filtre os países que estão acima de 5 milhões de casos em vez de 10 milhões 
-  - (l. 49) -&gt; **+ fácil**
-     
-    *OU*
-    
-2) opção acima + calcular o acumulado de casos de fomrma diferente, usanso a função max() em vex de sum(), e outrá variável. 
-  - (l.48) -&gt; **+ difícil**
+- O que acontece se eu tirar um \# da frente de um comentário e tentar rodar o script? 
+
+&lt;center&gt;&lt;img src="img/didi.gif" height=250px" /&gt;&lt;/center&gt;  
 ---
+## Isso tem ou não tem aspas?
 
-## Comentários
+Geralmente:
 
+- **Não têm aspas**: Objetos, funções,parâmetros,  Variáveis (o que seriam variáveis?) ...
 
-- Comente com o # a alteração que você fez no fim da linha
+- **""Têm aspas""** : Nomes, Legendas, opções do parâmetro (exceto se foram números). 
 
-- Crie com comentário em uma nova lina e aciona ---- (quatro tracinhos) no no final dessa linha. O que aconteceu?
 
 ---
-## Oh tem um íncice! &amp;#128558;
+## Erros : 
+### No R X na compilação : situações diferentes
 
-**Outros parâmetros interessantes ...**
+- Fizemos com o Run All.
 
-- Se mantendo organizado ...
-  - Títulos nos chunks (**cuidado!**)
-  
-  - Seções de comentários
-  
-  - Seções no texto com os \#
-  
-  - **Tudo isso vai pro índice e te ajuda a navegar no código**
-  
+--
+
+- Tentemos agora com o Knit (ou..)
+
+```r
+rmarkdown::render("Exercicios/")
+```
+
+
 ---
 
-## Parâmetros do chunk
+## Usando as funcionalidades do RStudio
 
-**Para hoje, vamos ver:**
+- Cometários ficam verde
 
-- título no chunk
+- Quando fechamos parênteses ele mostra de qual ele era referente
 
-- *include=* (se a saída, mensagens, warnings gerados nesse chunk vão ser incluídos no arquivo compilado  )
+- A linha fica colorida de amarelo ou vermelho para chamar atenção de algum erro
 
-- *echo=* (se o código será incluído no arquivo compilado)
+--
 
-- \#partiu
+- Com certeza tem mais coisa que nem eu descobri ainda...
 
 ---
 
@@ -268,27 +296,14 @@ No chunk intitulado "manipulacoes" linha 43
 - Novamente não se preocupe em entender todos os pormenores por enquanto.  
 - Se trabalhar em outros horários, faça isso! 
 
----
-## Pode ser que aconteça...
-  
- - Um pop-up do RStudio pedindo login e senha. Essa senha é  o **token**.  
-
-
-```r
-usethis::edit_r_environ()
-```
-Isso é pra acontecer só hoje! Se voltar a acontecer nas próximas vezes me procure para [resolvermos](&lt;https://github.com/InseadDataAnalytics/INSEADAnalytics/issues/51&gt;)!
-
-- um pop-up Git-Hub, faça o login com sua conta.
-
-- alguma outra opção que não antecipei...
-  
 
 ---
 
-## Kahoot do dia!
+## Não tem kahoot do dia!
 
-[&lt;center&gt;&lt;img src="img/kahoot.png" height="300px" /&gt;&lt;/center&gt;](&lt;https://create.kahoot.it/share/aula3/452a258e-7584-4657-8f2a-fe622d282181&gt;)
+&lt;center&gt;&lt;img src="https://media.giphy.com/media/3o6wrvdHFbwBrUFenu/giphy.gif" height=250px" /&gt;&lt;/center&gt;  
+
+
 
 
 
