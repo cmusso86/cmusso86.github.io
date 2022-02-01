@@ -4,6 +4,7 @@
     <title>‘R de trás pra frente’</title>
     <meta charset="utf-8" />
     <meta name="author" content="Carolina Musso" />
+    <meta name="date" content="2022-01-02" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="css/xaringan-themerCIEVS.css" type="text/css" />
   </head>
@@ -12,9 +13,9 @@
 class: center, middle, inverse, title-slide
 
 # ‘R de trás pra frente’
-## Aula 4: […] RMarkdown tem três partes
+## Aula 6
 ### Carolina Musso
-### 25/01/22
+### 01/02/22
 
 ---
 
@@ -25,233 +26,147 @@ class: center, middle, inverse, title-slide
 
 class: inverse center middle
 
-# Continuando o Módulo:
-## Aprendendo a rodar aquele código que fizeram pra mim...
+# Finalizando:
+## Exercício aula passada
 
 ---
-## Lembrando...
+## Erros : 
 
-**Quer mostrar quem manda aqui nessa parada? Se joga!**
-
- - [Manual de R para Epidemiologistas: Capítulo Reports with RMarkdown](&lt;https://epirhandbook.com/en/reports-with-r-markdown.html&gt;)
- 
- - [Livro Curso-R: Capítulo 9 Relatórios](&lt;https://livro.curso-r.com/9-relatorios.html&gt;)
- 
- - [DataCamp: Curso Reporting with RMarkdown](&lt;https://app.datacamp.com/learn/search?q=rmarkdown&gt;)
- 
- &lt;center&gt;&lt;img src="https://media.giphy.com/media/26FPnj46RYsIWgYLe/giphy.gif" height=150px" /&gt;&lt;/center&gt;
-
----
-## Paciêcia jovem padawan!
-
-- Palavras difíceis, conceitos novos, procedimentos esquisitos...
-
-    - Calma! A idéia é revisitar todas essas coisas ao longo do curso e logo serão familiares &amp;#128521;! 
-    
-    - Hoje temos monitor pra ajudar! yay!
-    
---
-    
-&lt;center&gt;&lt;img src="https://media.giphy.com/media/PQ652dp4mVviXA3cvu/giphy.gif" height=250px" /&gt;&lt;/center&gt;    
----
-
-## Começando!
-
-**Como ainda estamos alinhando as coisas**:
-
-- Apagar uma pasta: Exercícios
-
-- Abrir projeto -&gt; aba git -&gt; main -&gt; pull
-
-- (a gente vai ver push no fim da aula)
-
---
-
-- **Porque tem tanto arquivo professora?**
-
-  - As aulas compilam com eles! 
-  
-- **Porque testá insistindo tanto nisso?**
-
-  - Os códigos sempre precisam de manutenção! Parece difícil, mas podia ser pior! 
-
----
-## Tudo atualizado (espero ... &amp;#128517;)
-
---
-
-
-- Você vai perceber que a pasta dos coleguintas está aí!
-
-- Agora vamos abrir o exercício da aula de hoje , continuando o seu da aula passada!
-
-
---
-
-
-- Lembra que mexemos no cabeçalho? 
-
-- É tudo que faremos nele por enquanto...
-
-    
-&lt;center&gt;&lt;img src="https://media.giphy.com/media/l0MYzLLxlJDfYtzy0/giphy.gif"height=200px" /&gt;&lt;/center&gt; 
-
-
-
----
-
-## Texto:
-
-- É onde está nosso diferencial!
-
-- Mas...você tem tempo de interpretar os dados?
-
---
-
-- Ou...já passou tanto tempo copiando e colando figuras e tabelas e atualizando cabeçalhos que simplesmente não teve tempo de interpretar os dados?
-
---
- &lt;center&gt;&lt;img src="https://media.giphy.com/media/KJT3nsthnlkDUBPp0z/giphy.gif" height=250px" /&gt;&lt;/center&gt; 
----
-
-## Texto:
-
-O texto no RMarkdown está na linguagem Markdown (daí o nome), que é  uma linguagem de marcação para possibilidar fazer umas "firulas"no texto simples. 
-
-- No fundo é o que o e-mail, whatsapp usam por exemplo...
-
-- \# Título, \#\# Subtítulo ... aí por diante
-
-- Se colocar a palavra entre asteriscos \*assim\* ela fica em *itálico*, entre dois fica **negrito** ...
-
-- Também aceita fármulas, imagens... 
-
---
-
-- Mas o RStudio tem um macete também ...
-
----
-
-## Exercício do texto 
-
-Vamos fazer um texto com uma breve interpretação dos dados. Algo curto só para dar um gostinho e usar algumas funcionalidades do **Markdown** ou da funcionalidade **Visual Editor**.
-
-- Vocês têm 10 minutos 
-
- &lt;center&gt;&lt;img src="https://media.giphy.com/media/vzO0Vc8b2VBLi/giphy.gif" height=220px" /&gt;&lt;/center&gt; 
-
-
----
-## O código &amp;#128520;
-
---
-
-- Programação é algo bem abstrado... temos de escrever de um jeito que a máquina vai entender...
-
---
-
-- Basicamente a vamos escrever um monte de comandos, de um jeito e em uma ordem muito específicos, porque o computador não é tão inteligente assim...
-
---
-
-- Qual a vantagem disso? A máquina não cansa de fazer coisa repetitiva (ainda não se revoltaram)
-
---
-
-- Liguagem R é difícil pra gente, mas por íncrível que pareça, é uma das mais amigáveis do mercado!
-
---
-
-- Ou seja, ainda dá pra não-programadores, como nós , se aventurarem, pra aprender e usarmos a nosso favor na nossa área de atuação. 
----
-## O chamado chunk
-
-- O chunk são esses pedaços em cinza onde os códigos estão escritos.
-
---
-
-- Eles podem ser em várias linguagens de programação, mas nós vamos usar só o R.
-
---
-
-- Dentro dos chunks há três coisas importantes
-  - o **código** em si, que é o que "corre"
-  
-  - os **comentários**, que servem para se organizar, melhorar a colaboração ...
-  
-  - os **parâmetros** do chunk
-
----
-## Mas o código pode também não estár só no chunk...
-
-O chamado código *inline*
-
---
-
-Perceberam isso no arquivo? Como estava?
+### No código R 
+### Na compilação 
 
 --
 
 
 ```r
-`r alguma_coisa_em_R `
+rmarkdown::render("Exercicios/")
 ```
 
+---
 
-### Exercício
+## Fim do módulo 1!
 
-- Trocar o valor que aparece dos Estados Unidos para o Brazil
+
+- De trás pra frente!
+  - Não vimos "formalmente" nada da estrutura do código em R
+  - Vimos em pílulas nas dúvidas, "interlúdios",  tentativa e erro, intuição... 
+
+- Aprenderam (ou ao menos fizeram!)
+  - Coisas bem avançadas!
+  - GitHub (çocorro &amp;#128560;)
+  - códigos *inline*
+  - atualizações de datas automática
+  - boletim que baixa base da internet
+  - ...
+
+---
+class: inverse center middle
+
+# E agora?
+
+---
+# Opcção 1 
+
+## Realinhamento do Crak - R - as
+
+
+&lt;center&gt;&lt;img src="img/chakra.gif" height=320px" /&gt;&lt;/center&gt;  
+
+
+
+---
+class: inverse center middle
+
+# Módulo 2
+## Mas é que eu queria esse gráfico de outra cor...
 
 ---
 
-## Exercício chunk
+## Leituras paralelas
 
-**No código**
+- [EpiHandbook, Cap.30](&lt;https://epirhandbook.com/en/ggplot-basics.html&gt;)
 
-No chunk intitulado "manipulacoes" linha 43
-1) filtre os países que estão acima de 5 milhões de casos em vez de 10 milhões 
-  - (l. 49) -&gt; **+ fácil**
-     
-    *OU*
-    
-2) opção acima + calcular o acumulado de casos de fomrma diferente, usanso a função max() em vex de sum(), e outrá variável. 
-  - (l.48) -&gt; **+ difícil**
+- [Curso-R, 13.8](&lt;https://livro.curso-r.com/13-8-o-pacote-ggplot2-1.html&gt;)
+
+- [DataCap, Introdução a visualização com ggplot](&lt;https://app.datacamp.com/learn/courses/introduction-to-data-visualization-with-ggplot2&gt;)
+
+--
+
+- [R4DS](&lt;https://r4ds.had.co.nz&gt;)
+
+- [GGPLOT](&lt;https://ggplot2-book.org/mastery.html&gt;)
 ---
 
-## Comentários
+## Ciclo da análise
 
+- “The simple graph has brought more information to the data analyst’s mind than any other device.” — John Tukey
 
-- Comente com o # a alteração que você fez no fim da linha
+- "O gráfico simples trouxe mais informações à mente do analista de dados do que qualquer outro dispositivo"
 
-- Crie com comentário em uma nova lina e aciona ---- (quatro tracinhos) no no final dessa linha. O que aconteceu?
+&lt;center&gt;&lt;img src="img/ciclo.png" height=280px" /&gt;&lt;/center&gt;  
+
 
 ---
-## Oh tem um íncice! &amp;#128558;
+## ggplot2
 
-**Outros parâmetros interessantes ...**
+.left-column[
+&lt;center&gt;&lt;img src="img/ggplot.png" height="150px" /&gt;&lt;/center&gt;
+]
 
-- Se mantendo organizado ...
-  - Títulos nos chunks (**cuidado!**)
-  
-  - Seções de comentários
-  
-  - Seções no texto com os \#
-  
-  - **Tudo isso vai pro índice e te ajuda a navegar no código**
-  
+.right-column[
+
+
+
+- Uai cadê esse pacote? &amp;#128064;
+
+
+- Gramática de gráficos
+  - Camadas
+  - Dados
+  - Mapeamento
+  - "Geometria"
+  - Estatística
+  - Escala
+  - Coordenadas
+]
+---
+# Explorando parâmetros
+
+&lt;center&gt;&lt;img src="img/up.gif" height=300px" /&gt;&lt;/center&gt;  
+
 ---
 
-## Parâmetros do chunk
+# Desafios ...
 
-**Para hoje, vamos ver:**
+- Diferença **+** para **%&gt;%**
 
-- título no chunk
+--
 
-- *include=* (se a saída, mensagens, warnings gerados nesse chunk vão ser incluídos no arquivo compilado  )
+- Diferença do **fill=** dentro ou fora do  **aes()** ?
 
-- *echo=* (se o código será incluído no arquivo compilado)
+--
 
-- \#partiu
+- Colocar o y (ou x) no **ggplot()** ou no **geom_()**?
+
+--
+
+- Mudar na linha 102 o "_x_" para "_y_". 
+
+
+---
+
+## Dicas
+
+- Podemos escolher [cores](&lt;https://www.color-hex.com&gt;) [exatas](&lt;https://colorbrewer2.org/#type=sequential&amp;scheme=BuGn&amp;n=3&gt;)
+
+
+- [Temas](&lt;https://ggplot2.tidyverse.org/reference/ggtheme.html&gt;) 
+
+
+- [Cheat Sheets](&lt;https://www.maths.usyd.edu.au/u/UG/SM/STAT3022/r/current/Misc/data-visualization-2.1.pdf&gt;)
+
+
+- [Galeria](&lt;https://www.r-graph-gallery.com&gt;)
 
 ---
 
@@ -268,33 +183,11 @@ No chunk intitulado "manipulacoes" linha 43
 - Novamente não se preocupe em entender todos os pormenores por enquanto.  
 - Se trabalhar em outros horários, faça isso! 
 
----
-## Pode ser que aconteça...
-  
- - Um pop-up do RStudio pedindo login e senha. Essa senha é  o **token**.  
-
-
-```r
-usethis::edit_r_environ()
-```
-Isso é pra acontecer só hoje! Se voltar a acontecer nas próximas vezes me procure para [resolvermos](&lt;https://github.com/InseadDataAnalytics/INSEADAnalytics/issues/51&gt;)!
-
-- um pop-up Git-Hub, faça o login com sua conta.
-
-- alguma outra opção que não antecipei...
-  
 
 ---
 
-## Kahoot do dia!
 
-[&lt;center&gt;&lt;img src="img/kahoot.png" height="300px" /&gt;&lt;/center&gt;](&lt;https://create.kahoot.it/share/aula3/452a258e-7584-4657-8f2a-fe622d282181&gt;)
-
-
-
-
-
-
+&lt;center&gt;&lt;img src="img/pig.gif" height=500px" /&gt;&lt;/center&gt;  
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
