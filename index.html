@@ -4,6 +4,7 @@
     <title>‘R de trás pra frente’</title>
     <meta charset="utf-8" />
     <meta name="author" content="Carolina Musso" />
+    <meta name="date" content="2022-03-02" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="css/xaringan-themerCIEVS.css" type="text/css" />
   </head>
@@ -12,11 +13,12 @@
 class: center, middle, inverse, title-slide
 
 # ‘R de trás pra frente’
-## Aula 5: Erros comuns e boas práticas
+## Aula 7
 ### Carolina Musso
-### 27/01/22
+### 03/02/22
 
 ---
+
 
 
 
@@ -25,291 +27,144 @@ class: center, middle, inverse, title-slide
 
 class: inverse center middle
 
-# Continuando o Módulo:
-## Aprendendo a rodar aquele código que fizeram pra mim...
+# Módulo 2
+## Mas é que eu queria esse gráfico de outra cor...
 
 ---
 
-## Recaptulando ...
+## Leituras paralelas
 
-&lt;center&gt;&lt;img src="img/rmarkdown_translation.png" height=420px" /&gt;&lt;/center&gt;  
+- [EpiHandbook, Cap.30](&lt;https://epirhandbook.com/en/ggplot-basics.html&gt;)
 
-- **Agora, vamos atualizar a pasta de hoje!** 
+- [Curso-R, 13.8](&lt;https://livro.curso-r.com/13-8-o-pacote-ggplot2-1.html&gt;)
+
+- [DataCap, Introdução a visualização com ggplot](&lt;https://app.datacamp.com/learn/courses/introduction-to-data-visualization-with-ggplot2&gt;)
+
+
+- [R4DS](&lt;https://r4ds.had.co.nz&gt;)
+
+- [GGPLOT](&lt;https://ggplot2-book.org/mastery.html&gt;)
+---
+
+## Recaptulando
+
+- ggplot
+
+  - camadas (lembra do "+"?)
+  - partes estáticas e partes que respondem aos dados 
+  - cuidado com as aspas!
+  - conheça as variáveis (numéricas ou categóricas)
+  - o geom_? é a camada que diz o tipo de gráfico
+
+--
+
+ **O céu é o limite!**
+  &lt;center&gt;&lt;img src="img/foguete.gif" height=200px" /&gt;&lt;/center&gt;  
+---
+# Várias formas de fazer a mesma coisa
+
+  &lt;center&gt;&lt;img src="img/pam.gif" height=300px" /&gt;&lt;/center&gt;  
+---
+# Vamos tentar mudar a ordem das coisas!
+
+  &lt;center&gt;&lt;img src="img/card.gif" height=300px" /&gt;&lt;/center&gt; 
+---
+# O que  percebemos?
+
+- Escrever explicitamente o  nome do parâmetro importa sempre?
+
+- A ordem importa sempre?
+
+- Como saber o nome do parâmentro?
+
+- Como saber se o geom tem aquele parâmetro?
+
+- Como saber a opção do parâmetro?
+
+---
+# Alguns geoms ...
+
+- Histogramas - geom_histogram()
+
+- Gráficos de barras ou colunas - geom_bar() ou geom_col() 
+
+- Box-plots (diagrama de caixas) - geom_boxplot()
+
+- Pontos (dispersão / scatterplots) - geom_point()
+
+- Linhas - geom_line() , geom_path()
+
+- Linhas de tendência, Trendlines - geom_smooth()
 
 ---
 
-## Erros
-
-**Fazemos de tudo pra minimizar... mas nunca eliminamos completamente**
-
-- Codificação
-
-- Coisas antigas na memória
-
-- Pacotes
-
-- Parenteses e aspas abertos
-
-- Diferenças de erros no código R e erros de compilação
-
-- ...
+# Geom pra uma variável só 
+**Entender a sua distribuição:**
 
 
-
----
-## Primeira coisa a fazer quando dá um erro
-
---
-
-- Ler o erro! &amp;#128514;
-
---
-
-  - Nem sempre ajuda muito...mas sempre comece por aí!
-
---
-
-- Perguntar ao coleguinha (o coleguinha pode ser o ***Google!***)
-  - Simplesmente copie e cole o erro lá!
-
---
-
-- No Google dê preferêcia resultados do: 
-  - **StackOverflow**
-  - RBloggers
-  - RStudio / RProject
-  
----
-
-## StackOverflow
-
-&lt;center&gt;&lt;img src="img/preg.jpeg" height=380px" /&gt;&lt;/center&gt;  
-
-- Mas calma! Vamos ver os mais comuns aqui! 
-
----
-## Erro de codificação
-
-- Resumidamente...
-
-&lt;center&gt;&lt;img src="img/encoding.png" height=150px" /&gt;&lt;/center&gt;    
-
---
-
-- Na prática: O Caracteres especiais **no script** não são lidos corretamente
-
---
-
-- Como resolver?
-
---
-
-- **Reopen with encoding**
-    
- 
----
-
-## "Erro de Diretório"
-
-- **O script não acha os arquivos que você quer abrir!**
-
-- Sempre abra o RStudio a partir do próprio script na  pasta que você quer que ele rode, assim ele já estará "rodando"lá.
-
-
-**OU**
-
-- Session -&gt; Set Working Directory -&gt;  To Source File Location
-
-**OU**
-
-- Com linhas de código
-
-**Calma falaremos com calma sobre quando tivermos importanto bases do disco!**
-
-
----
-
-## Objetos antigos na memoria
-
-**Como eu sempre começo meu código?**
 
 
 ```r
-rm(list=ls())  #limpa  o ambiente
+ggplot(data = linelist, mapping = aes(x = age))+
+  geom_histogram()
 ```
 
-- Isso vai garantir que você sempre vai começar com o "Ambiente Limpo"
-
-&lt;center&gt;&lt;img src="img/clean.gif" height=250px" /&gt;&lt;/center&gt;  
+&lt;img src="Aula7_files/figure-html/unnamed-chunk-2-1.png" width="100%" /&gt;
 
 ---
+# Duas variáveis contínuas
 
-## E o contrário? 
-
-### O que deveria estar na memória não estava
-
-- Esqueci de rodar alguma coisa
-
-- Lembre-se, para o computador, você tem que falar tudo em uma ordem muito específica.
-
-- Afinal o que são os **objetos** no R?
-
----
-class: inverse center middle
-
-# Interlúdio:
-## Vamos achar um objeto no nosso código ...
-
----
-
-## No R, usamos muitos pacotes
-
-- Existe o chamado R base
-  - são as funções **nativas**
-
-- Mas usamos muitos pacotes!
-  - Que vem com rotinas mais **amigáveis**. 
-  - vamos usar muito um que já devem ter ouvido falar: **tidyverse**
-
-- Pra usar as funções dos pacotes precisamos antes **carregá-lo**!
-  - as funções são os que permites fazer as contas!
-  - como a que usamos para filtrar os paises com mais de 10000 casos
----
-
-## Como geralmente fazem para carregar?
-
-**E que erro comum pode acontecer?**
+- Pontos, dispersão, scatterplot
 
 
 ```r
-library(tidyverse)
+ggplot(data = linelist, mapping = aes(x = age, y = wt_kg))+
+  geom_point()
 ```
- 
-&lt;center&gt;&lt;img src="img/pacote.png" height=250px" /&gt;&lt;/center&gt;   
+
+&lt;img src="Aula7_files/figure-html/unnamed-chunk-3-1.png" width="100%" /&gt;
+
 
 ---
-## Como costumam resolver?
+
+# Estética: aes()
+**parâmetros que respondem as valores do meu banco**
+
+- x e y ....
+
+--
+
+**mas além deles ...**
+
+- **fill**, **color** ..
+- **shape** (forma),  **size** (tamanho) , **alpha**  (transparência)
+- **binwidth**: largura das colunas do histograma
+- **width**: largura da coluna do gráfico de barraswidth 
+- **linetype**:  tipo de linha  (ex: solida, pontilhada)
+
+**podem ser usado em aes() mas também podem ser fixados caso deseje algum específico**
+
+---
+
+# Uma linha de tendência
+
+
+- **Um pouco mais de estatística**
 
 
 ```r
-install.packages("tidyverse")
+ggplot(linelist,aes(x = age, y = wt_kg, color = age_years)) + 
+  geom_point() +  
+  geom_smooth()                   
 ```
 
-
-###Esquece!!!
-
-&lt;center&gt;&lt;img src="https://media.giphy.com/media/YfGkjrnVIk3jq/giphy.gif" height=250px" /&gt;&lt;/center&gt;  
+&lt;img src="Aula7_files/figure-html/unnamed-chunk-4-1.png" width="100%" /&gt;
 
 ---
+# Temos tempo?
 
-## Faça assim
-
-
-```r
-if (!require(pacman)) install.packages("pacman") #garante que tem o pacman
-
-pacman::p_load( pacote1 , pacote2 ,  pacote3, ...)
-```
-
-
-- **Exercício**: 
-
-  - Quais os pacotes tem no seu script? 
-  
-  - Tente descobrir para que cada  um deles serve. 
+  &lt;center&gt;&lt;img src="img/criar.gif" height=400px" /&gt;&lt;/center&gt;  
 ---
-
-## A louca dos pacotes!
-
-- Vamos descobrindo pacotes a cada dia
-
---
-
-- Então vamos adicionando à lista inicial
-
---
-
-- Na primeira vez que rodar o script ele vai instalar, então vai demorar mais
-
-- Nas próximas, vai apenas carregá-los, por isso será mais rápido. 
-
----
-
-## Objetos que o R não reconhece
-
--  \# para comentários e funções para o código
-
-- O que acontece se eu tirar um \# da frente de um comentário e tentar rodar o script? 
-
-&lt;center&gt;&lt;img src="img/didi.gif" height=250px" /&gt;&lt;/center&gt;  
----
-## Isso tem ou não tem aspas?
-
-Geralmente:
-
-- **Não têm aspas**: Objetos, funções,parâmetros,  Variáveis (o que seriam variáveis?) ...
-
-- **""Têm aspas""** : Nomes, Legendas, opções do parâmetro (exceto se foram números). 
-
-
----
-## Erros : 
-### No R X na compilação : situações diferentes
-
-- Fizemos com o Run All.
-
---
-
-- Tentemos agora com o Knit (ou..)
-
-```r
-rmarkdown::render("Exercicios/")
-```
-
-
----
-
-## Usando as funcionalidades do RStudio
-
-- Cometários ficam verde
-
-- Quando fechamos parênteses ele mostra de qual ele era referente
-
-- A linha fica colorida de amarelo ou vermelho para chamar atenção de algum erro
-
---
-
-- Com certeza tem mais coisa que nem eu descobri ainda...
-
----
-
-## Voltando ao Github
-
-- Vamos agora **subir** suas alterações
-
-- Primeiro, salve seu arquivo. 
-  - selecione o seu **brach REMOTE**
-  - clique na caixinha **SOMENTE** da pasta com seu nome
-  - Faça um Commit com comentário **útil**
-  - Faça um **Push**
-  
-- Novamente não se preocupe em entender todos os pormenores por enquanto.  
-- Se trabalhar em outros horários, faça isso! 
-
-
----
-
-## Não tem kahoot do dia!
-
-&lt;center&gt;&lt;img src="https://media.giphy.com/media/3o6wrvdHFbwBrUFenu/giphy.gif" height=250px" /&gt;&lt;/center&gt;  
-
-
-
-
-
-
-
-
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
