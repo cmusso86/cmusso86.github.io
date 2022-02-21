@@ -12,9 +12,9 @@
 class: center, middle, inverse, title-slide
 
 # ‘R de trás pra frente’
-## Aula 8
+## Aula 10
 ### Carolina Musso
-### 15/02/22
+### 21/02/22
 
 ---
 
@@ -26,143 +26,312 @@ class: center, middle, inverse, title-slide
 
 class: inverse center middle
 
-# Módulo 2
-## Mas é que eu queria esse gráfico de outra cor...
+# Módulo 3:
+## As vezes devemos dar um passo para trás antes de dar um para frente...
 
 ---
 
 ## Leituras paralelas
 
-- [EpiHandbook, Cap.30](&lt;https://epirhandbook.com/en/ggplot-basics.html&gt;)
+- [EpiHandbook, Basics](&lt;https://epirhandbook.com/en/r-basics.html&gt;)
 
-- [Curso-R, 13.8](&lt;https://livro.curso-r.com/13-8-o-pacote-ggplot2-1.html&gt;)
+- [Curso-R, 2](&lt;https://livro.curso-r.com/2-rstudio.html&gt;)
 
-- [DataCap, Introdução a visualização com ggplot](&lt;https://app.datacamp.com/learn/courses/introduction-to-data-visualization-with-ggplot2&gt;)
+- [DataCamp, Introdução ao R](&lt;https://app.datacamp.com/learn/courses/free-introduction-to-r&gt;)
+
+- [Hands-on programming with R](&lt;https://rstudio-education.github.io/hopr/basics.html&gt;)
+--
+
+- [R4DS](&lt;https://r4ds.had.co.nz&gt;) - Pacote tidyverse
+- [R4DS community](&lt;https://www.rfordatasci.com&gt;)
+- [R-Studio Education](&lt;https://education.rstudio.com&gt;)
 
 
-- [R4DS](&lt;https://r4ds.had.co.nz&gt;)
-
-- [GGPLOT](&lt;https://ggplot2-book.org/mastery.html&gt;)
 ---
 
-## Recaptulando
+# Recapitulando
 
-- ggplot
+####**Módulo 1: Como rodar aquele código que laguém fez para mim.**
+- Rmarkdown, erros de compilação e no código R
 
-  - Várias formas de fazer a mesma coisa
+#### **Modulo 2: Mas eu queria esse gráfico de outra cor**
+- ggplot: lógica geral e alguns exemplos de gráficos
+
+--
+
+  - **Mas principalmente:** Plantar a semente para voarem com as próprias asas!
   
---
-
-  - Histograma
-  
---
-
-  - Gráfico de pontos (dispersão/scatterplots)
-  
---
-
-  - parâmetros (dentro e fora do aes())
-  
---
-
-  - No final da aula: Linha de tendência/regressão linear
-
---
-
- **Alguém quer partilhar seu gráfico?**
  
 ---
 # Temas de hoje
 
-- Box-plot e Gráfico de Barras
+.left-column[
 
-- Títulos/Eixos/Legendas
+- Partes do R-Studio
 
-- Facetamento
+- Funções
 
- &lt;center&gt;&lt;img src="img/elaine.gif" height=300px" /&gt;&lt;/center&gt; 
+- Objetos
+
+- Tidy data
+]
+
+.right-column[
+&lt;center&gt;&lt;img src="img/feliz.png" height=400px" /&gt;&lt;/center&gt; ]
 ---
-### Box-plot (diagrama de caixas)
+# RStudio 
 
-- geom_boxplot()
+.left-column[
+- R: Motor
+&lt;center&gt;&lt;img src="img/engine.png" height=100px" /&gt;&lt;/center&gt;  ]
 
- &lt;center&gt;&lt;img src="img/box.webp" height=400px" /&gt;&lt;/center&gt;  
+.right-column[
+- R-Studio é um carro estiloso e confortável
+&lt;center&gt;&lt;img src="img/carro.png" height=200px" /&gt;&lt;/center&gt;  ]
   
 ---
-## Um gráfico muito informativo!
-### Mas ....
 
-- De modo geral um pouco confuso fora de um contexto acadêmico, o que acham?
+# RStudio: **Quatro painéis**
 
- &lt;center&gt;&lt;img src="img/met.gif" height=400px" /&gt;&lt;/center&gt;  
+ &lt;center&gt;&lt;img src="img/console.png" height=400px" /&gt;&lt;/center&gt;  
+ 
+-  Tools -&gt;  Global options -&gt; Pane Layout 
+  
 ---
-## geom_bar() , geom_cols()
+## Console: onde o R vive
 
-- Muito utilizado!
+.left-column[
 
-- Não é trivial no R...
+- Versão
 
-### Originalmente ...
+- Descrição
 
-- Semelhante a um histograma, mas para variáveis categóricas (default "count")
+- Licença
 
-- Mas, podemos usar valores no banco, se preferirmos (stat="identity")
+- Avisos
+
+- prompt &gt; ]
+
+.right-column[
+ &lt;center&gt;&lt;img src="img/prompt.png" height=400px" /&gt;&lt;/center&gt; ]
+---
+# Outras partes
+
+#### Script
+- Onde farei os códigos para salvar: Só roda quando eu enviar para o Console!
+
+#### Enviroment/ Ambiente
+
+- Objetos [...]
+
+#### Output / saídas
+
+- Visualizações [...]
 
 ---
-# Editando eixos e títulos 
+### Não salvar a imagem ao fechar
 
-**Mais fácil e intuitivo**
+&lt;center&gt;&lt;img src="img/global.png" height=500px" /&gt;&lt;/center&gt;
+---
+## R como uma calculadora
+
+- Todo curso começa assim &amp;#128580; ...
+
+```r
+1 + 3
+```
+
+```
+## [1] 4
+```
+
+```r
+34/90
+```
+
+```
+## [1] 0.3777778
+```
+
+```r
+5&lt;4
+```
+
+```
+## [1] FALSE
+```
+
+---
+
+## Funções
+
+- "Funções em programação é um conjunto de instruções para simplificar uma tarefa repetitiva"
 
 
 ```r
-labs(title = "Um título",
-    subtitle = "Um subtítulo",
-    x = "eixo x",
-    y = "eixo y",
-    color = "titulo da legenda",
-    caption = "Nota de rodapé")
+sqrt(9)
 ```
-**Semelhante, inclui outros parâmetros para os eixos** 
+
+```
+## [1] 3
+```
 
 ```r
-# Outra possibilidade para o eixo
-scale_x_continuous(...)+
+round(3.89, digits = 0 )
 ```
 
+```
+## [1] 4
+```
+
+```r
+round(3.89,  0 )
+```
+
+```
+## [1] 4
+```
 ---
-# Tamanhos, fontes, estilo e posicionamento 
+## Objetos
+
+- "Um nome que você dá para poder salvar informações"
+
+```r
+valor&lt;-5
+valor
+```
+
+- Vetor 
+  - funçao de concatenar c()\
+  - símbolo de atribuição &lt;- (ou um = também serve)
 
 
 ```r
-theme_classic()+ # o que eu mais gosto                                
-  theme(legend.position = "bottom",                    
-    plot.title = element_text(size = 30),          
-    plot.caption = element_text(hjust = 0),        
-    plot.subtitle = element_text(face = "italic"), 
-    axis.text.x = element_text(color = "red", size = 15, angle = 90), 
-    axis.text.y = element_text(size = 15),         
-    axis.title = element_text(size = 20)          
-    )    
+c(1,4,6,7,8) # sem salvar em um objeto
+vetor1&lt;-c(1,4,6,7,8) #salvando em um objeto
+vetor1 #visualizando esse objeto
 ```
 
+**Atalho no teclado**: Alt - ( ou option - no mac)
 
 ---
-## Faceting
+## Vetores não-numéricos
 
-- Incluir ainda mais uma dimensão
-
-- facet_grid()
-
-- facet_wrap()
+#### Vetor de caracteres: string
 
 
-&lt;img src="Aula8_files/figure-html/unnamed-chunk-5-1.png" width="100%" /&gt;
+```r
+nomes&lt;-c("Carol", "Otto", "Julio", "Eduardo", "Alvaro")
+nomes
+```
+
+```
+## [1] "Carol"   "Otto"    "Julio"   "Eduardo" "Alvaro"
+```
+
+```r
+class(nomes)
+```
+
+```
+## [1] "character"
+```
 
 ---
-# Temos tempo?
 
-  &lt;center&gt;&lt;img src="img/criar.gif" height=400px" /&gt;&lt;/center&gt;  
+## Regras para nomes de objetos
+
+- Não pode começar com número
+
+- Não pode ter espaços 
+
+  - se quiser muito : duas crases
+
+```r
+`quero nome separado`&lt;-c(1,5,6)
+`quero nome separado`
+```
+
+```
+## [1] 1 5 6
+```
+  
+  
+- Não pode ter nomes "especiais" do R: T (TRUE), F (FALSE), NA...
+
 ---
+
+## Outros objetos
+
+&lt;center&gt;&lt;img src="img/R-data-strucutres.jpg" height=400px" /&gt;&lt;/center&gt;
+
+---
+### Pra hoje: Dataframe **Duas dimensões**
+
+
+  - linhas: observações
+  - colunas: variáveis
+    - "tidy"
+
+&lt;center&gt;&lt;img src="img/tidy2.png" height=300px" /&gt;&lt;/center&gt;
+
+---
+## Vamos explorar o dataframe
+
+- Na aba Enviroment
+
+
+```r
+class(mtcars)
+```
+
+```
+## [1] "data.frame"
+```
+
+```r
+summary(mtcars)
+```
+
+```
+##       mpg             cyl             disp             hp       
+##  Min.   :10.40   Min.   :4.000   Min.   : 71.1   Min.   : 52.0  
+##  1st Qu.:15.43   1st Qu.:4.000   1st Qu.:120.8   1st Qu.: 96.5  
+##  Median :19.20   Median :6.000   Median :196.3   Median :123.0  
+##  Mean   :20.09   Mean   :6.188   Mean   :230.7   Mean   :146.7  
+##  3rd Qu.:22.80   3rd Qu.:8.000   3rd Qu.:326.0   3rd Qu.:180.0  
+##  Max.   :33.90   Max.   :8.000   Max.   :472.0   Max.   :335.0  
+##       drat             wt             qsec             vs        
+##  Min.   :2.760   Min.   :1.513   Min.   :14.50   Min.   :0.0000  
+##  1st Qu.:3.080   1st Qu.:2.581   1st Qu.:16.89   1st Qu.:0.0000  
+##  Median :3.695   Median :3.325   Median :17.71   Median :0.0000  
+##  Mean   :3.597   Mean   :3.217   Mean   :17.85   Mean   :0.4375  
+##  3rd Qu.:3.920   3rd Qu.:3.610   3rd Qu.:18.90   3rd Qu.:1.0000  
+##  Max.   :4.930   Max.   :5.424   Max.   :22.90   Max.   :1.0000  
+##        am              gear            carb      
+##  Min.   :0.0000   Min.   :3.000   Min.   :1.000  
+##  1st Qu.:0.0000   1st Qu.:3.000   1st Qu.:2.000  
+##  Median :0.0000   Median :4.000   Median :2.000  
+##  Mean   :0.4062   Mean   :3.688   Mean   :2.812  
+##  3rd Qu.:1.0000   3rd Qu.:4.000   3rd Qu.:4.000  
+##  Max.   :1.0000   Max.   :5.000   Max.   :8.000
+```
+---
+
+## Um pouco do R base
+
+- o $ para acessar as colunas
+
+
+```r
+mtcars$mpg
+```
+
+```
+##  [1] 21.0 21.0 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 17.8 16.4 17.3 15.2 10.4
+## [16] 10.4 14.7 32.4 30.4 33.9 21.5 15.5 15.2 13.3 19.2 27.3 26.0 30.4 15.8 19.7
+## [31] 15.0 21.4
+```
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
