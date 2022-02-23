@@ -12,9 +12,9 @@
 class: center, middle, inverse, title-slide
 
 # ‘R de trás pra frente’
-## Aula 10
+## Aula 11
 ### Carolina Musso
-### 21/02/22
+### 24/02/22
 
 ---
 
@@ -29,309 +29,268 @@ class: inverse center middle
 # Módulo 3:
 ## As vezes devemos dar um passo para trás antes de dar um para frente...
 
----
-
-## Leituras paralelas
-
-- [EpiHandbook, Basics](&lt;https://epirhandbook.com/en/r-basics.html&gt;)
-
-- [Curso-R, 2](&lt;https://livro.curso-r.com/2-rstudio.html&gt;)
-
-- [DataCamp, Introdução ao R](&lt;https://app.datacamp.com/learn/courses/free-introduction-to-r&gt;)
-
-- [Hands-on programming with R](&lt;https://rstudio-education.github.io/hopr/basics.html&gt;)
---
-
-- [R4DS](&lt;https://r4ds.had.co.nz&gt;) - Pacote tidyverse
-- [R4DS community](&lt;https://www.rfordatasci.com&gt;)
-- [R-Studio Education](&lt;https://education.rstudio.com&gt;)
 
 
 ---
 
 # Recapitulando
 
-####**Módulo 1: Como rodar aquele código que laguém fez para mim.**
-- Rmarkdown, erros de compilação e no código R
 
-#### **Modulo 2: Mas eu queria esse gráfico de outra cor**
-- ggplot: lógica geral e alguns exemplos de gráficos
+- **Objetos**: Nome que eu sou a dados (criados ou importados) que salvei no  ambiente no R:
+
+  - Crio  com funçoes e o símbolo  &lt;- ou =
+  
+  - **Exemplos**: vetores, matrizes, dataframes, listas, gráficos...
+  
+  - Aparecem na aba **Environment** -&gt; um resumo deles
+  
+  - se eu "chamar" o nome deles -&gt;  aparecem no console
+  
+---
+
+# Recapitulando
+
+- **Funções**: Instruções, verbos, que "mandam" os dados fazerem alguma coisa.
+
+  - Tem  parênteses e argumentos separados  por vírgulas.
+  
+  - Uso as funções **nos** objetos.
+  
+  - Funções **não são** objetos.
+  
+--
+
+- E os pacotes? O que são?
 
 --
 
-  - **Mas principalmente:** Plantar a semente para voarem com as próprias asas!
-  
+- Que pacotes utilizamos para nos auxiliar com o carregamento de pacotes?
+
+--
+
+  - pacman::
  
 ---
 # Temas de hoje
 
-.left-column[
 
-- Partes do R-Studio
+- **Importando dados**
 
-- Funções
+- **Exportando objetos**
 
-- Objetos
-
-- Tidy data
-]
-
-.right-column[
-&lt;center&gt;&lt;img src="img/feliz.png" height=400px" /&gt;&lt;/center&gt; ]
----
-# RStudio 
-
-.left-column[
-- R: Motor
-&lt;center&gt;&lt;img src="img/engine.png" height=100px" /&gt;&lt;/center&gt;  ]
-
-.right-column[
-- R-Studio é um carro estiloso e confortável
-&lt;center&gt;&lt;img src="img/carro.png" height=200px" /&gt;&lt;/center&gt;  ]
+  - Principais pontos
   
+  - Principais funções
+
 ---
 
-# RStudio: **Quatro painéis**
+## Leituras paralelas
 
- &lt;center&gt;&lt;img src="img/console.png" height=400px" /&gt;&lt;/center&gt;  
+- [EpiHandbook, 7.Import/Expot](&lt;https://epirhandbook.com/en/import-and-export.html&gt;)
+
+- [Curso-R, 5. Importação](&lt;https://livro.curso-r.com&gt;)
+
+- [DataCamp, Introdução a importação de dados em R](&lt;https://app.datacamp.com/learn/courses/introduction-to-importing-data-in-r&gt;)
+
+- [R4DS, 11. Data import](&lt;https://r4ds.had.co.nz/data-import.html&gt;) 
+
+
+---
+## Importando dados
+
+- Primeira frustração para começar a analisar seus dados!
+
+- O R tem que achar o arquivo no seu computador!
+
+&lt;center&gt;&lt;img src="img/200.gif" height=300px" /&gt;&lt;/center&gt;
+
+---
+
+## Quando abrimos o R ...
+
+- Ele está "rodando" em um diretório (pasta) no seu computador.
  
--  Tools -&gt;  Global options -&gt; Pane Layout 
+
+```r
+getwd()
+```
+
+```
+## [1] "/Users/carolinamusso/Desktop/Sustento/MS/CursoR_tras_pra_frente_MS"
+```
+
+- Se eu abro o programa -&gt; roda no diretório raiz
+
+- Se abro o arquivo -&gt; roda no mesmo diretório do arquivo
   
 ---
-## Console: onde o R vive
+## Como dominar completamente o problema
 
-.left-column[
+- Entender o que está acontecendo!
 
-- Versão
+--
 
-- Descrição
+**Opções:**
 
-- Licença
+- Colocar o arquivo na mesma pasta que ele está rodando
 
-- Avisos
+- Mudar o diretório do R para o diretório onde o arquivo está:
 
-- prompt &gt; ]
+- Importar com o importador
 
-.right-column[
- &lt;center&gt;&lt;img src="img/prompt.png" height=400px" /&gt;&lt;/center&gt; ]
+- Escrever o  caminho (path) pra importação explicitamente
 ---
-# Outras partes
+## Testando 
 
-#### Script
-- Onde farei os códigos para salvar: Só roda quando eu enviar para o Console!
+- Salve o arquivo de exercicio na sua pasta
 
-#### Enviroment/ Ambiente
+- Feche o RStudio -&gt; abra o programa -&gt; abra arquivo -&gt; rode
 
-- Objetos [...]
+--
 
-#### Output / saídas
+- Feche o RStudio -&gt; e abra o arquivo **original** -&gt; rode 
 
-- Visualizações [...]
+--
 
----
-### Não salvar a imagem ao fechar
+#### Novo teste
+- Vamos copiar o arquivo dos dados para a sua pasta e apagar no "Exercicios"
 
-&lt;center&gt;&lt;img src="img/global.png" height=500px" /&gt;&lt;/center&gt;
----
-## R como uma calculadora
-
-- Todo curso começa assim &amp;#128580; ...
-
-```r
-1 + 3
-```
-
-```
-## [1] 4
-```
-
-```r
-34/90
-```
-
-```
-## [1] 0.3777778
-```
-
-```r
-5&lt;4
-```
-
-```
-## [1] FALSE
-```
+- Volte ao RStudio -&gt; Abra o arquivo salvo na **sua pasta** -&gt; rode 
 
 ---
+### Resumindo: Garantir que o R ache o arquivo:
 
-## Funções
+- Se eu sei que o script e o arquivo estão na **mesma pasta** posso:
 
-- "Funções em programação é um conjunto de instruções para simplificar uma tarefa repetitiva"
+  - abrir o RStudio por meio do arquivo .Rmd (em vez de iniciar o software)
 
+--
 
-```r
-sqrt(9)
-```
+**OU**
 
-```
-## [1] 3
-```
-
-```r
-round(3.89, digits = 0 )
-```
-
-```
-## [1] 4
-```
-
-```r
-round(3.89,  0 )
-```
-
-```
-## [1] 4
-```
----
-## Objetos
-
-- "Um nome que você dá para poder salvar informações"
-
-```r
-valor&lt;-5
-valor
-```
-
-- Vetor 
-  - funçao de concatenar c()\
-  - símbolo de atribuição &lt;- (ou um = também serve)
-
-
-```r
-c(1,4,6,7,8) # sem salvar em um objeto
-vetor1&lt;-c(1,4,6,7,8) #salvando em um objeto
-vetor1 #visualizando esse objeto
-```
-
-**Atalho no teclado**: Alt - ( ou option - no mac)
-
----
-## Vetores não-numéricos
-
-#### Vetor de caracteres: string
-
-
-```r
-nomes&lt;-c("Carol", "Otto", "Julio", "Eduardo", "Alvaro")
-nomes
-```
-
-```
-## [1] "Carol"   "Otto"    "Julio"   "Eduardo" "Alvaro"
-```
-
-```r
-class(nomes)
-```
-
-```
-## [1] "character"
-```
-
+  - Session -&gt; Set Working Directory -&gt; To Source File Location
+  
 ---
 
-## Regras para nomes de objetos
+## Com código: reprodutível
 
-- Não pode começar com número
-
-- Não pode ter espaços 
-
-  - se quiser muito : duas crases
+  - indicar o  caminho (path) com código (muda o diretório)
+  
 
 ```r
-`quero nome separado`&lt;-c(1,5,6)
-`quero nome separado`
+setwd("C:/Users/Carolina/Documentos")
 ```
+--
 
-```
-## [1] 1 5 6
+  - pacote here(), só mostra o diretório para sua função de importação.
+  
+
+```r
+here("C:", "Carolina", "Documentos")
 ```
   
+---
+
+## Funções para importar
+
+- Vamos favorecer a função import() do pacote rio + pacote here()
+
+  - Sugestão do EpiRHandbook
   
-- Não pode ter nomes "especiais" do R: T (TRUE), F (FALSE), NA...
+  - Consegue importar em diversos formatos
+  
+  - você pode usar o `here()` dentro dele.
+  
+  &lt;center&gt;&lt;img src="img/rio.png" height=200px" /&gt;&lt;/center&gt;
 
 ---
 
-## Outros objetos
+### Outras funções
 
-&lt;center&gt;&lt;img src="img/R-data-strucutres.jpg" height=400px" /&gt;&lt;/center&gt;
+- read.csv {R base}
+
+- read_csv e read_csv2 {tidyverse}
+
+  - tem muitos argumentos interessantes e úteis mas é "lenta"
+  
+- read_excel {readxl}
+
+- fread {data.table}
+
+- Se não estiver na pasta -&gt; Caminho completo
+  
+  - .. -&gt; designa diretório anterior
 
 ---
-### Pra hoje: Dataframe **Duas dimensões**
+### Importador e pop-up
 
+- Eu não gosto... mas...
 
-  - linhas: observações
-  - colunas: variáveis
-    - "tidy"
+&lt;center&gt;&lt;img src="img/if-you-want.gif" height=300px" /&gt;&lt;/center&gt;
 
-&lt;center&gt;&lt;img src="img/tidy2.png" height=300px" /&gt;&lt;/center&gt;
-
----
-## Vamos explorar o dataframe
-
-- Na aba Enviroment
+--
 
 
 ```r
-class(mtcars)
-```
-
-```
-## [1] "data.frame"
-```
-
-```r
-summary(mtcars)
-```
-
-```
-##       mpg             cyl             disp             hp       
-##  Min.   :10.40   Min.   :4.000   Min.   : 71.1   Min.   : 52.0  
-##  1st Qu.:15.43   1st Qu.:4.000   1st Qu.:120.8   1st Qu.: 96.5  
-##  Median :19.20   Median :6.000   Median :196.3   Median :123.0  
-##  Mean   :20.09   Mean   :6.188   Mean   :230.7   Mean   :146.7  
-##  3rd Qu.:22.80   3rd Qu.:8.000   3rd Qu.:326.0   3rd Qu.:180.0  
-##  Max.   :33.90   Max.   :8.000   Max.   :472.0   Max.   :335.0  
-##       drat             wt             qsec             vs        
-##  Min.   :2.760   Min.   :1.513   Min.   :14.50   Min.   :0.0000  
-##  1st Qu.:3.080   1st Qu.:2.581   1st Qu.:16.89   1st Qu.:0.0000  
-##  Median :3.695   Median :3.325   Median :17.71   Median :0.0000  
-##  Mean   :3.597   Mean   :3.217   Mean   :17.85   Mean   :0.4375  
-##  3rd Qu.:3.920   3rd Qu.:3.610   3rd Qu.:18.90   3rd Qu.:1.0000  
-##  Max.   :4.930   Max.   :5.424   Max.   :22.90   Max.   :1.0000  
-##        am              gear            carb      
-##  Min.   :0.0000   Min.   :3.000   Min.   :1.000  
-##  1st Qu.:0.0000   1st Qu.:3.000   1st Qu.:2.000  
-##  Median :0.0000   Median :4.000   Median :2.000  
-##  Mean   :0.4062   Mean   :3.688   Mean   :2.812  
-##  3rd Qu.:1.0000   3rd Qu.:4.000   3rd Qu.:4.000  
-##  Max.   :1.0000   Max.   :5.000   Max.   :8.000
+my_data &lt;- import(file.choose())
 ```
 ---
+## Dica
 
-## Um pouco do R base
+Dê preferência a caminhos relativos do que caminhos absolutos. 
 
-- o $ para acessar as colunas
+&lt;center&gt;&lt;img src="img/eins.gif" height=300px" /&gt;&lt;/center&gt;
+
+---
+## Exportar dados
+
+- **E quando eu faço alguma coisa n R, como salvar no disco?**
+
+&lt;center&gt;&lt;img src="img/file.png" height=300px" /&gt;&lt;/center&gt;
+---
+## Exportar dados
+
+- Vamos também dar preferência a função export() do pacote rio  para o  formato Excel (e derivados)
+
+&lt;center&gt;&lt;img src="img/rio.png" height=200px" /&gt;&lt;/center&gt;
+
+- mas também tem write.csv(){R base}, fwrite(){data.tabe}, Write.Excel...
+
+---
+###  Exportar dados
+
+Bancos e outras coisas em excel...
+
+```r
+export(objeto,  "nome.xlsx")
+export(objeto,  "nome.csv")
+```
+
+### Exportar Imagens
+
+```r
+ggsave (objeto, "nome.png")
+ggsave (objeto, "nome.jpg")
+ggsave (objeto, "nome.pdf")
+```
+
+- Se eu não colocar o nome do objeto,  ele salva o  último gráfico gerado. 
+
+---
+
+## Exportar tabelas flextable
 
 
 ```r
-mtcars$mpg
+save_as_image(tabela, "nome.png")
+save_as_docx(tabela, "nome.docx")
 ```
 
-```
-##  [1] 21.0 21.0 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 17.8 16.4 17.3 15.2 10.4
-## [16] 10.4 14.7 32.4 30.4 33.9 21.5 15.5 15.2 13.3 19.2 27.3 26.0 30.4 15.8 19.7
-## [31] 15.0 21.4
-```
+---
+
+## Proposta inusitada para próxima aula
+
+&lt;center&gt;&lt;img src="img/st.gif" height=400px" /&gt;&lt;/center&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
