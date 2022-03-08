@@ -4,6 +4,7 @@
     <title>‘R de trás pra frente’</title>
     <meta charset="utf-8" />
     <meta name="author" content="Carolina Musso" />
+    <meta name="date" content="2022-08-03" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="css/xaringan-themerCIEVS.css" type="text/css" />
   </head>
@@ -12,9 +13,9 @@
 class: center, middle, inverse, title-slide
 
 # ‘R de trás pra frente’
-## Aula 11
+## Aula 12
 ### Carolina Musso
-### 24/02/22
+### 08/03/22
 
 ---
 
@@ -26,271 +27,175 @@ class: center, middle, inverse, title-slide
 
 class: inverse center middle
 
-# Módulo 3:
-## As vezes devemos dar um passo para trás antes de dar um para frente...
-
-
+# Módulo 4:
+## Nada se cria, tudo se transforma......
 
 ---
 
-# Recapitulando
+## Semana passada
 
 
-- **Objetos**: Nome que eu sou a dados (criados ou importados) que salvei no  ambiente no R:
+- **Importar:** Trazer dados para dentro do R
 
-  - Crio  com funçoes e o símbolo  &lt;- ou =
-  
-  - **Exemplos**: vetores, matrizes, dataframes, listas, gráficos...
-  
-  - Aparecem na aba **Environment** -&gt; um resumo deles
-  
-  - se eu "chamar" o nome deles -&gt;  aparecem no console
+
+- **Exportar:** Tirar objetos de dentro do R para pastas no computador
+
+
+
+&lt;center&gt;&lt;img src="img/rio.png" height=200px" /&gt;&lt;/center&gt;
+
+
+--
+
+**Falando em semana passada... Fiquei orgulhosa do desempenho nos exercícios!** &amp;#129321;
+
   
 ---
 
-# Recapitulando
+### Essa semana: Manipulação de dados
 
-- **Funções**: Instruções, verbos, que "mandam" os dados fazerem alguma coisa.
+#### Estrelando hoje: a funçao `filter()`
 
-  - Tem  parênteses e argumentos separados  por vírgulas.
+  - pacote dplyr que faz parte do tidyverse
+
+- Idealmente, queremos:
+
+  - Dados "tidy":
   
-  - Uso as funções **nos** objetos.
-  
-  - Funções **não são** objetos.
-  
---
 
-- E os pacotes? O que são?
-
---
-
-- Que pacotes utilizamos para nos auxiliar com o carregamento de pacotes?
-
---
-
-  - pacman::
- 
----
-# Temas de hoje
-
-
-- **Importando dados**
-
-- **Exportando objetos**
-
-  - Principais pontos
-  
-  - Principais funções
+&lt;center&gt;&lt;img src="img/tidy_data.png" height=220px" /&gt;&lt;/center&gt;
 
 ---
 
 ## Leituras paralelas
 
-- [EpiHandbook, 7.Import/Expot](&lt;https://epirhandbook.com/en/import-and-export.html&gt;)
 
-- [Curso-R, 5. Importação](&lt;https://livro.curso-r.com&gt;)
+- [EpiHandbook, 8.Cleaning data and core functions](&lt;https://epirhandbook.com/en/cleaning-data-and-core-functions.html&gt;)
 
-- [DataCamp, Introdução a importação de dados em R](&lt;https://app.datacamp.com/learn/courses/introduction-to-importing-data-in-r&gt;)
+- [Curso-R, 7. Manipulação](&lt;https://livro.curso-r.com/7-manipulacao.html&gt;)
 
-- [R4DS, 11. Data import](&lt;https://r4ds.had.co.nz/data-import.html&gt;) 
+- [DataCamp, Introduction to the Tidyverse](&lt;https://app.datacamp.com/learn/courses/introduction-to-the-tidyverse&gt;)
+
+- [R4DS, 5. Data transformation](&lt;https://r4ds.had.co.nz/transform.html&gt;) 
 
 
----
-## Importando dados
-
-- Primeira frustração para começar a analisar seus dados!
-
-- O R tem que achar o arquivo no seu computador!
-
-&lt;center&gt;&lt;img src="img/200.gif" height=300px" /&gt;&lt;/center&gt;
 
 ---
 
-## Quando abrimos o R ...
+### O dado que eu importei é "tidy"?
 
-- Ele está "rodando" em um diretório (pasta) no seu computador.
+- Esse não é tidy
+
+- Lembre, a organização boa para o **humano** ler, geralmente não é boa para a **máquina** ler.
+
+&lt;center&gt;&lt;img src="img/tidyplant.png" height=280px" /&gt;&lt;/center&gt;
+
+
+
+---
+### O dado que eu importei é "tidy"?
+
+
+![](https://i0.wp.com/res.cloudinary.com/syknapptic/image/upload/v1521304412/messy_tidy_qq4ba9.png?zoom=2&amp;w=578)
+
+---
+## O ciclo 
+
+&lt;center&gt;&lt;img src="img/ciclo.png" height=200px" /&gt;&lt;/center&gt;
+
+--
+
+- As vezes a parte de deixar os dados arrumados demora um bocado...
+
+- Se os dados que você trouxe não estão arrumados por natureza, vamos usar outra base por enquanto. 
+
+---
+### Trabalhando as linhas: observações
+
+&lt;center&gt;&lt;img src="img/filter.png" height=200px" /&gt;&lt;/center&gt;
+
+
+```r
+meus_dados %&gt;% filter (variavel=="alguma_coisa")
+```
+
+- Preciso escolher uma **variável** (coluna), e escolher uma categoria ou valor/range de ocorrência dos dados
+
+  - escrever uma forma exata como ela aparece
+---
+
+## Operadores lógicos
+&lt;center&gt;&lt;img src="img/logic.png" height=100px" /&gt;&lt;/center&gt;
+
+.left-column[
+
+####  ==  ;  !=
+
+#### &lt;; &lt;= ; &gt; ; &gt;=
+
+#### |   ;  &amp;
+
+#### is.na
+
+#### %in%
+] .right-column[
+
+- Exatamente igual ; Diferente
+
+
+- Menor/Maior ou Igual
+
+
+- OU: União, E: Interseção
+
+   
+- Verifica se o valor é faltante
+
+
+- Está contido em
+
+]
+       
+
+
+---
+
+### É igual a duas (ou mais) coisas ao mesmo tempo
+#### Interseção
+
+- &amp;
+- ou apenas ","
  
 
 ```r
-getwd()
+meus_dados %&gt;% filter (variavel1=="abobrinha",
+                       variavel2=="tralala")
 ```
 
-```
-## [1] "/Users/carolinamusso/Desktop/Sustento/MS/CursoR_tras_pra_frente_MS"
-```
-
-- Se eu abro o programa -&gt; roda no diretório raiz
-
-- Se abro o arquivo -&gt; roda no mesmo diretório do arquivo
+- **Mais restrito** : filtra mais os dados, terei menos linhas. 
   
 ---
-## Como dominar completamente o problema
-
-- Entender o que está acontecendo!
-
---
-
-**Opções:**
-
-- Colocar o arquivo na mesma pasta que ele está rodando
-
-- Mudar o diretório do R para o diretório onde o arquivo está:
-
-- Importar com o importador
-
-- Escrever o  caminho (path) pra importação explicitamente
----
-## Testando 
-
-- Salve o arquivo de exercicio na sua pasta
-
-- Feche o RStudio -&gt; abra o programa -&gt; abra arquivo -&gt; rode
-
---
-
-- Feche o RStudio -&gt; e abra o arquivo **original** -&gt; rode 
-
---
-
-#### Novo teste
-- Vamos copiar o arquivo dos dados para a sua pasta e apagar no "Exercicios"
-
-- Volte ao RStudio -&gt; Abra o arquivo salvo na **sua pasta** -&gt; rode 
-
----
-### Resumindo: Garantir que o R ache o arquivo:
-
-- Se eu sei que o script e o arquivo estão na **mesma pasta** posso:
-
-  - abrir o RStudio por meio do arquivo .Rmd (em vez de iniciar o software)
-
---
-
-**OU**
-
-  - Session -&gt; Set Working Directory -&gt; To Source File Location
-  
----
-
-## Com código: reprodutível
-
-  - indicar o  caminho (path) com código (muda o diretório)
-  
-
-```r
-setwd("C:/Users/Carolina/Documentos")
-```
---
-
-  - pacote here(), só mostra o diretório para sua função de importação.
-  
-
-```r
-here("C:", "Carolina", "Documentos")
-```
-  
----
-
-## Funções para importar
-
-- Vamos favorecer a função import() do pacote rio + pacote here()
-
-  - Sugestão do EpiRHandbook
-  
-  - Consegue importar em diversos formatos
-  
-  - você pode usar o `here()` dentro dele.
-  
-  &lt;center&gt;&lt;img src="img/rio.png" height=200px" /&gt;&lt;/center&gt;
-
----
-
-### Outras funções
-
-- read.csv {R base}
-
-- read_csv e read_csv2 {tidyverse}
-
-  - tem muitos argumentos interessantes e úteis mas é "lenta"
-  
-- read_excel {readxl}
-
-- fread {data.table}
-
-- Se não estiver na pasta -&gt; Caminho completo
-  
-  - .. -&gt; designa diretório anterior
-
----
-### Importador e pop-up
-
-- Eu não gosto... mas...
-
-&lt;center&gt;&lt;img src="img/if-you-want.gif" height=300px" /&gt;&lt;/center&gt;
-
---
+## Pode ser uma coisa ou outra
+#### União
 
 
 ```r
-my_data &lt;- import(file.choose())
-```
----
-## Dica
-
-Dê preferência a caminhos relativos do que caminhos absolutos. 
-
-&lt;center&gt;&lt;img src="img/eins.gif" height=300px" /&gt;&lt;/center&gt;
-
----
-## Exportar dados
-
-- **E quando eu faço alguma coisa n R, como salvar no disco?**
-
-&lt;center&gt;&lt;img src="img/file.png" height=300px" /&gt;&lt;/center&gt;
----
-## Exportar dados
-
-- Vamos também dar preferência a função export() do pacote rio  para o  formato Excel (e derivados)
-
-&lt;center&gt;&lt;img src="img/rio.png" height=200px" /&gt;&lt;/center&gt;
-
-- mas também tem write.csv(){R base}, fwrite(){data.tabe}, Write.Excel...
-
----
-###  Exportar dados
-
-Bancos e outras coisas em excel...
-
-```r
-export(objeto,  "nome.xlsx")
-export(objeto,  "nome.csv")
+meus_dados %&gt;% filter (var1=="lala"|var2=="lele")
 ```
 
-### Exportar Imagens
+- **Mais amplo** : capto mais linhas
 
-```r
-ggsave (objeto, "nome.png")
-ggsave (objeto, "nome.jpg")
-ggsave (objeto, "nome.pdf")
-```
+--
 
-- Se eu não colocar o nome do objeto,  ele salva o  último gráfico gerado. 
+**CUIDADO!** Muitos confundem! 
+
+&lt;center&gt;&lt;img src="img/venn.png" height=200px" /&gt;&lt;/center&gt;
+---
+## Exercitar a lógica boleana
+
+&lt;center&gt;&lt;img src="img/math.gif" height=400px" /&gt;&lt;/center&gt;
 
 ---
-
-## Exportar tabelas flextable
-
-
-```r
-save_as_image(tabela, "nome.png")
-save_as_docx(tabela, "nome.docx")
-```
-
----
-
-## Proposta inusitada para próxima aula
-
-&lt;center&gt;&lt;img src="img/st.gif" height=400px" /&gt;&lt;/center&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
