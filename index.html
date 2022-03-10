@@ -4,7 +4,7 @@
     <title>‘R de trás pra frente’</title>
     <meta charset="utf-8" />
     <meta name="author" content="Carolina Musso" />
-    <meta name="date" content="2022-08-03" />
+    <meta name="date" content="2022-10-03" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="css/xaringan-themerCIEVS.css" type="text/css" />
   </head>
@@ -13,9 +13,9 @@
 class: center, middle, inverse, title-slide
 
 # ‘R de trás pra frente’
-## Aula 12
+## Aula 13
 ### Carolina Musso
-### 08/03/22
+### 10/03/22
 
 ---
 
@@ -32,42 +32,25 @@ class: inverse center middle
 
 ---
 
-## Semana passada
+## Aula passada
 
 
-- **Importar:** Trazer dados para dentro do R
+- **O que é um dado tidy** 
+
+  - uma observação por linhas
+  - uma variável por coluna
 
 
-- **Exportar:** Tirar objetos de dentro do R para pastas no computador
+- **Função filter()** 
+  - filtros simples
+  - interseções e uniões
+  - filtrar NAs
 
-
-
-&lt;center&gt;&lt;img src="img/rio.png" height=200px" /&gt;&lt;/center&gt;
-
-
---
-
-**Falando em semana passada... Fiquei orgulhosa do desempenho nos exercícios!** &amp;#129321;
-
-  
+&lt;center&gt;&lt;img src="img/logic.png" height=100px" /&gt;&lt;/center&gt;
 ---
 
-### Essa semana: Manipulação de dados
 
-#### Estrelando hoje: a funçao `filter()`
-
-  - pacote dplyr que faz parte do tidyverse
-
-- Idealmente, queremos:
-
-  - Dados "tidy":
-  
-
-&lt;center&gt;&lt;img src="img/tidy_data.png" height=220px" /&gt;&lt;/center&gt;
-
----
-
-## Leituras paralelas
+## Leituras para aprofundamento
 
 
 - [EpiHandbook, 8.Cleaning data and core functions](&lt;https://epirhandbook.com/en/cleaning-data-and-core-functions.html&gt;)
@@ -78,124 +61,334 @@ class: inverse center middle
 
 - [R4DS, 5. Data transformation](&lt;https://r4ds.had.co.nz/transform.html&gt;) 
 
-
-
 ---
+### Trabalhando com as colunas
 
-### O dado que eu importei é "tidy"?
-
-- Esse não é tidy
-
-- Lembre, a organização boa para o **humano** ler, geralmente não é boa para a **máquina** ler.
-
-&lt;center&gt;&lt;img src="img/tidyplant.png" height=280px" /&gt;&lt;/center&gt;
+As vezes queremos selecionar apenas algumas colunas (pode ser pesado e confuso manter todas as colunas sempre)
 
 
 
----
-### O dado que eu importei é "tidy"?
-
-
-![](https://i0.wp.com/res.cloudinary.com/syknapptic/image/upload/v1521304412/messy_tidy_qq4ba9.png?zoom=2&amp;w=578)
-
----
-## O ciclo 
-
-&lt;center&gt;&lt;img src="img/ciclo.png" height=200px" /&gt;&lt;/center&gt;
-
---
-
-- As vezes a parte de deixar os dados arrumados demora um bocado...
-
-- Se os dados que você trouxe não estão arrumados por natureza, vamos usar outra base por enquanto. 
-
----
-### Trabalhando as linhas: observações
-
-&lt;center&gt;&lt;img src="img/filter.png" height=200px" /&gt;&lt;/center&gt;
 
 
 ```r
-meus_dados %&gt;% filter (variavel=="alguma_coisa")
+meus_dados %&gt;% select(col1, col3, col95)
+
+#OU
+
+select(meus_dados, col1, col3, col95)
 ```
 
-- Preciso escolher uma **variável** (coluna), e escolher uma categoria ou valor/range de ocorrência dos dados
-
-  - escrever uma forma exata como ela aparece
+&lt;center&gt;&lt;img src="img/select2.png" height=240px" /&gt;&lt;/center&gt;
 ---
-
-## Operadores lógicos
-&lt;center&gt;&lt;img src="img/logic.png" height=100px" /&gt;&lt;/center&gt;
-
-.left-column[
-
-####  ==  ;  !=
-
-#### &lt;; &lt;= ; &gt; ; &gt;=
-
-#### |   ;  &amp;
-
-#### is.na
-
-#### %in%
-] .right-column[
-
-- Exatamente igual ; Diferente
+## Exemplo
 
 
-- Menor/Maior ou Igual
-
-
-- OU: União, E: Interseção
-
-   
-- Verifica se o valor é faltante
-
-
-- Está contido em
-
-]
-       
-
-
----
-
-### É igual a duas (ou mais) coisas ao mesmo tempo
-#### Interseção
-
-- &amp;
-- ou apenas ","
- 
 
 ```r
-meus_dados %&gt;% filter (variavel1=="abobrinha",
-                       variavel2=="tralala")
+ebola %&gt;% select(date_onset, gender, age)
 ```
 
-- **Mais restrito** : filtra mais os dados, terei menos linhas. 
+```
+## # A tibble: 5,888 × 3
+##    date_onset gender   age
+##    &lt;date&gt;     &lt;chr&gt;  &lt;dbl&gt;
+##  1 2014-05-13 m          2
+##  2 2014-05-13 f          3
+##  3 2014-05-16 m         56
+##  4 2014-05-18 f         18
+##  5 2014-05-21 m          3
+##  6 2014-05-22 f         16
+##  7 2014-05-27 f         16
+##  8 2014-06-02 f          0
+##  9 2014-06-05 m         61
+## 10 2014-06-05 f         27
+## # … with 5,878 more rows
+```
+
+```r
+head(ebola)
+```
+
+```
+## # A tibble: 6 × 30
+##   case_id generation date_infection date_onset date_hospitalisation date_outcome
+##   &lt;chr&gt;        &lt;dbl&gt; &lt;date&gt;         &lt;date&gt;     &lt;date&gt;               &lt;date&gt;      
+## 1 5fe599           4 2014-05-08     2014-05-13 2014-05-15           NA          
+## 2 8689b7           4 NA             2014-05-13 2014-05-14           2014-05-18  
+## 3 11f8ea           2 NA             2014-05-16 2014-05-18           2014-05-30  
+## 4 b8812a           3 2014-05-04     2014-05-18 2014-05-20           NA          
+## 5 893f25           3 2014-05-18     2014-05-21 2014-05-22           2014-05-29  
+## 6 be99c8           3 2014-05-03     2014-05-22 2014-05-23           2014-05-24  
+## # … with 24 more variables: outcome &lt;chr&gt;, gender &lt;chr&gt;, age &lt;dbl&gt;,
+## #   age_unit &lt;chr&gt;, age_years &lt;dbl&gt;, age_cat &lt;fct&gt;, age_cat5 &lt;fct&gt;,
+## #   hospital &lt;chr&gt;, lon &lt;dbl&gt;, lat &lt;dbl&gt;, infector &lt;chr&gt;, source &lt;chr&gt;,
+## #   wt_kg &lt;dbl&gt;, ht_cm &lt;dbl&gt;, ct_blood &lt;dbl&gt;, fever &lt;chr&gt;, chills &lt;chr&gt;,
+## #   cough &lt;chr&gt;, aches &lt;chr&gt;, vomit &lt;chr&gt;, temp &lt;dbl&gt;, time_admission &lt;chr&gt;,
+## #   bmi &lt;dbl&gt;, days_onset_hosp &lt;dbl&gt;
+```
+
+---
+
+### **Selecionar colunas consecutivas ou remover** 
+
+  - **:**
+  - **\-**
+
+
+```r
+meus_dados %&gt;% select(col1:col33)
+meus_dados %&gt;% select( -col1)
+```
+
+###**Selecionar reordenando**
+
+
+```r
+meus_dados %&gt;% select( co5, col1, col3, col33, col2)
+```
+
+---
+## Exemplo
+
+
+```r
+ebola %&gt;% select( gender, outcome,case_id, date_onset)
+```
+
+```
+## # A tibble: 5,888 × 4
+##    gender outcome case_id date_onset
+##    &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;   &lt;date&gt;    
+##  1 m      &lt;NA&gt;    5fe599  2014-05-13
+##  2 f      Recover 8689b7  2014-05-13
+##  3 m      Recover 11f8ea  2014-05-16
+##  4 f      &lt;NA&gt;    b8812a  2014-05-18
+##  5 m      Recover 893f25  2014-05-21
+##  6 f      Recover be99c8  2014-05-22
+##  7 f      Recover 07e3e8  2014-05-27
+##  8 f      Death   369449  2014-06-02
+##  9 m      Recover f393b4  2014-06-05
+## 10 f      Death   1389ca  2014-06-05
+## # … with 5,878 more rows
+```
+
+```r
+head(ebola, 3)
+```
+
+```
+## # A tibble: 3 × 30
+##   case_id generation date_infection date_onset date_hospitalisation date_outcome
+##   &lt;chr&gt;        &lt;dbl&gt; &lt;date&gt;         &lt;date&gt;     &lt;date&gt;               &lt;date&gt;      
+## 1 5fe599           4 2014-05-08     2014-05-13 2014-05-15           NA          
+## 2 8689b7           4 NA             2014-05-13 2014-05-14           2014-05-18  
+## 3 11f8ea           2 NA             2014-05-16 2014-05-18           2014-05-30  
+## # … with 24 more variables: outcome &lt;chr&gt;, gender &lt;chr&gt;, age &lt;dbl&gt;,
+## #   age_unit &lt;chr&gt;, age_years &lt;dbl&gt;, age_cat &lt;fct&gt;, age_cat5 &lt;fct&gt;,
+## #   hospital &lt;chr&gt;, lon &lt;dbl&gt;, lat &lt;dbl&gt;, infector &lt;chr&gt;, source &lt;chr&gt;,
+## #   wt_kg &lt;dbl&gt;, ht_cm &lt;dbl&gt;, ct_blood &lt;dbl&gt;, fever &lt;chr&gt;, chills &lt;chr&gt;,
+## #   cough &lt;chr&gt;, aches &lt;chr&gt;, vomit &lt;chr&gt;, temp &lt;dbl&gt;, time_admission &lt;chr&gt;,
+## #   bmi &lt;dbl&gt;, days_onset_hosp &lt;dbl&gt;
+```
+
+
+```r
+ebola %&gt;% select( -case_id)
+```
+
+```
+## # A tibble: 5,888 × 29
+##    generation date_infection date_onset date_hospitalisati… date_outcome outcome
+##         &lt;dbl&gt; &lt;date&gt;         &lt;date&gt;     &lt;date&gt;              &lt;date&gt;       &lt;chr&gt;  
+##  1          4 2014-05-08     2014-05-13 2014-05-15          NA           &lt;NA&gt;   
+##  2          4 NA             2014-05-13 2014-05-14          2014-05-18   Recover
+##  3          2 NA             2014-05-16 2014-05-18          2014-05-30   Recover
+##  4          3 2014-05-04     2014-05-18 2014-05-20          NA           &lt;NA&gt;   
+##  5          3 2014-05-18     2014-05-21 2014-05-22          2014-05-29   Recover
+##  6          3 2014-05-03     2014-05-22 2014-05-23          2014-05-24   Recover
+##  7          4 2014-05-22     2014-05-27 2014-05-29          2014-06-01   Recover
+##  8          4 2014-05-28     2014-06-02 2014-06-03          2014-06-07   Death  
+##  9          4 NA             2014-06-05 2014-06-06          2014-06-18   Recover
+## 10          4 NA             2014-06-05 2014-06-07          2014-06-09   Death  
+## # … with 5,878 more rows, and 23 more variables: gender &lt;chr&gt;, age &lt;dbl&gt;,
+## #   age_unit &lt;chr&gt;, age_years &lt;dbl&gt;, age_cat &lt;fct&gt;, age_cat5 &lt;fct&gt;,
+## #   hospital &lt;chr&gt;, lon &lt;dbl&gt;, lat &lt;dbl&gt;, infector &lt;chr&gt;, source &lt;chr&gt;,
+## #   wt_kg &lt;dbl&gt;, ht_cm &lt;dbl&gt;, ct_blood &lt;dbl&gt;, fever &lt;chr&gt;, chills &lt;chr&gt;,
+## #   cough &lt;chr&gt;, aches &lt;chr&gt;, vomit &lt;chr&gt;, temp &lt;dbl&gt;, time_admission &lt;chr&gt;,
+## #   bmi &lt;dbl&gt;, days_onset_hosp &lt;dbl&gt;
+```
+
+```r
+head(ebola, 3)
+```
+
+```
+## # A tibble: 3 × 30
+##   case_id generation date_infection date_onset date_hospitalisation date_outcome
+##   &lt;chr&gt;        &lt;dbl&gt; &lt;date&gt;         &lt;date&gt;     &lt;date&gt;               &lt;date&gt;      
+## 1 5fe599           4 2014-05-08     2014-05-13 2014-05-15           NA          
+## 2 8689b7           4 NA             2014-05-13 2014-05-14           2014-05-18  
+## 3 11f8ea           2 NA             2014-05-16 2014-05-18           2014-05-30  
+## # … with 24 more variables: outcome &lt;chr&gt;, gender &lt;chr&gt;, age &lt;dbl&gt;,
+## #   age_unit &lt;chr&gt;, age_years &lt;dbl&gt;, age_cat &lt;fct&gt;, age_cat5 &lt;fct&gt;,
+## #   hospital &lt;chr&gt;, lon &lt;dbl&gt;, lat &lt;dbl&gt;, infector &lt;chr&gt;, source &lt;chr&gt;,
+## #   wt_kg &lt;dbl&gt;, ht_cm &lt;dbl&gt;, ct_blood &lt;dbl&gt;, fever &lt;chr&gt;, chills &lt;chr&gt;,
+## #   cough &lt;chr&gt;, aches &lt;chr&gt;, vomit &lt;chr&gt;, temp &lt;dbl&gt;, time_admission &lt;chr&gt;,
+## #   bmi &lt;dbl&gt;, days_onset_hosp &lt;dbl&gt;
+```
+
+
+---
+
+### **Funções auxiliares**
+
+- **starts_with()**,  **ends_with()**
+
+```r
+meus_dados %&gt;% select( starts_with("algum_padrao"))
+
+meus_dados %&gt;% select( ends_with("algum_padrao"))
+```
+
+###  **contains()**, **where**
+
+
+```r
+meus_dados %&gt;% select( contains("algum_padrao"))
+
+meus_dados %&gt;% select( where(is.numeric))
+```
+
+---
+## Exemplo
+
+
+
+```r
+ebola %&gt;% select( contains("date"))
+```
+
+```
+## # A tibble: 5,888 × 4
+##    date_infection date_onset date_hospitalisation date_outcome
+##    &lt;date&gt;         &lt;date&gt;     &lt;date&gt;               &lt;date&gt;      
+##  1 2014-05-08     2014-05-13 2014-05-15           NA          
+##  2 NA             2014-05-13 2014-05-14           2014-05-18  
+##  3 NA             2014-05-16 2014-05-18           2014-05-30  
+##  4 2014-05-04     2014-05-18 2014-05-20           NA          
+##  5 2014-05-18     2014-05-21 2014-05-22           2014-05-29  
+##  6 2014-05-03     2014-05-22 2014-05-23           2014-05-24  
+##  7 2014-05-22     2014-05-27 2014-05-29           2014-06-01  
+##  8 2014-05-28     2014-06-02 2014-06-03           2014-06-07  
+##  9 NA             2014-06-05 2014-06-06           2014-06-18  
+## 10 NA             2014-06-05 2014-06-07           2014-06-09  
+## # … with 5,878 more rows
+```
+
+```r
+head(ebola)
+```
+
+```
+## # A tibble: 6 × 30
+##   case_id generation date_infection date_onset date_hospitalisation date_outcome
+##   &lt;chr&gt;        &lt;dbl&gt; &lt;date&gt;         &lt;date&gt;     &lt;date&gt;               &lt;date&gt;      
+## 1 5fe599           4 2014-05-08     2014-05-13 2014-05-15           NA          
+## 2 8689b7           4 NA             2014-05-13 2014-05-14           2014-05-18  
+## 3 11f8ea           2 NA             2014-05-16 2014-05-18           2014-05-30  
+## 4 b8812a           3 2014-05-04     2014-05-18 2014-05-20           NA          
+## 5 893f25           3 2014-05-18     2014-05-21 2014-05-22           2014-05-29  
+## 6 be99c8           3 2014-05-03     2014-05-22 2014-05-23           2014-05-24  
+## # … with 24 more variables: outcome &lt;chr&gt;, gender &lt;chr&gt;, age &lt;dbl&gt;,
+## #   age_unit &lt;chr&gt;, age_years &lt;dbl&gt;, age_cat &lt;fct&gt;, age_cat5 &lt;fct&gt;,
+## #   hospital &lt;chr&gt;, lon &lt;dbl&gt;, lat &lt;dbl&gt;, infector &lt;chr&gt;, source &lt;chr&gt;,
+## #   wt_kg &lt;dbl&gt;, ht_cm &lt;dbl&gt;, ct_blood &lt;dbl&gt;, fever &lt;chr&gt;, chills &lt;chr&gt;,
+## #   cough &lt;chr&gt;, aches &lt;chr&gt;, vomit &lt;chr&gt;, temp &lt;dbl&gt;, time_admission &lt;chr&gt;,
+## #   bmi &lt;dbl&gt;, days_onset_hosp &lt;dbl&gt;
+```
+
+---
+## Ordenando a base
+
+
+```r
+arrange(ebola , generation)
+```
+
+```
+## # A tibble: 5,888 × 30
+##    case_id generation date_infection date_onset date_hospitalisati… date_outcome
+##    &lt;chr&gt;        &lt;dbl&gt; &lt;date&gt;         &lt;date&gt;     &lt;date&gt;              &lt;date&gt;      
+##  1 d1fafd           0 NA             2014-04-07 2014-04-17          2014-04-19  
+##  2 49731d           0 2014-03-19     2014-04-25 2014-05-02          2014-05-07  
+##  3 53371b           1 2014-04-09     2014-04-15 2014-04-20          NA          
+##  4 f5c3d8           1 2014-04-18     2014-04-21 2014-04-25          2014-04-30  
+##  5 11f8ea           2 NA             2014-05-16 2014-05-18          2014-05-30  
+##  6 6c286a           2 NA             2014-04-27 2014-04-27          2014-05-07  
+##  7 e66fa4           2 NA             2014-04-21 2014-05-06          2014-05-12  
+##  8 0f58c4           2 2014-04-22     2014-04-26 2014-04-29          2014-05-17  
+##  9 d58402           2 2014-04-23     2014-05-01 2014-05-10          2014-05-11  
+## 10 76b97a           2 2014-05-11     2014-05-16 2014-05-25          2014-06-17  
+## # … with 5,878 more rows, and 24 more variables: outcome &lt;chr&gt;, gender &lt;chr&gt;,
+## #   age &lt;dbl&gt;, age_unit &lt;chr&gt;, age_years &lt;dbl&gt;, age_cat &lt;fct&gt;, age_cat5 &lt;fct&gt;,
+## #   hospital &lt;chr&gt;, lon &lt;dbl&gt;, lat &lt;dbl&gt;, infector &lt;chr&gt;, source &lt;chr&gt;,
+## #   wt_kg &lt;dbl&gt;, ht_cm &lt;dbl&gt;, ct_blood &lt;dbl&gt;, fever &lt;chr&gt;, chills &lt;chr&gt;,
+## #   cough &lt;chr&gt;, aches &lt;chr&gt;, vomit &lt;chr&gt;, temp &lt;dbl&gt;, time_admission &lt;chr&gt;,
+## #   bmi &lt;dbl&gt;, days_onset_hosp &lt;dbl&gt;
+```
+
+---
+
+# O tal PIPE
+
+## `%&gt;%`
+
+Encadear uma sequência de funções de forma mais organizada. 
+
+Se quer saber a lógica computacional co pipe leia o capítulo do [r4ds](&lt;https://r4ds.had.co.nz/pipes.html?q=pipe#pipes&gt;). 
+
+---
+
+### Mas a idéia é: 
+
+  - o resultado de uma função será usada em outra de forma mais organizada e fluida, "bonitinha"
   
----
-## Pode ser uma coisa ou outra
-#### União
+  - Sem ter que escrever uma dentro da outra
+  
+  - nem ficar repetindo coisas nem salvando objetos intermediários. Veja só:
+
+
+#### Com o pipe
 
 
 ```r
-meus_dados %&gt;% filter (var1=="lala"|var2=="lele")
+ebola_trat&lt;-ebola %&gt;% 
+  select(date_infection, gender, age) %&gt;% 
+  filter(!is.na(gender)) %&gt;% 
+  arrange(age)
+```
+---
+### Sem o pipe
+
+
+```r
+ebola_trat&lt;-select(ebola,date_infection, gender, age)
+ebola_trat&lt;-filter(ebola_trat ,!is.na(gender))
+ebola_trat&lt;-arrange(ebola_trat, age)
 ```
 
-- **Mais amplo** : capto mais linhas
+OU
 
---
 
-**CUIDADO!** Muitos confundem! 
-
-&lt;center&gt;&lt;img src="img/venn.png" height=200px" /&gt;&lt;/center&gt;
----
-## Exercitar a lógica boleana
-
-&lt;center&gt;&lt;img src="img/math.gif" height=400px" /&gt;&lt;/center&gt;
+```r
+ebola_trat&lt;-arrange(select(filter(ebola ,!is.na(gender)),date_infection, gender, age), age)
+```
 
 ---
+
+# Aula que vem
+
+&lt;center&gt;&lt;img src="img/hang.gif" height=100px" /&gt;&lt;/center&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
