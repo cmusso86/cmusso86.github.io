@@ -4,7 +4,7 @@
     <title>‘R de trás pra frente’</title>
     <meta charset="utf-8" />
     <meta name="author" content="Carolina Musso" />
-    <meta name="date" content="2022-10-03" />
+    <meta name="date" content="2022-11-03" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="css/xaringan-themerCIEVS.css" type="text/css" />
   </head>
@@ -15,7 +15,7 @@ class: center, middle, inverse, title-slide
 # ‘R de trás pra frente’
 ## Aula 13
 ### Carolina Musso
-### 10/03/22
+### 11/03/22
 
 ---
 
@@ -71,11 +71,11 @@ As vezes queremos selecionar apenas algumas colunas (pode ser pesado e confuso m
 
 
 ```r
-meus_dados %&gt;% select(col1, col3, col95)
+meus_dados %&gt;% select(nome_col1, nome_col3, mome_col95)
 
 #OU
 
-select(meus_dados, col1, col3, col95)
+select(meus_dados, nome_col1, nome_col3, nome_col95)
 ```
 
 &lt;center&gt;&lt;img src="img/select2.png" height=240px" /&gt;&lt;/center&gt;
@@ -89,7 +89,7 @@ ebola %&gt;% select(date_onset, gender, age)
 ```
 
 ```
-## # A tibble: 5,888 × 3
+## # A tibble: 5,888 x 3
 ##    date_onset gender   age
 ##    &lt;date&gt;     &lt;chr&gt;  &lt;dbl&gt;
 ##  1 2014-05-13 m          2
@@ -110,7 +110,7 @@ head(ebola)
 ```
 
 ```
-## # A tibble: 6 × 30
+## # A tibble: 6 x 30
 ##   case_id generation date_infection date_onset date_hospitalisation date_outcome
 ##   &lt;chr&gt;        &lt;dbl&gt; &lt;date&gt;         &lt;date&gt;     &lt;date&gt;               &lt;date&gt;      
 ## 1 5fe599           4 2014-05-08     2014-05-13 2014-05-15           NA          
@@ -136,15 +136,15 @@ head(ebola)
 
 
 ```r
-meus_dados %&gt;% select(col1:col33)
-meus_dados %&gt;% select( -col1)
+meus_dados %&gt;% select(nome_col1:nome_col33)
+meus_dados %&gt;% select( -nome_col1)
 ```
 
 ###**Selecionar reordenando**
 
 
 ```r
-meus_dados %&gt;% select( co5, col1, col3, col33, col2)
+meus_dados %&gt;% select( nome_col5, nome_col1, nome_col3, nome_col33, nome_col2)
 ```
 
 ---
@@ -156,7 +156,7 @@ ebola %&gt;% select( gender, outcome,case_id, date_onset)
 ```
 
 ```
-## # A tibble: 5,888 × 4
+## # A tibble: 5,888 x 4
 ##    gender outcome case_id date_onset
 ##    &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;   &lt;date&gt;    
 ##  1 m      &lt;NA&gt;    5fe599  2014-05-13
@@ -177,7 +177,7 @@ head(ebola, 3)
 ```
 
 ```
-## # A tibble: 3 × 30
+## # A tibble: 3 x 30
 ##   case_id generation date_infection date_onset date_hospitalisation date_outcome
 ##   &lt;chr&gt;        &lt;dbl&gt; &lt;date&gt;         &lt;date&gt;     &lt;date&gt;               &lt;date&gt;      
 ## 1 5fe599           4 2014-05-08     2014-05-13 2014-05-15           NA          
@@ -197,7 +197,7 @@ ebola %&gt;% select( -case_id)
 ```
 
 ```
-## # A tibble: 5,888 × 29
+## # A tibble: 5,888 x 29
 ##    generation date_infection date_onset date_hospitalisati… date_outcome outcome
 ##         &lt;dbl&gt; &lt;date&gt;         &lt;date&gt;     &lt;date&gt;              &lt;date&gt;       &lt;chr&gt;  
 ##  1          4 2014-05-08     2014-05-13 2014-05-15          NA           &lt;NA&gt;   
@@ -223,7 +223,7 @@ head(ebola, 3)
 ```
 
 ```
-## # A tibble: 3 × 30
+## # A tibble: 3 x 30
 ##   case_id generation date_infection date_onset date_hospitalisation date_outcome
 ##   &lt;chr&gt;        &lt;dbl&gt; &lt;date&gt;         &lt;date&gt;     &lt;date&gt;               &lt;date&gt;      
 ## 1 5fe599           4 2014-05-08     2014-05-13 2014-05-15           NA          
@@ -269,7 +269,7 @@ ebola %&gt;% select( contains("date"))
 ```
 
 ```
-## # A tibble: 5,888 × 4
+## # A tibble: 5,888 x 4
 ##    date_infection date_onset date_hospitalisation date_outcome
 ##    &lt;date&gt;         &lt;date&gt;     &lt;date&gt;               &lt;date&gt;      
 ##  1 2014-05-08     2014-05-13 2014-05-15           NA          
@@ -290,7 +290,7 @@ head(ebola)
 ```
 
 ```
-## # A tibble: 6 × 30
+## # A tibble: 6 x 30
 ##   case_id generation date_infection date_onset date_hospitalisation date_outcome
 ##   &lt;chr&gt;        &lt;dbl&gt; &lt;date&gt;         &lt;date&gt;     &lt;date&gt;               &lt;date&gt;      
 ## 1 5fe599           4 2014-05-08     2014-05-13 2014-05-15           NA          
@@ -316,7 +316,7 @@ arrange(ebola , generation)
 ```
 
 ```
-## # A tibble: 5,888 × 30
+## # A tibble: 5,888 x 30
 ##    case_id generation date_infection date_onset date_hospitalisati… date_outcome
 ##    &lt;chr&gt;        &lt;dbl&gt; &lt;date&gt;         &lt;date&gt;     &lt;date&gt;              &lt;date&gt;      
 ##  1 d1fafd           0 NA             2014-04-07 2014-04-17          2014-04-19  
@@ -388,7 +388,7 @@ ebola_trat&lt;-arrange(select(filter(ebola ,!is.na(gender)),date_infection, gend
 
 # Aula que vem
 
-&lt;center&gt;&lt;img src="img/hang.gif" height=100px" /&gt;&lt;/center&gt;
+&lt;center&gt;&lt;img src="img/hang.gif" height=3u00px" /&gt;&lt;/center&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
