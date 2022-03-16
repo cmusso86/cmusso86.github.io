@@ -12,9 +12,9 @@
 class: center, middle, inverse, title-slide
 
 # ‘R de trás pra frente’
-## Aula 14
+## Aula 15
 ### Carolina Musso
-### 15/03/22
+### 17/03/22
 
 ---
 
@@ -34,305 +34,308 @@ class: inverse center middle
 ## Aula passada
 
 
-- **Função select() e arrange() e pipe** 
-  - trabalhando com colunas - seleciona, reordena...
-  - ordenar a base
-  - coombinar várias funções
+- **Função mutate() e group_by() e summarise** 
+  - criar novas colunas com novas variáveis
+  - agrupar os dados
+  - reduzir a base de acordo com esses grupos
+    - cuidado com as contas a se fazer de acordo com os agrupamentos!
 
-- **Nada disso mudou a essência dos dados!!**
+- **Agora mudamos muito os dados!!**
 
-  - Só mudou de lugar ou exlcuiu alguma coisa ...
+  - Pensar com cuidado!
 ---
 
 ### Hoje:
 
-- As vezes quer calcular coisas novas!
+- Trabalhando com datas.
 
-  - Indicadores;
+--
+
+- É muito chato!
+
+--
   
-  - Estatísticas descritivas básicas;
+- Incompatibilidade de formatos: d/m/a ; a-m-d
   
-  - Novas variáveis...
+--
+
+- É caracter ou numérico?
+
+--
+
   
-#### Funções de hoje
+####Alguém leu o capítulo?
 
-- **mutate()** , **group_by()**, **summarise()**
+&lt;center&gt;&lt;img src="img/fry.jpeg" height=180px" /&gt;&lt;/center&gt;
+
 
 ---
 
-### Leituras para aprofundamento: as mesmas!
+### Como o R reconhece a data?
 
 
-- [EpiHandbook, 8.Cleaning data and core functions](&lt;https://epirhandbook.com/en/cleaning-data-and-core-functions.html&gt;)
+```r
+Sys.Date()
+```
 
-- [Curso-R, 7. Manipulação](&lt;https://livro.curso-r.com/7-manipulacao.html&gt;)
+```
+## [1] "2022-03-16"
+```
 
-- [DataCamp, Introduction to the Tidyverse](&lt;https://app.datacamp.com/learn/courses/introduction-to-the-tidyverse&gt;)
 
-- [R4DS, 5. Data transformation](&lt;https://r4ds.had.co.nz/transform.html&gt;) 
+```r
+Sys.time()
+```
+
+```
+## [1] "2022-03-16 20:55:26 -03"
+```
+
+**VOCÊ SÓ CONSEGUE FAZER CONTAS NESSE FORMATO**
+
+--
+
+- Ou seja, se não estiver, você tem que **transformar**!
 
 ---
-### mutate ()
 
-Cria novas colunas ou substitui as existentes
+### Leituras de aprofundamento
+
+- [EpiHandbook, 9.Working with dates](&lt;https://www.epirhandbook.com/en/working-with-dates.html&gt;)
+
+- [Curso-R, 7.5 O pacote lubridate](&lt;https://livro.curso-r.com/7-5-o-pacote-lubridate.html&gt;)
+
+- [DataCamp, Working with Dates and Times with R](&lt;https://app.datacamp.com/learn/courses/working-with-dates-and-times-in-r&gt;)
+
+- [R4DS, 16. Dates and Times](&lt;https://r4ds.had.co.nz/dates-and-times.html&gt;) 
+- [Lubridate CheatSheet](&lt;https://rawgit.com/rstudio/cheatsheets/main/lubridate.pdf&gt;)
+---
+### Pacote lubridate 
+
+- A intenção é sempre pegar uma data que está no "nosso formato".
+
+- Ver o formato que ela está.
+
+- "Avisar" pro R o formato que ela está.
+
+- Para ele conseguir colocar no formato que ele consiga ler.
 
 
+```r
+library(tidyverse)
+hoje&lt;-"17/03/2022"
+lubridate::dmy(hoje)
+```
+
+```
+## [1] "2022-03-17"
+```
+
+---
+### Ele é muito bom em adivinhar coisas! 
+
+```r
+hoje&lt;-"17032022"
+lubridate::dmy(hoje)
+```
+
+```
+## [1] "2022-03-17"
+```
+
+
+```r
+hoje&lt;-"17-03-2022"
+lubridate::dmy(hoje)
+```
+
+```
+## [1] "2022-03-17"
+```
+
+
+```r
+hoje&lt;-"1703     22"
+lubridate::dmy(hoje)
+```
+
+```
+## [1] "2022-03-17"
+```
+
+---
+### Com o R base 
 
 
 
 ```r
-meus_dados %&gt;% 
-  mutate(nome_nova_coluna=funcao(nome_coluna_que_quero_usar)
+hoje&lt;-"17/02/2022"
+
+as.Date(hoje, format="%d/%m/%Y") 
 ```
 
-&lt;center&gt;&lt;img src="img/mutate.png" height=300px" /&gt;&lt;/center&gt;
+```
+## [1] "2022-02-17"
+```
+
+- Diga o formato em que ele estava! 
+
+%d = dia
+
+%m= mês número ; %B= mês nome ; %b= nome abreviado
+
+%y = ano com 2 dígitod (ex. 89 ; %Y = ano com 4 dígitos (ex. 1989)
+
+%A = Dia da semana (Segunda, Terça, etc.) 
+
+%U = Semana (01-53)
 ---
-### Função mutate()
 
-- Sempre que quiser fazer alguma conta em um *data frame*
+### Pronto
 
-- Escolha o nome que quiser 
+--
 
-  - Vai aparecer uma coluna nova no final
+- Bom, isso é quando está fácil...
+
+- Há vários outros problemas que podem acontecer...
+
+--
+
+- Mas o importante é: tem que ter
+
+
+```r
+hoje&lt;-Sys.Date()
+class(hoje)
+```
+
+```
+## [1] "Date"
+```
+
+- Assim contigo fazer contas!
+
+---
+
+### Contas com datas
+
+
+```r
+library(lubridate)
+hoje&lt;-Sys.Date()
+hoje
+```
+
+```
+## [1] "2022-03-16"
+```
+
+
+```r
+hoje + days(3)
+```
+
+```
+## [1] "2022-03-19"
+```
+
+
+```r
+hoje + 3
+```
+
+```
+## [1] "2022-03-19"
+```
+---
+### Contas com datas
+
+
+```r
+hoje + months(1)
+```
+
+```
+## [1] "2022-04-16"
+```
+
+
+```r
+hoje - years(20)
+```
+
+```
+## [1] "2002-03-16"
+```
+
+---
+
+### Intervalo de tempo
+
+
+```r
+diferenca&lt;-hoje - ymd("2020-02-20")
+diferenca
+```
+
+```
+## Time difference of 755 days
+```
+
+
+```r
+diferenca&lt;-as.numeric(diferenca)
+```
+
+
+```r
+passado&lt;-hoje-10
+diferenca&lt;-difftime(hoje,passado, units = "weeks")
+diferenca
+```
+
+```
+## Time difference of 1.428571 weeks
+```
+
+---
+### Mas a data assim fica feio!
+
+- Não estamos costumados a mostrar a data nesse formato de YYY-mm-dd
+
+- **DEPOIS** de fazer as contas, ordenações que eu quiser, eu possi escolher apresentar nas tabelas, gráficos, texto, de outra forma... para isso, existe a funçao `format`. 
+
+- É a idéia do as.Date, ao contrário...
+
+
+```r
+format(Sys.Date(), format = "%d %B %Y")
+```
+
+```
+## [1] "16 Março 2022"
+```
+---
+### Semanas epidemiológicas
+
+- Tem uma função que calcula as semanas epidemiológicas `epiweek()
+  - Desde que a data esteja como? **Naquele formato que o R entende que é uma data!**
   
-  - Se o nome já existir, vai substituir a que existe
-  
-  - o nome não pode ter espaço (se quiser **Muito** coloque entre crases)
+### ggplot e datas
 
----
-
-## Exemplo 1
-
-- A altura está em **cm**, eu quero a altura em **metros**.
-- Ele vai calcular para cada um, o resultado correspondente. 
-
+[Exemploes em: Datanovia](&lt;https://www.datanovia.com/en/blog/ggplot-date-axis-customization/&gt;)
 
 
 ```r
-ebola %&gt;% 
-  select( ht_cm) %&gt;% 
-  mutate(ht_m=ht_cm/100)
-```
-
-```
-## # A tibble: 5,888 x 2
-##    ht_cm  ht_m
-##    &lt;dbl&gt; &lt;dbl&gt;
-##  1    48  0.48
-##  2    59  0.59
-##  3   238  2.38
-##  4   135  1.35
-##  5    71  0.71
-##  6   116  1.16
-##  7    87  0.87
-##  8    11  0.11
-##  9   226  2.26
-## 10   174  1.74
-## # … with 5,878 more rows
++
+scale_x_date(date_labels = "%b/%d")
 ```
 
 ---
 
-## Exemplo 2
+### Ao trabalho!
 
-- Eu queria a altura em metros para calcular o IMC, posso continuar o cálculo com a nova variável. 
-
-
-```r
-ebola %&gt;% 
-  select(wt_kg, ht_cm) %&gt;% 
-  mutate(ht_m=ht_cm/100,
-         imc=wt_kg/ht_m^2)
-```
-
-```
-## # A tibble: 5,888 x 4
-##    wt_kg ht_cm  ht_m   imc
-##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1    27    48  0.48 117. 
-##  2    25    59  0.59  71.8
-##  3    91   238  2.38  16.1
-##  4    41   135  1.35  22.5
-##  5    36    71  0.71  71.4
-##  6    56   116  1.16  41.6
-##  7    47    87  0.87  62.1
-##  8     0    11  0.11   0  
-##  9    86   226  2.26  16.8
-## 10    69   174  1.74  22.8
-## # … with 5,878 more rows
-```
-
----
-
-## Exemplo 3
-
-- Fazer o cálculo com os valores de uma coluna só.
-
-- O que acontece?
-
-
-```r
-ebola %&gt;% 
-  filter(!is.na(age)) %&gt;% 
-  select(age) %&gt;% 
-  mutate(idade_media=mean(age)) # ou na.rm=T 
-```
-
-```
-## # A tibble: 5,802 x 2
-##      age idade_media
-##    &lt;dbl&gt;       &lt;dbl&gt;
-##  1     2        16.1
-##  2     3        16.1
-##  3    56        16.1
-##  4    18        16.1
-##  5     3        16.1
-##  6    16        16.1
-##  7    16        16.1
-##  8     0        16.1
-##  9    61        16.1
-## 10    27        16.1
-## # … with 5,792 more rows
-```
-
----
-## CUIDADO!!
-
-- Ele faz a conta para a **coluna**!
-
-- Fazer a conta para uma linha é bem chato! 
-
-  - Não é simples como no excel.
-  
-  - Mas, se precisar! Pesquise as funções:
-  
-    - **rowwise()**
-    
-    - **c_across()**
----
-
-### Agrupar: group_by():
-
-- Uai... ele não fez nada?
-
-
-```r
-ebola %&gt;% 
-  filter(!is.na(age)) %&gt;% 
-  select(gender, age) %&gt;% 
-  group_by(gender) 
-```
-
-```
-## # A tibble: 5,802 x 2
-## # Groups:   gender [3]
-##    gender   age
-##    &lt;chr&gt;  &lt;dbl&gt;
-##  1 m          2
-##  2 f          3
-##  3 m         56
-##  4 f         18
-##  5 m          3
-##  6 f         16
-##  7 f         16
-##  8 f          0
-##  9 m         61
-## 10 f         27
-## # … with 5,792 more rows
-```
-
----
-
-### Agrupar + alguma conta!
-
-
-```r
-ebola %&gt;% 
-  filter(!is.na(age)) %&gt;% 
-  select(gender, age) %&gt;% 
-  group_by(gender) %&gt;% 
-  mutate(idade_media=mean(age))
-```
-
-```
-## # A tibble: 5,802 x 3
-## # Groups:   gender [3]
-##    gender   age idade_media
-##    &lt;chr&gt;  &lt;dbl&gt;       &lt;dbl&gt;
-##  1 m          2        19.6
-##  2 f          3        12.7
-##  3 m         56        19.6
-##  4 f         18        12.7
-##  5 m          3        19.6
-##  6 f         16        12.7
-##  7 f         16        12.7
-##  8 f          0        12.7
-##  9 m         61        19.6
-## 10 f         27        12.7
-## # … with 5,792 more rows
-```
-
----
-
-## O que perceberem?
-
-- Melhorou um pouco...
-
-  - Mas parece que ainda tenho muita coisa repetida de que não preciso, não é? **Preciso reduzir o banco**
-
-&lt;center&gt;&lt;img src="img/groupby.png" height=300px" /&gt;&lt;/center&gt;
----
-
-### group_by() + summarize()
-
-
-```r
-ebola %&gt;% 
-  filter(!is.na(age),
-         !is.na(gender)) %&gt;% 
-  select(gender, age) %&gt;% 
-  group_by(gender) %&gt;% 
-  summarise(idade_media=mean(age))
-```
-
-```
-## # A tibble: 2 x 2
-##   gender idade_media
-##   &lt;chr&gt;        &lt;dbl&gt;
-## 1 f             12.7
-## 2 m             19.6
-```
-
-
----
-
-### Tudo junto misturado!
-
-
-```r
-ebola %&gt;% 
-  filter(!is.na(age),
-         !is.na(gender)) %&gt;% 
-  select(gender, age, wt_kg, ht_cm) %&gt;% 
-  mutate(ht_m=ht_cm/100,
-         IMC=wt_kg/ht_m^2) %&gt;% 
-  group_by(gender) %&gt;% 
-  summarise(idade_media=mean(age),
-            IMC_medio=mean(IMC))
-```
-
-```
-## # A tibble: 2 x 3
-##   gender idade_media IMC_medio
-##   &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt;
-## 1 f             12.7      55.5
-## 2 m             19.6      38.4
-```
----
-
-# Aula que vem
-
-&lt;center&gt;&lt;img src="img/loki.gif" height=3pagedown::chrome_print("index.html")00px" /&gt;&lt;/center&gt;
+&lt;center&gt;&lt;img src="img/exer.gif" height=400px" /&gt;&lt;/center&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
