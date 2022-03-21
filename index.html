@@ -12,9 +12,9 @@
 class: center, middle, inverse, title-slide
 
 # ‘R de trás pra frente’
-## Aula 15
+## Aula 16
 ### Carolina Musso
-### 17/03/22
+### 22/03/22
 
 ---
 
@@ -34,308 +34,69 @@ class: inverse center middle
 ## Aula passada
 
 
-- **Função mutate() e group_by() e summarise** 
-  - criar novas colunas com novas variáveis
-  - agrupar os dados
-  - reduzir a base de acordo com esses grupos
-    - cuidado com as contas a se fazer de acordo com os agrupamentos!
+- **Trabalhando com datas** 
 
-- **Agora mudamos muito os dados!!**
-
-  - Pensar com cuidado!
----
-
-### Hoje:
-
-- Trabalhando com datas.
-
---
-
-- É muito chato!
-
---
+  - Formato YYYY-MM-DD **e** classe **Date**
+    
+  - pacotes:
   
-- Incompatibilidade de formatos: d/m/a ; a-m-d
-  
---
+      - lubridate : dmy() ...
+      
+      - R base:  Sys.Date(), format()
 
-- É caracter ou numérico?
+### Hoje : "pivoteamento"
 
---
-
-  
-####Alguém leu o capítulo?
-
-&lt;center&gt;&lt;img src="img/fry.jpeg" height=180px" /&gt;&lt;/center&gt;
-
+  - pivot_longer(), pivot_wider()
 
 ---
 
-### Como o R reconhece a data?
+### Messy data
 
+**“Tidy datasets are all alike, but every messy dataset is messy in its own way.”** –– Hadley Wickham
 
-```r
-Sys.Date()
-```
+"Base de dados arrumadas são todas iguais, mas bases desorganizadas, são desorganizadas em sua própria maneira"
 
-```
-## [1] "2022-03-16"
-```
+&lt;center&gt;&lt;img src="img/cn.gif" height=200px" /&gt;&lt;/center&gt;
 
+#### Pacote tidy
 
-```r
-Sys.time()
-```
-
-```
-## [1] "2022-03-16 20:55:26 -03"
-```
-
-**VOCÊ SÓ CONSEGUE FAZER CONTAS NESSE FORMATO**
-
---
-
-- Ou seja, se não estiver, você tem que **transformar**!
+- Deixar o data frame no formato ideal.
 
 ---
 
 ### Leituras de aprofundamento
 
-- [EpiHandbook, 9.Working with dates](&lt;https://www.epirhandbook.com/en/working-with-dates.html&gt;)
+- [EpiHandbook, 12.Pivoting Data](&lt;https://epirhandbook.com/en/pivoting-data.html&gt;)
 
-- [Curso-R, 7.5 O pacote lubridate](&lt;https://livro.curso-r.com/7-5-o-pacote-lubridate.html&gt;)
+- [Curso-R, 7.3 O pacote tidyr](&lt;https://livro.curso-r.com/7-3-tidyr.html&gt;)
 
-- [DataCamp, Working with Dates and Times with R](&lt;https://app.datacamp.com/learn/courses/working-with-dates-and-times-in-r&gt;)
+- [DataCamp, Reshaping data with tidyR](&lt;https://app.datacamp.com/learn/courses/reshaping-data-with-tidyr&gt;)
 
 - [R4DS, 16. Dates and Times](&lt;https://r4ds.had.co.nz/dates-and-times.html&gt;) 
-- [Lubridate CheatSheet](&lt;https://rawgit.com/rstudio/cheatsheets/main/lubridate.pdf&gt;)
----
-### Pacote lubridate 
 
-- A intenção é sempre pegar uma data que está no "nosso formato".
-
-- Ver o formato que ela está.
-
-- "Avisar" pro R o formato que ela está.
-
-- Para ele conseguir colocar no formato que ele consiga ler.
-
-
-```r
-library(tidyverse)
-hoje&lt;-"17/03/2022"
-lubridate::dmy(hoje)
-```
-
-```
-## [1] "2022-03-17"
-```
-
----
-### Ele é muito bom em adivinhar coisas! 
-
-```r
-hoje&lt;-"17032022"
-lubridate::dmy(hoje)
-```
-
-```
-## [1] "2022-03-17"
-```
-
-
-```r
-hoje&lt;-"17-03-2022"
-lubridate::dmy(hoje)
-```
-
-```
-## [1] "2022-03-17"
-```
-
-
-```r
-hoje&lt;-"1703     22"
-lubridate::dmy(hoje)
-```
-
-```
-## [1] "2022-03-17"
-```
-
----
-### Com o R base 
-
-
-
-```r
-hoje&lt;-"17/02/2022"
-
-as.Date(hoje, format="%d/%m/%Y") 
-```
-
-```
-## [1] "2022-02-17"
-```
-
-- Diga o formato em que ele estava! 
-
-%d = dia
-
-%m= mês número ; %B= mês nome ; %b= nome abreviado
-
-%y = ano com 2 dígitod (ex. 89 ; %Y = ano com 4 dígitos (ex. 1989)
-
-%A = Dia da semana (Segunda, Terça, etc.) 
-
-%U = Semana (01-53)
+- [tidyr CheatSheet](&lt;https://raw.githubusercontent.com/rstudio/cheatsheets/main/tidyr.pdf&gt;)
 ---
 
-### Pronto
+## Formato largo (wide)
 
---
+- É bom pra tabelas, mas não é bom pra para o ggplot...
 
-- Bom, isso é quando está fácil...
+  - vamos transformar para **longo**
 
-- Há vários outros problemas que podem acontecer...
-
---
-
-- Mas o importante é: tem que ter
-
-
-```r
-hoje&lt;-Sys.Date()
-class(hoje)
-```
-
-```
-## [1] "Date"
-```
-
-- Assim contigo fazer contas!
+&lt;center&gt;&lt;img src="img/pivot_longer_new.png" height=350px" /&gt;&lt;/center&gt;
 
 ---
 
-### Contas com datas
+## Formato longo
 
+- É bom para o ggplot, mas não para apresentar em tabela!
 
-```r
-library(lubridate)
-hoje&lt;-Sys.Date()
-hoje
-```
+  - vamos transformar para wide
 
-```
-## [1] "2022-03-16"
-```
-
-
-```r
-hoje + days(3)
-```
-
-```
-## [1] "2022-03-19"
-```
-
-
-```r
-hoje + 3
-```
-
-```
-## [1] "2022-03-19"
-```
----
-### Contas com datas
-
-
-```r
-hoje + months(1)
-```
-
-```
-## [1] "2022-04-16"
-```
-
-
-```r
-hoje - years(20)
-```
-
-```
-## [1] "2002-03-16"
-```
+&lt;center&gt;&lt;img src="img/pivot_wider_new.png" height=350px" /&gt;&lt;/center&gt;
 
 ---
 
-### Intervalo de tempo
-
-
-```r
-diferenca&lt;-hoje - ymd("2020-02-20")
-diferenca
-```
-
-```
-## Time difference of 755 days
-```
-
-
-```r
-diferenca&lt;-as.numeric(diferenca)
-```
-
-
-```r
-passado&lt;-hoje-10
-diferenca&lt;-difftime(hoje,passado, units = "weeks")
-diferenca
-```
-
-```
-## Time difference of 1.428571 weeks
-```
-
----
-### Mas a data assim fica feio!
-
-- Não estamos costumados a mostrar a data nesse formato de YYY-mm-dd
-
-- **DEPOIS** de fazer as contas, ordenações que eu quiser, eu possi escolher apresentar nas tabelas, gráficos, texto, de outra forma... para isso, existe a funçao `format`. 
-
-- É a idéia do as.Date, ao contrário...
-
-
-```r
-format(Sys.Date(), format = "%d %B %Y")
-```
-
-```
-## [1] "16 Março 2022"
-```
----
-### Semanas epidemiológicas
-
-- Tem uma função que calcula as semanas epidemiológicas `epiweek()
-  - Desde que a data esteja como? **Naquele formato que o R entende que é uma data!**
-  
-### ggplot e datas
-
-[Exemploes em: Datanovia](&lt;https://www.datanovia.com/en/blog/ggplot-date-axis-customization/&gt;)
-
-
-```r
-+
-scale_x_date(date_labels = "%b/%d")
-```
-
----
-
-### Ao trabalho!
-
-&lt;center&gt;&lt;img src="img/exer.gif" height=400px" /&gt;&lt;/center&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
