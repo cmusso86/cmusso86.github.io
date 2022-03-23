@@ -12,9 +12,9 @@
 class: center, middle, inverse, title-slide
 
 # ‘R de trás pra frente’
-## Aula 16
+## Aula 17
 ### Carolina Musso
-### 22/03/22
+### 24/03/22
 
 ---
 
@@ -31,71 +31,402 @@ class: inverse center middle
 
 ---
 
-## Aula passada
+## O que vimos até agora nesse módulo
 
 
-- **Trabalhando com datas** 
-
-  - Formato YYYY-MM-DD **e** classe **Date**
-    
-  - pacotes:
-  
-      - lubridate : dmy() ...
-      
-      - R base:  Sys.Date(), format()
-
-### Hoje : "pivoteamento"
-
-  - pivot_longer(), pivot_wider()
+- filter() 
+- select() 
+- arrange()
+- %&gt;%
+- mutate()
+- group_by()
+- summmarize()
+- Datas
+- pivot_longer()
+- pivot_wider()
 
 ---
 
-### Messy data
+class: inverse center middle
 
-**“Tidy datasets are all alike, but every messy dataset is messy in its own way.”** –– Hadley Wickham
-
-"Base de dados arrumadas são todas iguais, mas bases desorganizadas, são desorganizadas em sua própria maneira"
-
-&lt;center&gt;&lt;img src="img/cn.gif" height=200px" /&gt;&lt;/center&gt;
-
-#### Pacote tidy
-
-- Deixar o data frame no formato ideal.
+## Hoje
+### Joins, linkages, cruzamentos....
 
 ---
-
 ### Leituras de aprofundamento
 
-- [EpiHandbook, 12.Pivoting Data](&lt;https://epirhandbook.com/en/pivoting-data.html&gt;)
+- [EpiHandbook, 14. Joining Data](&lt;https://epirhandbook.com/en/joining-data.html&gt;)
 
-- [Curso-R, 7.3 O pacote tidyr](&lt;https://livro.curso-r.com/7-3-tidyr.html&gt;)
 
-- [DataCamp, Reshaping data with tidyR](&lt;https://app.datacamp.com/learn/courses/reshaping-data-with-tidyr&gt;)
+- [DataCamp, Joining data with dplyR](&lt;https://app.datacamp.com/learn/courses/joining-data-with-dplyr&gt;)
 
-- [R4DS, 16. Dates and Times](&lt;https://r4ds.had.co.nz/dates-and-times.html&gt;) 
-
-- [tidyr CheatSheet](&lt;https://raw.githubusercontent.com/rstudio/cheatsheets/main/tidyr.pdf&gt;)
----
-
-## Formato largo (wide)
-
-- É bom pra tabelas, mas não é bom pra para o ggplot...
-
-  - vamos transformar para **longo**
-
-&lt;center&gt;&lt;img src="img/pivot_longer_new.png" height=350px" /&gt;&lt;/center&gt;
+- [R4DS, 13. Relational data](&lt;https://r4ds.had.co.nz/relational-data.html&gt;) 
 
 ---
 
-## Formato longo
+### Por que unir?
 
-- É bom para o ggplot, mas não para apresentar em tabela!
+- Base  1
 
-  - vamos transformar para wide
+```
+## # A tibble: 3 x 2
+##   date_onset hospital         
+##   &lt;date&gt;     &lt;chr&gt;            
+## 1 2014-05-18 Port Hospital    
+## 2 2014-05-21 Military Hospital
+## 3 2014-05-22 Port Hospital
+```
 
-&lt;center&gt;&lt;img src="img/pivot_wider_new.png" height=350px" /&gt;&lt;/center&gt;
+- Base 2
+
+```
+## # A tibble: 3 x 3
+##   Hospital          N_residentes level    
+##   &lt;fct&gt;                    &lt;dbl&gt; &lt;chr&gt;    
+## 1 central hospital       1950280 Tertiary 
+## 2 military hospital        40500 Secondary
+## 3 military hospital        10000 Primary
+```
 
 ---
+
+### Que problemas podem aparecer?
+
+#### Joins  cássicos (não probabilísticos)
+
+--
+
+- Preciso de pelo menos de uma coluna "chave" para união. 
+
+  - correspondência **exata**
+
+--
+
+#### Garantir
+
+  - mesmo nome de coluna (é melhor)
+  
+  - mesma classe de coluna
+  
+  - nomes da chave que correspondam com exatidão
+  
+---
+
+### Bases
+
+
+
+```
+## # A tibble: 3 x 2
+##   date_onset hospital         
+##   &lt;date&gt;     &lt;chr&gt;            
+## 1 2014-05-18 Port Hospital    
+## 2 2014-05-21 Military Hospital
+## 3 2014-05-22 Port Hospital
+```
+
+
+
+```
+## # A tibble: 3 x 3
+##   Hospital          N_residentes level    
+##   &lt;fct&gt;                    &lt;dbl&gt; &lt;chr&gt;    
+## 1 central hospital       1950280 Tertiary 
+## 2 military hospital        40500 Secondary
+## 3 military hospital        10000 Primary
+```
+
+---
+# Primeiro problema
+
+- Mudar os nomes das colunas - **Duas formas**
+
+
+#### pacote dplyr
+
+  - `rename()`
+  
+  - Dá para encadear com o pipe %&gt;%
+ 
+#### R base
+
+  - `names()` 
+
+  - deve ter aspas e **todos** os nomes
+
+---
+
+### Com o dplyr
+
+
+```r
+ebola_mini&lt;-ebola_mini %&gt;% 
+  rename(Inicio_sint=date_onset,
+        Hospital=hospital)
+```
+
+### Com o R base
+
+
+```r
+names(ebola_mini)&lt;-c("Inicio_sint", 
+                     "Hospital")
+```
+
+--
+
+- Fazem a mesma coisa!
+
+---
+
+## Como ficou
+
+
+
+```
+## # A tibble: 3 x 2
+##   Inicio_sint Hospital         
+##   &lt;date&gt;      &lt;chr&gt;            
+## 1 2014-05-18  Port Hospital    
+## 2 2014-05-21  Military Hospital
+## 3 2014-05-22  Port Hospital
+```
+
+
+
+```
+## # A tibble: 3 x 3
+##   Hospital          N_residentes level    
+##   &lt;fct&gt;                    &lt;dbl&gt; &lt;chr&gt;    
+## 1 central hospital       1950280 Tertiary 
+## 2 military hospital        40500 Secondary
+## 3 military hospital        10000 Primary
+```
+
+---
+
+### Segundo problema 
+
+- As colunas "chave" devem ser do mesmo tipo. 
+
+--
+
+- Vemos que nesse caso, uma é fator e a outra um caractere. 
+
+  - Devemos transformar uma delas
+
+--
+
+#### começamos com um mutate()
+
+--
+
+- Já usamos a `as.numeric()`, lembram?
+
+- E para transformar em caractere, o que sugerem?
+
+--
+
+
+```r
+hosp_info&lt;-hosp_info %&gt;% 
+  mutate(Hospital=as.character(Hospital))
+```
+
+---
+
+
+## Como ficou
+
+
+
+```
+## # A tibble: 3 x 2
+##   Inicio_sint Hospital         
+##   &lt;date&gt;      &lt;chr&gt;            
+## 1 2014-05-18  Port Hospital    
+## 2 2014-05-21  Military Hospital
+## 3 2014-05-22  Port Hospital
+```
+
+
+
+```
+## # A tibble: 3 x 3
+##   Hospital          N_residentes level    
+##   &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;    
+## 1 central hospital       1950280 Tertiary 
+## 2 military hospital        40500 Secondary
+## 3 military hospital        10000 Primary
+```
+
+---
+
+## Terceiro problema
+
+- Os nomes não estão escritos da mesma forma
+
+- Funções úteis
+
+  - toupper()
+  - tolower()
+
+
+```r
+ebola_mini&lt;-ebola_mini %&gt;% 
+  mutate(Hospital=tolower(Hospital))
+```
+
+--
+
+- Geralmente tratamos ambas as bases para padronizar
+---
+## Como ficou
+
+
+
+```
+## # A tibble: 3 x 2
+##   Inicio_sint Hospital         
+##   &lt;date&gt;      &lt;chr&gt;            
+## 1 2014-05-18  port hospital    
+## 2 2014-05-21  military hospital
+## 3 2014-05-22  port hospital
+```
+
+
+```
+## # A tibble: 3 x 3
+##   Hospital          N_residentes level    
+##   &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;    
+## 1 central hospital       1950280 Tertiary 
+## 2 military hospital        40500 Secondary
+## 3 military hospital        10000 Primary
+```
+
+---
+
+## Agora sim! 
+#### Podemos seguir com o join! 
+
+- Repare no nome da função usada.
+
+
+```r
+ebola_hosp_info &lt;- left_join(ebola_mini, hosp_info)
+```
+
+
+```
+## # A tibble: 4 x 4
+##   Inicio_sint Hospital          N_residentes level    
+##   &lt;date&gt;      &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;    
+## 1 2014-05-18  port hospital            50280 Secondary
+## 2 2014-05-21  military hospital        40500 Secondary
+## 3 2014-05-21  military hospital        10000 Primary  
+## 4 2014-05-22  port hospital            50280 Secondary
+```
+
+
+---
+
+## Existem vários joins!
+
+- left_join()
+
+- right_join()
+
+- inner_join()
+
+- full_join()
+
+- semi_join()
+
+- anti_join()
+
+--
+
+- **E agora, qual usar?**
+
+
+---
+
+# left_join()
+
+- Mantém **todas** as linhas do data frame da **esquerda**, exclui as que não batem do data frame da direita.
+
+
+```r
+base_unida&lt;-left_join(a,b)
+```
+
+&lt;center&gt;&lt;img src="img/left-join.gif" height=320px" /&gt;&lt;/center&gt;
+
+---
+
+# right_join()
+
+- Mantém **todas** as linhas do data frame da **direita**, exclui as que não batem do data frame da esquerda.
+
+
+```r
+base_unida&lt;-right_join(a,b)
+```
+
+&lt;center&gt;&lt;img src="img/right-join.gif" height=320px" /&gt;&lt;/center&gt;
+
+---
+
+# full_join()
+
+- Mantém **todas** as linhas de ambas as bases -&gt; completa com NA
+
+
+```r
+base_unida&lt;-full_join(a,b)
+```
+
+&lt;center&gt;&lt;img src="img/full-join.gif" height=320px" /&gt;&lt;/center&gt;
+
+---
+
+# inner_join()
+
+- Mantém **somente** as linhas que há em **ambas**
+
+
+```r
+base_unida&lt;-inner_join(a,b)
+```
+
+&lt;center&gt;&lt;img src="img/inner-join.gif" height=320px" /&gt;&lt;/center&gt;
+
+---
+
+# semi_join()
+
+- **Não faz join!** -&gt; filtra a base da esquerda de acordo com o que **também tem** na da  direita
+
+
+```r
+base_unida&lt;-semi_join(a,b)
+```
+
+&lt;center&gt;&lt;img src="img/semi-join.gif" height=320px" /&gt;&lt;/center&gt;
+
+---
+
+# anti_join()
+
+- **Não faz join!** -&gt; filtra a base da esquerda de acordo com o que **não tem** na da  direita
+
+
+```r
+base_unida&lt;-semi_join(a,b)
+```
+
+&lt;center&gt;&lt;img src="img/anti-join.gif" height=320px" /&gt;&lt;/center&gt;
+
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
