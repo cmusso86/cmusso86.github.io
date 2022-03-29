@@ -12,9 +12,9 @@
 class: center, middle, inverse, title-slide
 
 # ‘R de trás pra frente’
-## Aula 17
+## Aula 18
 ### Carolina Musso
-### 24/03/22
+### 29/03/22
 
 ---
 
@@ -31,66 +31,7 @@ class: inverse center middle
 
 ---
 
-## O que vimos até agora nesse módulo
-
-
-- filter() 
-- select() 
-- arrange()
-- %&gt;%
-- mutate()
-- group_by()
-- summmarize()
-- Datas
-- pivot_longer()
-- pivot_wider()
-
----
-
-class: inverse center middle
-
-## Hoje
-### Joins, linkages, cruzamentos....
-
----
-### Leituras de aprofundamento
-
-- [EpiHandbook, 14. Joining Data](&lt;https://epirhandbook.com/en/joining-data.html&gt;)
-
-
-- [DataCamp, Joining data with dplyR](&lt;https://app.datacamp.com/learn/courses/joining-data-with-dplyr&gt;)
-
-- [R4DS, 13. Relational data](&lt;https://r4ds.had.co.nz/relational-data.html&gt;) 
-
----
-
-### Por que unir?
-
-- Base  1
-
-```
-## # A tibble: 3 x 2
-##   date_onset hospital         
-##   &lt;date&gt;     &lt;chr&gt;            
-## 1 2014-05-18 Port Hospital    
-## 2 2014-05-21 Military Hospital
-## 3 2014-05-22 Port Hospital
-```
-
-- Base 2
-
-```
-## # A tibble: 3 x 3
-##   Hospital          N_residentes level    
-##   &lt;fct&gt;                    &lt;dbl&gt; &lt;chr&gt;    
-## 1 central hospital       1950280 Tertiary 
-## 2 military hospital        40500 Secondary
-## 3 military hospital        10000 Primary
-```
-
----
-
-### Que problemas podem aparecer?
+## Aula passada
 
 #### Joins  cássicos (não probabilísticos)
 
@@ -111,323 +52,253 @@ class: inverse center middle
   - nomes da chave que correspondam com exatidão
   
 ---
+## Hoje: Strings 
 
-### Bases
+### Leituras de aprofundamento
 
+- [EpiHandbook, 10. Characteres e Strings](&lt;https://epirhandbook.com/en/characters-and-strings.html&gt;)
 
+- [Curso - R, 7.4 O pacote stringr](&lt;https://livro.curso-r.com/7-4-o-pacote-stringr.html&gt;)
 
-```
-## # A tibble: 3 x 2
-##   date_onset hospital         
-##   &lt;date&gt;     &lt;chr&gt;            
-## 1 2014-05-18 Port Hospital    
-## 2 2014-05-21 Military Hospital
-## 3 2014-05-22 Port Hospital
-```
+- [DataCamp, Intermediate Regular Expressions in R](&lt;https://app.datacamp.com/learn/courses/intermediate-regular-expressions-in-r&gt;)
 
+- [DataCamp, String Manipulation with stringR in R](&lt;https://app.datacamp.com/learn/courses/string-manipulation-with-stringr-in-r&gt;)
 
-
-```
-## # A tibble: 3 x 3
-##   Hospital          N_residentes level    
-##   &lt;fct&gt;                    &lt;dbl&gt; &lt;chr&gt;    
-## 1 central hospital       1950280 Tertiary 
-## 2 military hospital        40500 Secondary
-## 3 military hospital        10000 Primary
-```
+- [R4DS, 14. Strings](&lt;https://r4ds.had.co.nz/strings.html&gt;) 
 
 ---
-# Primeiro problema
 
-- Mudar os nomes das colunas - **Duas formas**
+### Variavel: Caracteres &lt;chr&gt;
+
+--
+- Nada mais é do que um texto
+
+  - Variáveis de texto são comuns 
+
+--
+
+- Costumam não estar padronizadas
+
+--
+
+- E por isso costumam dar trabalho!!
+
+- "Riacho Fundo", "riacho fundo I", "riacho fundo 1" ...
+
+&lt;center&gt;&lt;img src="img/ms.gif" height=220px" /&gt;&lt;/center&gt;
+
+---
+# pacote strigr
+
+- str_c
+
+- separate()
+
+- unite()
+
+- str_trim()
+
+- str_sub ()
+
+- str_detect
+
+---
+
+## str_c
 
 
-#### pacote dplyr
 
-  - `rename()`
-  
-  - Dá para encadear com o pipe %&gt;%
- 
+```r
+str_c("A", "aula", "de", "R")
+```
+
+```
+## [1] "AauladeR"
+```
+
+
+```r
+str_c("A", "aula", "de", "R", sep=" ")
+```
+
+```
+## [1] "A aula de R"
+```
+
+
+```r
+nome&lt;-c("Jose", "João", "Maria")
+sobrenome&lt;-c("Silva", "Faria", "Souza")
+str_c(nome, sobrenome, sep=" ", collapse=", ")
+```
+
+```
+## [1] "Jose Silva, João Faria, Maria Souza"
+```
+---
 #### R base
 
-  - `names()` 
 
-  - deve ter aspas e **todos** os nomes
+```r
+paste("A", "aula", "de", "R")
+```
+
+```
+## [1] "A aula de R"
+```
+
+
+```r
+paste(nome, sobrenome, collapse = ", ")
+```
+
+```
+## [1] "Jose Silva, João Faria, Maria Souza"
+```
+
 
 ---
 
-### Com o dplyr
+## separate ()
+
+- repare que essa função já age no data frame todo sem o mutate()
 
 
-```r
-ebola_mini&lt;-ebola_mini %&gt;% 
-  rename(Inicio_sint=date_onset,
-        Hospital=hospital)
+```
+##   case_ID                  symptoms outcome
+## 1       1   jaundice, fever, chills Recover
+## 2       2      chills, aches, pains   Death
+## 3       3                     fever   Death
+## 4       4       vomiting, diarrhoea Recover
+## 5       5 bleeding from gums, fever Recover
+## 6       6     rapid pulse, headache Recover
 ```
 
-### Com o R base
+
+```r
+df_split &lt;- separate(df, symptoms, 
+                     into = c("sym_1", "sym_2", "sym_3"), 
+                     extra = "merge")
+```
+---
+## separate ()
+
+```r
+df_split 
+```
+
+```
+##   case_ID    sym_1     sym_2       sym_3 outcome
+## 1       1 jaundice     fever      chills Recover
+## 2       2   chills     aches       pains   Death
+## 3       3    fever      &lt;NA&gt;        &lt;NA&gt;   Death
+## 4       4 vomiting diarrhoea        &lt;NA&gt; Recover
+## 5       5 bleeding      from gums, fever Recover
+## 6       6    rapid     pulse    headache Recover
+```
+---
+### unite ()
 
 
 ```r
-names(ebola_mini)&lt;-c("Inicio_sint", 
-                     "Hospital")
+df_split %&gt;% 
+  unite(
+    col = "all_symptoms", c("sym_1", "sym_2", "sym_3"), 
+    sep = ", ", remove = TRUE, na.rm = TRUE                  
+  )
+```
+
+```
+##   case_ID                all_symptoms outcome
+## 1       1     jaundice, fever, chills Recover
+## 2       2        chills, aches, pains   Death
+## 3       3                       fever   Death
+## 4       4         vomiting, diarrhoea Recover
+## 5       5 bleeding, from, gums, fever Recover
+## 6       6      rapid, pulse, headache Recover
+```
+
+---
+
+## str_trim()
+
+- Retira espaços no começo e no final
+
+
+```r
+IDs &lt;- c("provA_1852  ", 
+         "  provA_2345",   
+         "provA_9460 
+         ")  
+
+str_trim(IDs, "both")
+```
+
+```
+## [1] "provA_1852" "provA_2345" "provA_9460"
+```
+
+- Parece útil?
+---
+
+## str_sub()
+
+- extrair uma parte de interesse
+
+
+```r
+str_sub("pneumonia", 1, 2)
+```
+
+```
+## [1] "pn"
+```
+
+
+```r
+str_sub("pneumonia", 6, -1)
+```
+
+```
+## [1] "onia"
 ```
 
 --
 
-- Fazem a mesma coisa!
+- Conseguem pensar em exemplos onde isso pode ser útil?
 
 ---
 
-## Como ficou
+## str_detect ()
 
 
-
-```
-## # A tibble: 3 x 2
-##   Inicio_sint Hospital         
-##   &lt;date&gt;      &lt;chr&gt;            
-## 1 2014-05-18  Port Hospital    
-## 2 2014-05-21  Military Hospital
-## 3 2014-05-22  Port Hospital
+```r
+string &lt;- "A professora é legal"
+str_detect(string,pattern = "é")
 ```
 
-
-
 ```
-## # A tibble: 3 x 3
-##   Hospital          N_residentes level    
-##   &lt;fct&gt;                    &lt;dbl&gt; &lt;chr&gt;    
-## 1 central hospital       1950280 Tertiary 
-## 2 military hospital        40500 Secondary
-## 3 military hospital        10000 Primary
+## [1] TRUE
 ```
-
----
-
-### Segundo problema 
-
-- As colunas "chave" devem ser do mesmo tipo. 
 
 --
-
-- Vemos que nesse caso, uma é fator e a outra um caractere. 
-
-  - Devemos transformar uma delas
-
---
-
-#### começamos com um mutate()
-
---
-
-- Já usamos a `as.numeric()`, lembram?
-
-- E para transformar em caractere, o que sugerem?
+Vou mostrar uma coisa, e quero que pensem para que pode ser útil ...
 
 --
 
 
 ```r
-hosp_info&lt;-hosp_info %&gt;% 
-  mutate(Hospital=as.character(Hospital))
+sum(str_detect(string,pattern = "é"))
+```
+
+```
+## [1] 1
 ```
 
 ---
+## E isso é só o começo ...
 
-
-## Como ficou
-
-
-
-```
-## # A tibble: 3 x 2
-##   Inicio_sint Hospital         
-##   &lt;date&gt;      &lt;chr&gt;            
-## 1 2014-05-18  Port Hospital    
-## 2 2014-05-21  Military Hospital
-## 3 2014-05-22  Port Hospital
-```
-
-
-
-```
-## # A tibble: 3 x 3
-##   Hospital          N_residentes level    
-##   &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;    
-## 1 central hospital       1950280 Tertiary 
-## 2 military hospital        40500 Secondary
-## 3 military hospital        10000 Primary
-```
-
----
-
-## Terceiro problema
-
-- Os nomes não estão escritos da mesma forma
-
-- Funções úteis
-
-  - toupper()
-  - tolower()
-
-
-```r
-ebola_mini&lt;-ebola_mini %&gt;% 
-  mutate(Hospital=tolower(Hospital))
-```
-
---
-
-- Geralmente tratamos ambas as bases para padronizar
----
-## Como ficou
-
-
-
-```
-## # A tibble: 3 x 2
-##   Inicio_sint Hospital         
-##   &lt;date&gt;      &lt;chr&gt;            
-## 1 2014-05-18  port hospital    
-## 2 2014-05-21  military hospital
-## 3 2014-05-22  port hospital
-```
-
-
-```
-## # A tibble: 3 x 3
-##   Hospital          N_residentes level    
-##   &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;    
-## 1 central hospital       1950280 Tertiary 
-## 2 military hospital        40500 Secondary
-## 3 military hospital        10000 Primary
-```
-
----
-
-## Agora sim! 
-#### Podemos seguir com o join! 
-
-- Repare no nome da função usada.
-
-
-```r
-ebola_hosp_info &lt;- left_join(ebola_mini, hosp_info)
-```
-
-
-```
-## # A tibble: 4 x 4
-##   Inicio_sint Hospital          N_residentes level    
-##   &lt;date&gt;      &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;    
-## 1 2014-05-18  port hospital            50280 Secondary
-## 2 2014-05-21  military hospital        40500 Secondary
-## 3 2014-05-21  military hospital        10000 Primary  
-## 4 2014-05-22  port hospital            50280 Secondary
-```
-
-
----
-
-## Existem vários joins!
-
-- left_join()
-
-- right_join()
-
-- inner_join()
-
-- full_join()
-
-- semi_join()
-
-- anti_join()
-
---
-
-- **E agora, qual usar?**
-
-
----
-
-# left_join()
-
-- Mantém **todas** as linhas do data frame da **esquerda**, exclui as que não batem do data frame da direita.
-
-
-```r
-base_unida&lt;-left_join(a,b)
-```
-
-&lt;center&gt;&lt;img src="img/left-join.gif" height=320px" /&gt;&lt;/center&gt;
-
----
-
-# right_join()
-
-- Mantém **todas** as linhas do data frame da **direita**, exclui as que não batem do data frame da esquerda.
-
-
-```r
-base_unida&lt;-right_join(a,b)
-```
-
-&lt;center&gt;&lt;img src="img/right-join.gif" height=320px" /&gt;&lt;/center&gt;
-
----
-
-# full_join()
-
-- Mantém **todas** as linhas de ambas as bases -&gt; completa com NA
-
-
-```r
-base_unida&lt;-full_join(a,b)
-```
-
-&lt;center&gt;&lt;img src="img/full-join.gif" height=320px" /&gt;&lt;/center&gt;
-
----
-
-# inner_join()
-
-- Mantém **somente** as linhas que há em **ambas**
-
-
-```r
-base_unida&lt;-inner_join(a,b)
-```
-
-&lt;center&gt;&lt;img src="img/inner-join.gif" height=320px" /&gt;&lt;/center&gt;
-
----
-
-# semi_join()
-
-- **Não faz join!** -&gt; filtra a base da esquerda de acordo com o que **também tem** na da  direita
-
-
-```r
-base_unida&lt;-semi_join(a,b)
-```
-
-&lt;center&gt;&lt;img src="img/semi-join.gif" height=320px" /&gt;&lt;/center&gt;
-
----
-
-# anti_join()
-
-- **Não faz join!** -&gt; filtra a base da esquerda de acordo com o que **não tem** na da  direita
-
-
-```r
-base_unida&lt;-semi_join(a,b)
-```
-
-&lt;center&gt;&lt;img src="img/anti-join.gif" height=320px" /&gt;&lt;/center&gt;
-
-
+&lt;center&gt;&lt;img src="img/alice.gif" height=320px" /&gt;&lt;/center&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
