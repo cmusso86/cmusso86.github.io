@@ -12,9 +12,9 @@
 class: center, middle, inverse, title-slide
 
 # ‘R de trás pra frente’
-## Aula 18
+## Aula 19
 ### Carolina Musso
-### 29/03/22
+### 31/03/22
 
 ---
 
@@ -33,64 +33,11 @@ class: inverse center middle
 
 ## Aula passada
 
-#### Joins  cássicos (não probabilísticos)
+###Strings
 
---
+#### pacote strigr
 
-- Preciso de pelo menos de uma coluna "chave" para união. 
-
-  - correspondência **exata**
-
---
-
-#### Garantir
-
-  - mesmo nome de coluna (é melhor)
-  
-  - mesma classe de coluna
-  
-  - nomes da chave que correspondam com exatidão
-  
----
-## Hoje: Strings 
-
-### Leituras de aprofundamento
-
-- [EpiHandbook, 10. Characteres e Strings](&lt;https://epirhandbook.com/en/characters-and-strings.html&gt;)
-
-- [Curso - R, 7.4 O pacote stringr](&lt;https://livro.curso-r.com/7-4-o-pacote-stringr.html&gt;)
-
-- [DataCamp, Intermediate Regular Expressions in R](&lt;https://app.datacamp.com/learn/courses/intermediate-regular-expressions-in-r&gt;)
-
-- [DataCamp, String Manipulation with stringR in R](&lt;https://app.datacamp.com/learn/courses/string-manipulation-with-stringr-in-r&gt;)
-
-- [R4DS, 14. Strings](&lt;https://r4ds.had.co.nz/strings.html&gt;) 
-
----
-
-### Variavel: Caracteres &lt;chr&gt;
-
---
-- Nada mais é do que um texto
-
-  - Variáveis de texto são comuns 
-
---
-
-- Costumam não estar padronizadas
-
---
-
-- E por isso costumam dar trabalho!!
-
-- "Riacho Fundo", "riacho fundo I", "riacho fundo 1" ...
-
-&lt;center&gt;&lt;img src="img/ms.gif" height=220px" /&gt;&lt;/center&gt;
-
----
-# pacote strigr
-
-- str_c
+- str_c() , paste()
 
 - separate()
 
@@ -98,207 +45,232 @@ class: inverse center middle
 
 - str_trim()
 
-- str_sub ()
+- str_sub()
 
-- str_detect
+- str_detect()
+
+---
+# Fatores
+
+- Variáveis do tipo caractere
+
+- Podemos ordenar
+
+- Variável qualitativa ordinal
+
+--
+
+- Exemplos?
+
+---
+### Leituras de aprofundamento
+
+- [EpiHandbook, 11. Factor](&lt;https://epirhandbook.com/en/factors.html&gt;)
+
+- [Curso - R, 7.4 O pacote forcats](&lt;https://livro.curso-r.com/7-6-forcats.html&gt;)
+
+- [DataCamp, Categorical Data in tidyverse](&lt;https://app.datacamp.com/learn/courses/categorical-data-in-the-tidyverse&gt;)
+
+- [R4DS, 15. Factors](&lt;https://r4ds.had.co.nz/factors.html&gt;) 
+
+- [forcats, Cheatsheet](&lt;https://raw.githubusercontent.com/rstudio/cheatsheets/main/factors.pdf&gt;)
 
 ---
 
-## str_c
+### Variavel: Fator 
+
+- Níveis, não necessariamente alfabético 
 
 
+&lt;center&gt;&lt;img src="img/forcats.png" height=320px" /&gt;&lt;/center&gt;
 
-```r
-str_c("A", "aula", "de", "R")
-```
-
-```
-## [1] "AauladeR"
-```
-
-
-```r
-str_c("A", "aula", "de", "R", sep=" ")
-```
-
-```
-## [1] "A aula de R"
-```
-
-
-```r
-nome&lt;-c("Jose", "João", "Maria")
-sobrenome&lt;-c("Silva", "Faria", "Souza")
-str_c(nome, sobrenome, sep=" ", collapse=", ")
-```
-
-```
-## [1] "Jose Silva, João Faria, Maria Souza"
-```
 ---
+# Ordem do R
+
+&lt;img src="Aula19_files/figure-html/unnamed-chunk-1-1.png" width="100%" /&gt;
+
+---
+
+## Mudar a ordem
+
+- Ver as categorias que tenho
+
+
+```r
+#unique(dados$nome_coluna)
+unique(linelist$delay_cat)
+```
+
+```
+## [1] "2-5 days" "&lt;2 days"  "&gt;5 days"
+```
+
+
+
+- Se já for um fator
+
+
+```r
+levels(linelist_fator$delay_cat)
+```
+
+```
+## [1] "&lt;2 days"  "&gt;5 days"  "2-5 days"
+```
+
+--
+
+Pronto, agora que sei o que tem, posso reordenar.
+
+---
+
+## Reordenando
+
+#### forcats
+
+
+```r
+linelist_fator &lt;- linelist %&gt;%
+  mutate(delay_cat = fct_relevel(delay_cat, 
+                                 "&lt;2 days", 
+                                 "2-5 days","&gt;5 days"))
+```
+
 #### R base
 
 
 ```r
-paste("A", "aula", "de", "R")
-```
-
-```
-## [1] "A aula de R"
-```
-
-
-```r
-paste(nome, sobrenome, collapse = ", ")
-```
-
-```
-## [1] "Jose Silva, João Faria, Maria Souza"
-```
-
-
----
-
-## separate ()
-
-- repare que essa função já age no data frame todo sem o mutate()
-
-
-```
-##   case_ID                  symptoms outcome
-## 1       1   jaundice, fever, chills Recover
-## 2       2      chills, aches, pains   Death
-## 3       3                     fever   Death
-## 4       4       vomiting, diarrhoea Recover
-## 5       5 bleeding from gums, fever Recover
-## 6       6     rapid pulse, headache Recover
-```
-
-
-```r
-df_split &lt;- separate(df, symptoms, 
-                     into = c("sym_1", "sym_2", "sym_3"), 
-                     extra = "merge")
-```
----
-## separate ()
-
-```r
-df_split 
-```
-
-```
-##   case_ID    sym_1     sym_2       sym_3 outcome
-## 1       1 jaundice     fever      chills Recover
-## 2       2   chills     aches       pains   Death
-## 3       3    fever      &lt;NA&gt;        &lt;NA&gt;   Death
-## 4       4 vomiting diarrhoea        &lt;NA&gt; Recover
-## 5       5 bleeding      from gums, fever Recover
-## 6       6    rapid     pulse    headache Recover
-```
----
-### unite ()
-
-
-```r
-df_split %&gt;% 
-  unite(
-    col = "all_symptoms", c("sym_1", "sym_2", "sym_3"), 
-    sep = ", ", remove = TRUE, na.rm = TRUE                  
-  )
-```
-
-```
-##   case_ID                all_symptoms outcome
-## 1       1     jaundice, fever, chills Recover
-## 2       2        chills, aches, pains   Death
-## 3       3                       fever   Death
-## 4       4         vomiting, diarrhoea Recover
-## 5       5 bleeding, from, gums, fever Recover
-## 6       6      rapid, pulse, headache Recover
+linelist_fator &lt;- linelist %&gt;%
+  mutate(delay_cat = factor(delay_cat, 
+                            levels=c("&lt;2 days",
+                            "2-5 days","&gt;5 days")))
 ```
 
 ---
 
-## str_trim()
-
-- Retira espaços no começo e no final
+## Como ficou
 
 
 ```r
-IDs &lt;- c("provA_1852  ", 
-         "  provA_2345",   
-         "provA_9460 
-         ")  
-
-str_trim(IDs, "both")
+ggplot(linelist_fator )+
+  geom_bar(mapping = aes(x = delay_cat))
 ```
 
-```
-## [1] "provA_1852" "provA_2345" "provA_9460"
-```
+&lt;img src="Aula19_files/figure-html/unnamed-chunk-7-1.png" width="100%" /&gt;
 
-- Parece útil?
+
 ---
-
-## str_sub()
-
-- extrair uma parte de interesse
+## Mudar direto no gráfico
 
 
 ```r
-str_sub("pneumonia", 1, 2)
+ggplot(data = linelist)+
+  geom_bar(mapping = aes(x = fct_relevel(delay_cat, 
+                    c("&lt;2 days",
+                      "2-5 days", "&gt;5 days"))))
 ```
 
-```
-## [1] "pn"
-```
-
-
-```r
-str_sub("pneumonia", 6, -1)
-```
-
-```
-## [1] "onia"
-```
-
---
-
-- Conseguem pensar em exemplos onde isso pode ser útil?
+&lt;img src="Aula19_files/figure-html/unnamed-chunk-8-1.png" width="100%" /&gt;
 
 ---
 
-## str_detect ()
+## Adicionar fatores
 
 
 ```r
-string &lt;- "A professora é legal"
-str_detect(string,pattern = "é")
+linelist %&gt;% 
+  mutate(delay_cat = fct_expand(delay_cat,
+                                "Não adimitido", 
+                                "Transferido")) %&gt;%
+  tabyl(delay_cat)
 ```
 
 ```
-## [1] TRUE
-```
-
---
-Vou mostrar uma coisa, e quero que pensem para que pode ser útil ...
-
---
-
-
-```r
-sum(str_detect(string,pattern = "é"))
-```
-
-```
-## [1] 1
+##      delay_cat    n   percent
+##        &lt;2 days 2990 0.5308949
+##        &gt;5 days  602 0.1068892
+##       2-5 days 2040 0.3622159
+##  Não adimitido    0 0.0000000
+##    Transferido    0 0.0000000
 ```
 
 ---
-## E isso é só o começo ...
 
-&lt;center&gt;&lt;img src="img/alice.gif" height=320px" /&gt;&lt;/center&gt;
+## Elimiar fatores com 0 contagens
+
+
+```r
+linelist %&gt;% 
+  mutate(delay_cat = fct_drop(delay_cat)) %&gt;% 
+  tabyl(delay_cat)
+```
+
+```
+##  delay_cat    n   percent
+##    &lt;2 days 2990 0.5308949
+##    &gt;5 days  602 0.1068892
+##   2-5 days 2040 0.3622159
+```
+
+---
+
+## Agrupar em outros
+
+- Escolha previamente quais
+
+
+```r
+ mutate(linelist,hospital = fct_other(                      
+    hospital,
+    keep = c("Port Hospital", "Central Hospital"),  
+    other_level = "Other Hospital")) %&gt;%          
+  tabyl(hospital)                                   
+```
+
+```
+##          hospital    n    percent
+##  Central Hospital  436 0.07741477
+##     Port Hospital 1687 0.29953835
+##    Other Hospital 3509 0.62304688
+```
+
+---
+
+## Agrupar em outros
+
+- Escolha quantos com maior frequência quer manter.
+
+
+```r
+mutate(linelist,hospital = fct_lump(                     
+    hospital,
+    n = 2,                                           
+    other_level = "Other Hospital")) %&gt;%           
+  tabyl(hospital)                                   
+```
+
+```
+##        hospital    n   percent
+##         Missing 1398 0.2482244
+##   Port Hospital 1687 0.2995384
+##  Other Hospital 2547 0.4522372
+```
+
+---
+
+## Mudando os nomes
+
+
+```r
+ linelist%&gt;% 
+  mutate(delay_cat = fct_recode(
+    delay_cat,
+    "Menos de 2 dias" = "&lt;2 days",
+    "De 2 a 5 dias"      = "2-5 days",
+    "Mais de 5 dias" = "&gt;5 days"))
+```
+
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
