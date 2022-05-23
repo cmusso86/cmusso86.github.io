@@ -12,9 +12,9 @@
 class: center, middle, inverse, title-slide
 
 # ‘R de trás pra frente’
-## Aula 24
+## Aula 25
 ### Carolina Musso
-### 17/05/22
+### 24/05/22
 
 ---
 
@@ -26,58 +26,107 @@ class: center, middle, inverse, title-slide
 
 class: inverse center middle
 
-# Módulo 5 e três quartos:
-## Uma mistura de Vira Tempo com Sala Precisa
+# Tópicos avançados:
+## Mapas
 
 ---
 
-### Módulo 1: dúvidas
+## Semana passada
 
-  - As partes do Rmarkdown. Vamos deixar para:
+- Revisão de ggplot
+
+- Aulas gravadas [aqui](&lt;https://saudegov-my.sharepoint.com/:f:/g/personal/eduardo_nunes_saude_gov_br/EtXfjODyabZClxKXE-jNBFMBx1kI7kPw6vANDnZyPsxYCQ?e=F7d5FS&gt;), **senha**: xpt_A*21
+
+- Veremos mapas baseado em **ggplot**
+
+- Mas tem outros! 
+
+  - tmap, leaflet, plotly, map, ...
+
+---
+### Hoje
+
+- Um introdução e então: live coding
+
+### Quinta
+
+- Exercícios 
+
+- **9h30 Palestra** Seminário de Estatística com R
+
+  - [Quarto: Conhecendo a nova geração do R Markdown](&lt;https://youtu.be/-ca1YElsdu0&gt;)
   
-  - **Tópicos avançados:** 
+  - Beatriz Milz
+
+---
+# Aprofundamento
+
+- [Cap 28 GIS Basics, The Epidemiologist R Handbook](&lt;https://epirhandbook.com/en/gis-basics.html&gt;)
+
+- Tutoriais pacotes: [maps](&lt;https://rstudio-pubs-static.s3.amazonaws.com/176768_ec7fb4801e3a4772886d61e65885fbdd.html&gt;), [ggplot](&lt;https://r-spatial.org/r/2018/10/25/ggplot2-sf.html&gt;), [geobr1](&lt;https://ipeagit.github.io/geobr/articles/intro_to_geobr.html&gt;), [geobr1](&lt;https://adrianofigueiredo.netlify.app/post/mapas-em-r-com-geobr/&gt;)
+
+- DataCamp: [1](&lt;https://www.datacamp.com/courses/spatial-analysis-with-sf-and-raster-in-r&gt;), [2](&lt;https://app.datacamp.com/learn/courses/visualizing-geospatial-data-in-r&gt;)
+
+- [Alguns Shapefiles](&lt;https://www.ibge.gov.br/geociencias/downloads-geociencias.html&gt;)
+---
+
+## Aspectos espaciais
+
+### Termos importantes
+
+- Geographic Information System (GIS)
+
+  - Gis e ArcGis
   
-    Compilando Arquivos .Rmd em diferentes formatos
+- Vetor: Pontos, linhas e polígonos
 
-&lt;center&gt;&lt;img src="img/another-day.gif" height=300px" /&gt;&lt;/center&gt;  
-    
+- Raster: Pixels
+
 ---
 
-## Módulo 2: Dúvidas 
+### Como essas informações estão armazenadas?
 
-- Era sobre gráficos
+- Geralmente em *Shapefiles*
 
-- Vamos ver as perguntas do kahoot de [novo](&lt;https://create.kahoot.it/share/revisao-modulo-2/12aa15e9-0fbf-40bf-a4cb-1f9f03fd630c&gt;)
-
-&lt;center&gt;&lt;img src="img/bar.gif" height=300px" /&gt;&lt;/center&gt;  
+  - coleção de arquivos: .shp, .shx, and .dbf. ou mais...
+  
+  - Localização na superfície da terra
+  
+  - Sistema de coordenadas
+  
 ---
 
-#### PROGRAMAÇAO
+### Como importar isso para o R?
 
-**Esta semana**
+- Pacotes, baixam direto os shapefiles
 
-- Hoje: Exercícios ggplot
-- Quinta: Continuação de exercícios ou trabalho
+  - brazilmaps
+  
+  - geobr
+  
+  - naturalearth
+  
+  - ...
 
-**Semana que vem**
+- Ler de shapefiles no disco (seu computurador)
 
-- Terça: Tópicos avançados - mapas, dúvidas com os monitores.
-- Quinta: Dúvidas / trabalho
+---
 
-**Semana dia 30**
+### Não é um dataframe
 
-- Terça: Tópicos avançados - Rmarkdown
-- Quinta: Dúvidas / trabalho
+--
 
-**Semana dia 6 de junho**
-
-- Terça: Tópicos avançados - Dashboard
-- Quinta: Dúvidas / trabalho
-
-
+- Mas não importa, vamos fingir que é
 
 
+--
 
+- E fazer o join com o dataframe dos nossos dados
+
+--
+
+&lt;center&gt;&lt;img src="img/dive2.gif" height=300px" /&gt;&lt;/center&gt;  
+---
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
