@@ -14,7 +14,7 @@ class: center, middle, inverse, title-slide
 # ‘R de trás pra frente’
 ## Aula 25
 ### Carolina Musso
-### 24/05/22
+### 31/05/22
 
 ---
 
@@ -27,106 +27,237 @@ class: center, middle, inverse, title-slide
 class: inverse center middle
 
 # Tópicos avançados:
-## Mapas
+## Rmarkdown
 
 ---
 
-## Semana passada
+## Semanas passadas
 
-- Revisão de ggplot
+- Mapas
 
-- Aulas gravadas [aqui](&lt;https://saudegov-my.sharepoint.com/:f:/g/personal/eduardo_nunes_saude_gov_br/EtXfjODyabZClxKXE-jNBFMBx1kI7kPw6vANDnZyPsxYCQ?e=F7d5FS&gt;), **senha**: xpt_A*21
-
-- Veremos mapas baseado em **ggplot**
-
-- Mas tem outros! 
-
-  - tmap, leaflet, plotly, map, ...
-
----
-### Hoje
-
-- Um introdução e então: live coding
-
-### Quinta
-
-- Exercícios 
-
-- **9h30 Palestra** Seminário de Estatística com R
-
-  - [Quarto: Conhecendo a nova geração do R Markdown](&lt;https://youtu.be/-ca1YElsdu0&gt;)
-  
-  - Beatriz Milz
-
----
-# Aprofundamento
-
-- [Cap 28 GIS Basics, The Epidemiologist R Handbook](&lt;https://epirhandbook.com/en/gis-basics.html&gt;)
-
-- Tutoriais pacotes: [maps](&lt;https://rstudio-pubs-static.s3.amazonaws.com/176768_ec7fb4801e3a4772886d61e65885fbdd.html&gt;), [ggplot](&lt;https://r-spatial.org/r/2018/10/25/ggplot2-sf.html&gt;), [geobr1](&lt;https://ipeagit.github.io/geobr/articles/intro_to_geobr.html&gt;), [geobr1](&lt;https://adrianofigueiredo.netlify.app/post/mapas-em-r-com-geobr/&gt;)
-
-- DataCamp: [1](&lt;https://www.datacamp.com/courses/spatial-analysis-with-sf-and-raster-in-r&gt;), [2](&lt;https://app.datacamp.com/learn/courses/visualizing-geospatial-data-in-r&gt;)
-
-- [Alguns Shapefiles](&lt;https://www.ibge.gov.br/geociencias/downloads-geociencias.html&gt;)
----
-
-## Aspectos espaciais
-
-### Termos importantes
-
-- Geographic Information System (GIS)
-
-  - Gis e ArcGis
-  
-- Vetor: Pontos, linhas e polígonos
-
-- Raster: Pixels
-
----
-
-### Como essas informações estão armazenadas?
-
-- Geralmente em *Shapefiles*
-
-  - coleção de arquivos: .shp, .shx, and .dbf. ou mais...
-  
-  - Localização na superfície da terra
-  
-  - Sistema de coordenadas
-  
----
-
-### Como importar isso para o R?
-
-- Pacotes, baixam direto os shapefiles
-
-  - brazilmaps
-  
-  - geobr
-  
-  - naturalearth
-  
-  - ...
-
-- Ler de shapefiles no disco (seu computurador)
-
----
-
-### Não é um dataframe
-
---
-
-- Mas não importa, vamos fingir que é
+- Aulas gravadas [aqui](&lt;https://saudegov-my.sharepoint.com/:f:/g/personal/eduardo_nunes_saude_gov_br/EtXfjODyabZClxKXE-jNBFMBx1kI7kPw6vANDnZyPsxYCQ?e=F7d5FS&gt;), **senha**: xpt_A*21  
 
 
 --
 
-- E fazer o join com o dataframe dos nossos dados
+**QUE COISA MARR LINDDGHIA!**
+
+&lt;center&gt;&lt;img src="img/maps.png" height=300px" /&gt;&lt;/center&gt;
+
+---
+## Hoje
+
+- Tópicos avançados em Rmarkdown
+
+## Quinta
+
+- Compilar um preliminar do trabalho de vocês
+
+ &lt;center&gt;&lt;img src="https://media.giphy.com/media/26FPnj46RYsIWgYLe/giphy.gif" height=150px" /&gt;&lt;/center&gt;
+---
+## Sugestão para aprofundamento...
+
+ - [Manual de R para Epidemiologistas: Capítulo Reports with RMarkdown](&lt;https://epirhandbook.com/en/reports-with-r-markdown.html&gt;)
+ 
+ - [Livro Curso-R: Capítulo 9 Relatórios](&lt;https://livro.curso-r.com/9-relatorios.html&gt;)
+ 
+ - [DataCamp: Curso Reporting with RMarkdown](&lt;https://app.datacamp.com/learn/search?q=rmarkdown&gt;)
+ 
+ - [RMarkdown para cientistas](&lt;https://rmd4sci.njtierney.com/figures-tables-captions-.html&gt;)
+ 
+---
+## Agora,  um pouquinho de teoria
+
+- RMarkdown foi criado sob o paradigma da Programação literária
+
+- Liguagem para humanos x liguagem para máquina
 
 --
 
-&lt;center&gt;&lt;img src="img/dive2.gif" height=300px" /&gt;&lt;/center&gt;  
+- Resumo: Rmardown tem o melhor dos dois mundos &amp;#127757; &amp;#127758;
+
+--
+- Ou vocês se esqueceram todo o objetivo desse curso de trás pra frente?
+
+--
+
+- **Curiosidade**: Quem inventou foi o [Yihui](&lt;https://yihui.org/en/&gt;) engenheiro do RStudio pra fazer o dever de casa quando tava na faculdade ... &amp;#128529;)
 ---
+## O Rmarkdwon tem três partes.
+
+### Cabeçalho:
+
+- **Características:**  
+
+--
+
+  - Linguagel YAML
+
+--
+
+  - Bizarro 
+
+--
+
+  - Sensível a indentação
+
+--
+
+  - É onde estão os metadados (wtf?!?!)
+  
+--
+
+  - Hoje vamos mexer pouco mais nele. 
+  
+--
+  **!!!!SEMPRE COM CUIDADO!!!!!**
+
+---
+
+## Texto:
+
+O texto no RMarkdown está na linguagem Markdown (daí o nome), que é  uma linguagem de marcação para possibilidar fazer umas "firulas"no texto simples. 
+
+- No fundo é o que o e-mail, whatsapp usam por exemplo...
+
+- \# Título, \#\# Subtítulo ... aí por diante
+
+- Se colocar a palavra entre asteriscos \*assim\* ela fica em *itálico*, entre dois fica **negrito** ...
+
+- Também aceita fórmulas, imagens... 
+
+--
+
+- Mas o RStudio tem um macete também ...**MAS CUIDADO!!**
+
+
+---
+## O código &amp;#128520;
+
+
+- O chamado chunk
+
+  -  O chunk são esses pedaços em cinza onde os códigos estão escritos
+  
+  - o **código** ,  **comentários**, os **parâmetros** do chunk
+
+-  Mas o código pode também não estár só no chunk.
+
+  - chamado código *inline*
+
+
+
+```r
+`r alguma_coisa_em_R`
+```
+
+---
+
+# Chunk de setup
+
+Podemos fazer nele as configurações gerais
+
+
+```r
+knitr::opts_chunk$set(echo = TRUE,
+                      fig.width = 6, 
+                      fig.height = 6,
+                      tab.cap.pre = "Tabela")
+```
+
+Mais coisas no site do [YiHui](&lt;https://yihui.org/knitr/options/&gt;)
+
+---
+
+## Parâmetros do chunk
+
+**Para hoje, vamos ver:**
+
+- título no chunk
+
+- *include=* (se a saída, mensagens, warnings gerados nesse chunk vão ser incluídos no arquivo compilado  )
+
+- *echo=* (se o código será incluído no arquivo compilado)
+
+--
+
+- Vamos relembrar lá em um arquivo .Rmd
+---
+
+### Coisas um pouquinho mais avançadas...
+
+- Compilar em .pdf -&gt; LateX
+
+- **Mais Fácil** : pacote tinytex 
+
+--
+
+- Vamos lá instalar!!
+
+&lt;center&gt;&lt;img src="img/holy.gif" height=300px" /&gt;&lt;/center&gt;
+
+---
+# Bons costumes
+
+## Para Tudo
+
+- Ter um "pacotinho" reprodutível. 
+
+- Pasta do projeto
+
+  - com subpastas
+  
+    - caminho relativo, em vez de caminho absoluto.
+  
+---
+# Um exemplo de relatório em PDF
+
+&lt;center&gt;&lt;img src="img/pdf.gif" height=200px" /&gt;&lt;/center&gt;
+---
+### Apresentações
+
+ - Como eu fiz essa aula?
+ 
+&lt;center&gt;&lt;img src="img/naruto.gif" height=300px" /&gt;&lt;/center&gt;
+
+- Aula da [Beatriz Milz](&lt;https://beatrizmilz.github.io/slidesR/xaringan/09-2021-rday.html#9&gt;)
+---
+### Outras coisas
+
+- Mesclar retrato e paisagem
+
+  - melhor saída **atualmente**: arquivo auxiliar em [.lua](&lt;https://stackoverflow.com/a/52131435/3888000&gt;)
+  
+&lt;center&gt;&lt;img src="img/lua.png" height=200px" /&gt;&lt;/center&gt;
+
+- \\endPortrait
+
+- \\endLandscape
+
+---
+
+# O Quarto
+
+- [A palestra](&lt;https://www.youtube.com/watch?v=7nnZGIQEy7E&gt;)
+
+- [Slides](&lt;https://beatrizmilz.github.io/2022-SER-quarto/#/8&gt;)
+
+- [Site Rstudio](&lt;https://quarto.org/docs/tools/rstudio.html&gt;)
+
+&lt;center&gt;&lt;img src="img/quarto.png" height=200px" /&gt;&lt;/center&gt;
+
+---
+
+# Semana que vem
+
+- Dashboards
+
+- Pacote [flexdashboard](&lt;https://epirhandbook.com/en/dashboards-with-r-markdown.html&gt;)
+
+&lt;center&gt;&lt;img src="img/dash.png" height=250px" /&gt;&lt;/center&gt;
+
+
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
