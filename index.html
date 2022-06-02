@@ -4,6 +4,7 @@
     <title>‘R de trás pra frente’</title>
     <meta charset="utf-8" />
     <meta name="author" content="Carolina Musso" />
+    <meta name="date" content="2022-02-06" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="css/xaringan-themerCIEVS.css" type="text/css" />
   </head>
@@ -11,10 +12,18 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
+.title[
 # ‘R de trás pra frente’
-## Aula 25
+]
+.subtitle[
+## Aula 26.1
+]
+.author[
 ### Carolina Musso
-### 31/05/22
+]
+.date[
+### 02/06/22
+]
 
 ---
 
@@ -30,224 +39,54 @@ class: inverse center middle
 ## Rmarkdown
 
 ---
-
-## Semanas passadas
-
-- Mapas
-
-- Aulas gravadas [aqui](&lt;https://saudegov-my.sharepoint.com/:f:/g/personal/eduardo_nunes_saude_gov_br/EtXfjODyabZClxKXE-jNBFMBx1kI7kPw6vANDnZyPsxYCQ?e=F7d5FS&gt;), **senha**: xpt_A*21  
-
-
---
-
-**QUE COISA MARR LINDDGHIA!**
-
-&lt;center&gt;&lt;img src="img/maps.png" height=300px" /&gt;&lt;/center&gt;
-
----
-## Hoje
-
-- Tópicos avançados em Rmarkdown
-
-## Quinta
-
-- Compilar um preliminar do trabalho de vocês
-
- &lt;center&gt;&lt;img src="https://media.giphy.com/media/26FPnj46RYsIWgYLe/giphy.gif" height=150px" /&gt;&lt;/center&gt;
----
 ## Sugestão para aprofundamento...
 
- - [Manual de R para Epidemiologistas: Capítulo Reports with RMarkdown](&lt;https://epirhandbook.com/en/reports-with-r-markdown.html&gt;)
+ - [Manual de R para Epidemiologistas: Capítulo Reports with RMarkdown](&lt;https://epirhandbook.com/en/reports-with-r-markdown.html&gt;)  
+ - [Livro Curso-R: Capítulo 9 Relatórios](&lt;https://livro.curso-r.com/9-relatorios.html&gt;)  
+ - [DataCamp: Curso Reporting with RMarkdown](&lt;https://app.datacamp.com/learn/search?q=rmarkdown&gt;)  
+ - [RMarkdown para cientistas](&lt;https://rmd4sci.njtierney.com/figures-tables-captions-.html&gt;)  
+ - [RMarkdown Cookbook](&lt;https://bookdown.org/yihui/rmarkdown-cookbook/&gt;)  
+ - [Rmarkdown Oficial](&lt;https://rmarkdown.rstudio.com&gt;)  
+ - [RMarkdown Defenitive Guide](&lt;https://bookdown.org/yihui/rmarkdown/&gt;)  
+ - [knitR](&lt;https://yihui.org/knitr/options/&gt;)
+ - [Mais sobre Xaringan](&lt;https://arm.rbind.io/slides/xaringan.html#74&gt;)
  
- - [Livro Curso-R: Capítulo 9 Relatórios](&lt;https://livro.curso-r.com/9-relatorios.html&gt;)
- 
- - [DataCamp: Curso Reporting with RMarkdown](&lt;https://app.datacamp.com/learn/search?q=rmarkdown&gt;)
- 
- - [RMarkdown para cientistas](&lt;https://rmd4sci.njtierney.com/figures-tables-captions-.html&gt;)
- 
 ---
-## Agora,  um pouquinho de teoria
+### Aula Passada
+#### O RMarkdown tem 3 partes
 
-- RMarkdown foi criado sob o paradigma da Programação literária
+- **Cabeçalho**: Incluir customizações gerais
 
-- Liguagem para humanos x liguagem para máquina
+- **Texto**: O que eu foi escrever no meu documento
 
---
-
-- Resumo: Rmardown tem o melhor dos dois mundos &amp;#127757; &amp;#127758;
-
---
-- Ou vocês se esqueceram todo o objetivo desse curso de trás pra frente?
-
---
-
-- **Curiosidade**: Quem inventou foi o [Yihui](&lt;https://yihui.org/en/&gt;) engenheiro do RStudio pra fazer o dever de casa quando tava na faculdade ... &amp;#128529;)
----
-## O Rmarkdwon tem três partes.
-
-### Cabeçalho:
-
-- **Características:**  
-
---
-
-  - Linguagel YAML
-
---
-
-  - Bizarro 
-
---
-
-  - Sensível a indentação
-
---
-
-  - É onde estão os metadados (wtf?!?!)
-  
---
-
-  - Hoje vamos mexer pouco mais nele. 
-  
---
-  **!!!!SEMPRE COM CUIDADO!!!!!**
-
----
-
-## Texto:
-
-O texto no RMarkdown está na linguagem Markdown (daí o nome), que é  uma linguagem de marcação para possibilidar fazer umas "firulas"no texto simples. 
-
-- No fundo é o que o e-mail, whatsapp usam por exemplo...
-
-- \# Título, \#\# Subtítulo ... aí por diante
-
-- Se colocar a palavra entre asteriscos \*assim\* ela fica em *itálico*, entre dois fica **negrito** ...
-
-- Também aceita fórmulas, imagens... 
-
---
-
-- Mas o RStudio tem um macete também ...**MAS CUIDADO!!**
+- **Código**: Chunk (que tem seus parâmetros), inline (fica no texto)
 
 
----
-## O código &amp;#128520;
+#####  Bons costumes
 
-
-- O chamado chunk
-
-  -  O chunk são esses pedaços em cinza onde os códigos estão escritos
-  
-  - o **código** ,  **comentários**, os **parâmetros** do chunk
-
--  Mas o código pode também não estár só no chunk.
-
-  - chamado código *inline*
-
-
-
-```r
-`r alguma_coisa_em_R`
-```
-
----
-
-# Chunk de setup
-
-Podemos fazer nele as configurações gerais
-
-
-```r
-knitr::opts_chunk$set(echo = TRUE,
-                      fig.width = 6, 
-                      fig.height = 6,
-                      tab.cap.pre = "Tabela")
-```
-
-Mais coisas no site do [YiHui](&lt;https://yihui.org/knitr/options/&gt;)
-
----
-
-## Parâmetros do chunk
-
-**Para hoje, vamos ver:**
-
-- título no chunk
-
-- *include=* (se a saída, mensagens, warnings gerados nesse chunk vão ser incluídos no arquivo compilado  )
-
-- *echo=* (se o código será incluído no arquivo compilado)
-
---
-
-- Vamos relembrar lá em um arquivo .Rmd
----
-
-### Coisas um pouquinho mais avançadas...
-
-- Compilar em .pdf -&gt; LateX
-
-- **Mais Fácil** : pacote tinytex 
-
---
-
-- Vamos lá instalar!!
-
-&lt;center&gt;&lt;img src="img/holy.gif" height=300px" /&gt;&lt;/center&gt;
-
----
-# Bons costumes
-
-## Para Tudo
-
-- Ter um "pacotinho" reprodutível. 
-
-- Pasta do projeto
-
-  - com subpastas
-  
-    - caminho relativo, em vez de caminho absoluto.
+- Pasta do projeto : com subpastas ~ caminhos relativos
   
 ---
-# Um exemplo de relatório em PDF
+# Prática
 
-&lt;center&gt;&lt;img src="img/pdf.gif" height=200px" /&gt;&lt;/center&gt;
----
-### Apresentações
+- Instalamos tinytex -&gt; LateX -&gt; compilar em PDF  -&gt; Vários pacotes
 
- - Como eu fiz essa aula?
- 
-&lt;center&gt;&lt;img src="img/naruto.gif" height=300px" /&gt;&lt;/center&gt;
+- Mesclar retrato e paisagem -&gt; arquivo auxiliar .lua
 
-- Aula da [Beatriz Milz](&lt;https://beatrizmilz.github.io/slidesR/xaringan/09-2021-rday.html#9&gt;)
----
-### Outras coisas
+- Falamos do xaringan
 
-- Mesclar retrato e paisagem
+- Começamos a falar de bibliografia
 
-  - melhor saída **atualmente**: arquivo auxiliar em [.lua](&lt;https://stackoverflow.com/a/52131435/3888000&gt;)
-  
-&lt;center&gt;&lt;img src="img/lua.png" height=200px" /&gt;&lt;/center&gt;
-
-- \\endPortrait
-
-- \\endLandscape
 
 ---
 
-# O Quarto
+# Bibliografia
 
-- [A palestra](&lt;https://www.youtube.com/watch?v=7nnZGIQEy7E&gt;)
+- Baixar a referência em BibTex e salvar em umm arquivo 
 
-- [Slides](&lt;https://beatrizmilz.github.io/2022-SER-quarto/#/8&gt;)
-
-- [Site Rstudio](&lt;https://quarto.org/docs/tools/rstudio.html&gt;)
-
-&lt;center&gt;&lt;img src="img/quarto.png" height=200px" /&gt;&lt;/center&gt;
+- Baixar o formato desejado do repositorio [Zotero](&lt;https://www.zotero.org/styles&gt;)
 
 ---
-
 # Semana que vem
 
 - Dashboards
@@ -305,6 +144,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable
