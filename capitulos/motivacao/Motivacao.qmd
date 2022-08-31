@@ -270,7 +270,7 @@ Diversidade de pensamento
 
 -   **A RStudio correu atrás**
 
--   [RStudio: A Single Home for R and Python](RStudio:%20A%20Single%20Home%20for%20R%20&%20Python "RStudio: A Single Home for R & Python").
+-   [RStudio: A Single Home for R and Python](https://www.rstudio.com/solutions/r-and-python/).
 
     -   Pacote reticulate.
 
