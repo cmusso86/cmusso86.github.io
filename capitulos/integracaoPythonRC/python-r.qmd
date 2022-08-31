@@ -1,0 +1,139 @@
+---
+title: "Integração Python em R e R em Python"
+author: "Rafael Lira"
+format:
+  revealjs:
+    incremental: true 
+    theme: dark
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    highlight-style: dracula
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: visual
+
+---
+
+```{r echo=FALSE}
+if (!require("pacman")) install.packages("pacman")
+p_load(reticulate, Rcpp)
+```
+
+<section class="title-slide">
+    <h1 style="text-align: center">Python no R</h1>
+</section>
+
+<section>
+<h2>Reticulate:</h2>
+<h3>O pacote da trégua</h3>
+<h4>Scripts do Python no R</h4>
+
+
+:::::: {.columns}
+
+::: {.column width="50%"}
+<img src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/r/r.png" style="width:192px;height:192px; margin-bottom:50px;"/>
+:::
+
+::: {.column width="50%"}
+<img src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/python/python.png" style="width:192px;height:192px;"/>
+:::
+
+:::: {.column width="75%"}
+- Execução de scripts do Python interagindo com a sessão do R; 
+- Tradução entre objetos do R e do Python (como entre data frames do R e do Pandas);
+::::
+::::::
+</section>
+
+<section>
+<h2>Reticulate<h2>
+<h4>Lista de comandos<h4>
+
+::: {.fragment}
+```{r}
+ls("package:reticulate")
+```
+:::
+</section>
+
+<section>
+<h3>Reticulate:<h3>
+
+:::{.fragment}
+```{r}
+# py_install("pandas")
+# py_install("numpy")
+
+pd <- import("pandas", as = "pd", convert = FALSE)
+```
+:::
+</section>
+
+<section>
+
+:::{.fragment}
+```{r}
+repl_python(
+  input = "import numpy as np
+  array = np.array([[1,2],[3,4],[5.0,6]])
+  print(array)
+  print(type(array))"
+)
+```
+::: 
+
+:::{.fragment}
+```{r}
+array <- py$array
+class(array)
+```
+:::
+</section>
+
+<section>
+
+:::{.fragment}
+```{r}
+repl_python(
+  input = "import
+  dictionary = {'alpha': 1, 'beta': 2, 'lista': list(range(5))}
+  print(dictionary)
+  print(type(dictionary))"
+)
+```
+:::
+
+:::{.fragment}
+```{r}
+# Convertendo dicionário do Python para lista do R
+(dictionary <- py$dictionary)
+class(dictionary)
+```
+:::
+</section>
+
+
+<section>
+<h2>Rpy2:</h2>
+<h3>Códigos do R no Python</h3>
+</section>
+
+<section>
+<h2>Rcpp:</h2>
+<h3>C++ no R</h3>
+
+:::::: {.columns}
+
+:::: {.column width="75%"}
+- C++: Linguagem de médio/alto nível e com alta performance
+- Veloz
+- Eficiente
+::::
+::::::
+</section>
