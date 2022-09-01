@@ -7,6 +7,7 @@ p_load(reticulate)
 ls("package:reticulate")
 
 # Fazendo a instalação dos pacotes do Python através do R #
+use_virtualenv("./venv", required = TRUE)
 # py_install("pandas")
 # py_install("numpy")
 
@@ -35,7 +36,7 @@ class(py_df)
 
 # Criando dicionário no Python
 repl_python(
-  input = "import
+  input = "
   dictionary = {'alpha': 1, 'beta': 2, 'lista': list(range(5))}
   print(dictionary)
   print(type(dictionary))"

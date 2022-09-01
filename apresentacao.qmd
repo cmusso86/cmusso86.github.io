@@ -16,13 +16,29 @@ format:
     code-overflow: wrap
     highlight-style: dracula
     transition: fade
-    self-contained: true
 knitr:
   opts_chunk:
     echo: true
     warnings: false
-editor: visual
 ---
+
+```{r, include=F}
+if (!require(pacman)) install.packages("pacman")
+pacman::p_load(tidyverse, reticulate, rio , glue)
+
+pacotes<-read.table("requirements.txt") %>% 
+  select(V1) %>% 
+  pull()
+
+
+
+pacotes<-pacotes[-33]
+
+virtualenv_create("venv")
+use_virtualenv("venv")
+virtualenv_install("venv",pacotes)
+
+```
 
 <section>
 
@@ -61,3 +77,25 @@ Tech Stack
 </section>
 
 {{< include capitulos/motivacao/Motivacao.qmd >}}
+
+{{< include capitulos/python_basico/sintaxe_jupyter.qmd >}}
+
+{{< include capitulos/integracaoPythonRC/python-r.qmd >}}
+
+{{< include capitulos/equivalencias/equivalencias.qmd >}}
+
+{{< include capitulos/scikit-learn/scikit-learn_slide.qmd >}}
+
+</section>
+
+<section>
+
+<h1 style="text-align: center">
+
+Obrigada !!!
+
+![](https://github.com/rstudio/reticulate/raw/main/man/figures/reticulated_python.png){width="387"}
+
+</h1>
+
+</section>

@@ -1,0 +1,64 @@
+---
+title: "Integração R e Python"
+---
+
+<section>
+<h2>Download Python</h2>
+<h4>(Não é tão trivial quanto o R)</h4>
+
+- Mais opções de IDE:
+    - Visual Studio Code
+    - Pycharm
+    - Spyder
+    - Jupyter
+
+</section>
+
+<section>
+
+<h2>Opções de download do python<h2>
+- ANACONDA
+- Também é possível baixar pelo <a href="https://python.org">python.org</a>
+
+</section>
+
+<section>
+
+<p style="color: red; font-size: 40px; text-align: center">Instale no PATH, ou sofra as consequências</p>
+
+<img src="src/python_basico/pipFail.png" style="display: block; margin-left: auto; margin-right: auto; width: 800px; height: 140px"/>
+
+<img src="	https://i.kym-cdn.com/entries/icons/original/000/040/642/terrifiednootnoot.jpg" style="display: block; margin-left: auto; margin-right: auto; width: 383px; height: 214px"/>
+
+</section>
+
+<section>
+
+<h2>Vantagens do ANACONDA</h2>
+
+- Já vem com os principais pacotes para ciência de dados.
+    - Pandas
+    - Numpy
+    - Seaborn
+    - Scikit-learn
+    - etc.
+- Também vem com o Jupyter.
+
+</section>
+
+<section>
+
+<h2>Jupyter</h2>
+
+- Interface amigável.
+- Funciona no seu navegador padrão.
+- Possibilidade de escrita de textos com Markdown.
+- Execução e visualização da saída do código em cada célula.
+- Vários atalhos para melhorar a produtividade.
+- Ótima ferramenta para exploração.
+
+</section>
+
+<section data-background-image="src/python_basico/Jupyter.jpeg" data-background-size="contain">
+</section>
+

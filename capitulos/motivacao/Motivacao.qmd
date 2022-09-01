@@ -100,7 +100,7 @@ Fonte: [DataCamp](https://www.datacamp.com/tutorial/r-or-python-for-data-analysi
 
 <h2 style="text-align: center">
 
-[Hadley Wichman](https://hadley.nz)
+[Hadley Wickhan](https://hadley.nz)
 
 </h2>
 
@@ -270,7 +270,7 @@ Diversidade de pensamento
 
 -   **A RStudio correu atrás**
 
--   [RStudio: A Single Home for R and Python](https://www.rstudio.com/solutions/r-and-python/).
+-   [RStudio: A Single Home for R and Python](RStudio:%20A%20Single%20Home%20for%20R%20&%20Python "RStudio: A Single Home for R & Python").
 
     -   Pacote reticulate.
 
