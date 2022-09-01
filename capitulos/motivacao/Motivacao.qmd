@@ -100,7 +100,7 @@ Fonte: [DataCamp](https://www.datacamp.com/tutorial/r-or-python-for-data-analysi
 
 <h2 style="text-align: center">
 
-[Hadley Wickhan](https://hadley.nz)
+[Hadley Wickham](https://hadley.nz)
 
 </h2>
 
