@@ -1,7 +1,4 @@
 ## Objetivo
 
-Repositório dedicado ao cumprimento do trabalho final da disciplina Tópicos em Estatística 1 (_Big Data_ e _Big Compute_) 1º./2022.
+Repositório para hospedar as apresentações de cursos e matérias. Apresenmtações feitas em Quarto ou Xaringan, usadas para ministrar disciplinas ou para fazer apresentações de disciplinas que fiz como aluna. 
 
-## Tema
-
-O trabalho consiste de uma apresentação sobre a integração entre Python e R através de APIs disponíveis para cada cada linguagem, além de descrever ferramentas excepionalmente utéis vindas do Python como o Scikit-Learn, PySpark, entre outros.
