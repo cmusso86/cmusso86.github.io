@@ -1,0 +1,378 @@
+---
+title: "Yellow Fever Outbreak in the Amazon"
+title-slide-attributes:
+    data-background-image: img/fundo.png
+    data-background-size: contain
+author: "Group 9"
+format:
+  revealjs:
+    embed-resources: true
+    multiplex: true
+    incremental: true
+    logo: img/logo.png
+    css: logo.css
+    scrollable: true
+    preview-links: true
+    theme: [serif, style.scss]
+    highlight-style: dracula
+    transition: fade
+filters:
+  - roughnotation
+editor: visual
+---
+
+## Emergency Operation Center (EOC)
+
+### Following suspected cases/deaths
+
+::: columns
+::: {.column width="50%"}
+![](img/nos.png){fig-align="left" width="657"}
+
+::: {.nonincremental style="font-size: 22px; font-weight: bold;"}
+Planning / Analysis / Logistics / Communications
+:::
+:::
+
+::: {.column width="50%"}
+::: incremental
+-   **Other stakeholders**
+
+    -   Mayor
+
+    -   Health secretary
+
+    -   Health Care professionals
+:::
+:::
+:::
+
+## Yellow Fever: An overview
+
+[![](img/YF_cycle.png){fig-align="center" width="450"}](https://www.scielo.br/j/mioc/a/3YkjX4xbMb88BxVy6qCNsgf/?lang=en#)
+
+::: footer
+[Yellow fever outbreak in Brazil: the puzzle of rapid viral spread and challenges for immunisation. Possas C, *et al.* (2018)](https://www.scielo.br/j/mioc/a/3YkjX4xbMb88BxVy6qCNsgf/?lang=en#).
+:::
+
+## Municipality X
+
+::: columns
+::: {.column width="50%"}
+![](img/map1.png){fig-align="left" width="781"}
+:::
+
+::: {.column width="50%"}
+::: incremental
+-   **100.000** inhabitants
+-   **70%** vaccinated
+-   **Endemic** for yellow fever
+-   Mining + deforestation
+:::
+
+::: incremental
+-   **Situation**
+    -   1 **death** of YF
+    -   2 suspected **cases**
+    -   Rumors of 3 dead **primates**
+:::
+:::
+:::
+
+## Approaching the situation
+
+::: columns
+::: {.column .fragment width="30%"}
+::: callout-important
+## 1) Outbreak confirmation
+
+-   Lab confirmation for **human** and **primate** cases
+-   Investigate **travel history**
+-   Cases' origins and correlations
+-   Clinical-epidemiological info
+:::
+:::
+
+::: {.column .fragment width="30%"}
+::: callout-caution
+## 2) CONTROL
+
+-   **Alert** government/health system
+-   **Assess** and **promote** vaccination status
+-   Active search
+-   **Environmental surveillance** for
+    -   **Mosquitoes** / **Primates**
+    -   Urban cycle?
+:::
+:::
+
+::: {.column .fragment width="30%"}
+::: callout-tip
+## 3) NEXT STEPS
+
+-   For **negative cases** perform metagenomic analysis
+-   To be **continued**
+:::
+:::
+:::
+
+## Epidemic progression
+
+![](images/g1b_week-03.png)
+
+## Spatial distribution
+
+::: columns
+::: {.column width="50%"}
+![Number of Yellow Fever cases per region](img/map2.png){fig-align="left" width="1250"}
+:::
+
+::: {.column width="50%"}
+::: {.incremental style="font-size: 36px;"}
+-   The cases were **concentrated** in region **8, 9, and 10**.
+-   We hypothesize that these regions are **closest to mining** area and the **forest**
+-   **Risk of spread** to other areas in the city
+:::
+:::
+:::
+
+## Demographics
+
+::: columns
+::: {.column width="40%"}
+::: nonincremental
+<small>
+
+-   **93%** are in regions **8/9/10**
+-   **78%** are men: average 43.5 yo
+-   **80,28%** of hospitalization are men
+-   **71,43%** unvaccinated
+-   **56.34%** of Lethality
+
+</small>
+:::
+:::
+
+::: {.column width="60%"}
+![](images/log.png){width="1505"}
+:::
+:::
+
+## Symptoms
+
+![](images/sintoma.png){fig-align="center" width="2503"}
+
+## Plan of Action
+
+::: columns
+::: {.column .nonincremental width="50%" style="font-size: 36px;"}
+### PREVENTION
+
+::: callout-caution
+## Vaccinations
+
+-   Request more vaccines.
+-   **Logistics:** campaigning, accessibility.
+-   If limited resources:**prioritize** higher incidence and mortality population.
+:::
+
+::: callout-caution
+## Vector control
+
+-   Space spray
+-   Mosquito surveillance in the households
+-   Mosquito repellents
+-   Bed nets
+:::
+:::
+
+::: {.column .nonincremental width="50%" style="font-size: 36px;"}
+### RESPONSE
+
+::: callout-important
+## Health-care
+
+-   Primary care and Hospital
+-   Fluids, medicines and Beds
+-   Human resources
+-   Health education
+:::
+
+::: callout-important
+## Labs
+
+-   Diagnosis
+:::
+
+::: callout-important
+## Secondary Response
+
+-   Social and Economical Support
+:::
+:::
+:::
+
+## Communications
+
+::: columns
+::: {.column width="50%"}
+::: {.nonincremental style="font-size: 36px;"}
+-   **Strategies for defined target groups:**
+
+    -   Authorities
+    -   General public
+    -   Health workers
+    -   Schools
+    -   Community health agents
+
+-   **Daily situation report and weekly meetings**
+:::
+:::
+
+::: {.column width="50%"}
+![](img/informe.png){fig-align="right" width="426"}
+:::
+:::
+
+## New chalenges
+
+::: columns
+::: {.column .fragment width="25%"}
+![](images/mine.png){width="195"}
+
+<small>
+
+**Most mining workers are undocumented immigrants**
+
+</small>
+:::
+
+::: {.column .fragment width="25%"}
+![](images/ape.png){width="163"}
+
+<small>
+
+**Rumours that mining workers are killing monkeys.**
+
+</small>
+:::
+
+::: {.column .fragment width="25%"}
+![](images/mayor.png){width="179"}
+
+<small>
+
+**Mayor and population pressure authorities to allow hunting of wild animal.**
+
+</small>
+:::
+
+::: {.column .fragment width="25%"}
+![](images/cartel.png){width="198"}
+
+<small>
+
+**Drug cartel is partially controlling the mining area hindering access\
+**
+
+</small>
+:::
+:::
+
+## Adapting to the new challenges
+
+### [Approaching the miners]{.rn rn-color="orange"}
+
+![](images/fw_y.png){fig-align="center"}
+
+## Adapting to the new challenges
+
+### [Approaching general population]{.rn rn-color="lightgreen"}
+
+![](img/fw_g.png){fig-align="center"}
+
+## Adapting to the new challenges
+
+### [Approaching authorities]{.rn rn-color="lightblue"}
+
+![](img/fw_b.png){fig-align="center"}
+
+## Addressing resource limitations
+#### Shortage of vaccines, ICU beds ...
+
+
+::: {.absolute top=150 left="0"}
+::: begebox
+Priorities
+:::
+:::
+
+::: {.absolute top=290 left="0"}
+::: bege2box
+Investigate increased mortality
+:::
+:::
+
+::: {.absolute .nonincremental top=280 left="350"}
+::: {.empty .nonincremental}
+-   Diferential diagnosis
+
+-   Virus mutations
+
+-   Miners conditions, delay in treatment
+:::
+:::
+
+::: {.absolute top=470 left="0"}
+::: rosa1box
+Guarantee vaccination & hospital beds
+:::
+:::
+
+::: {.absolute top=470 left="230"}
+::: roxobox
+Address vaccine hesitancy
+:::
+:::
+
+::: {.absolute top=470 left="460"}
+::: greenbox
+Enhance prevention measures
+:::
+:::
+
+::: {.absolute top=150 right="0"}
+::: bluebox
+Improve monitoring & data collection
+:::
+:::
+
+::: {.absolute top=420 right="0"}
+::: rosa2box
+Propose future research
+:::
+:::
+
+## Lessons learned
+
+::: {style="font-size: 32px;"}
+-   We need **collective** efforts from **multidisciplinary** backgrounds
+
+-   Define **priorities** and secondary steps
+
+-   Focus on hypotheses and plans that can give us **quick answers**
+
+-   Communicate and engage with **stakeholders** and **population**
+
+-   Think **outside the box**
+
+-   Make the most out of the **information we have** rather than focusing on what we don't have
+
+-   Capitalize on our **strengths** and our partnerships
+
+-   Public health is **political**
+
+-   **Life** can always get **harder**
+:::
+
+# Thank you!
