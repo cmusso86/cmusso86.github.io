@@ -1,0 +1,215 @@
+---
+title: "What if?"
+subtitle: "Cap11: Why model?"
+author: "Grupo top de IC"
+institute: "UnB"
+format:
+  revealjs:
+    embed-resources: true
+    multiplex: true
+    incremental: true
+    logo: logo.jpeg
+    scrollable: true
+    highlight-style: arrow
+    transition: fade
+---
+
+## Capítulo 11
+
+-   Part I conceitual, estimadores não paramétricos
+-   Part II dados "reais", estimadores paramétricos
+
+- We define nonparametric estimators: those  that produce estimates from the data without any a priori restrictions on the conditional mean function: Part I
+
+- Parametric estimation and other approaches to borrow information are our only hope when data are unable to speak for themselves.
+
+
+## Data cannot speak for themselves
+
+-   16 individuals infected with HIV randomly sampled from a larger target population.
+
+-   Each individual receives a certain level of antiretroviral therapy. At the end CD4 cell count, in cells/mm3 is measured: We wish to consistently estimate the mean of cell counts for individuals with level A=a.
+
+. . . 
+
+$\hat{E}=[Y|A=a]$ é um estimador consistente.
+
+```{r eval=F}
+#install.packages("gfoRmula")
+
+library(tidyverse)
+dataurls <- list()
+stub <- "https://cdn1.sph.harvard.edu/wp-content/uploads/sites/1268/"
+dataurls[[1]] <- paste0(stub, "2012/10/nhefs_sas.zip")
+dataurls[[2]] <- paste0(stub, "2012/10/nhefs_stata.zip")
+dataurls[[3]] <- paste0(stub, "2017/01/nhefs_excel.zip")
+dataurls[[4]] <- paste0(stub, "1268/20/nhefs.csv")
+
+temp <- tempfile()
+for (i in 1:3) {
+  download.file(dataurls[[i]], temp)
+  unzip(temp, exdir = "data")
+}
+
+download.file(dataurls[[4]], here("data", "nhefs.csv"))
+```
+
+## Tratamentos
+
+::: panel-tabset
+## 2 categorias
+
+```{r echo=F}
+library(tidyverse)
+A <- c(1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0)
+Y <- c(200, 150, 220, 110, 50, 180, 90, 170, 170, 30,
+       70, 110, 80, 50, 10, 20)
+
+ggplot()+
+  geom_point(aes(A, Y))+
+  theme_classic(base_size = 14)+
+  scale_x_continuous(breaks = c(0,1))+
+  geom_label(aes(x=c(0,1), y=c(200, 30), label=c(67.5, 
+                                                 146.2)))
+```
+
+```{r}
+
+summary(Y[A == 0])
+summary(Y[A == 1])
+```
+
+## 4 categorias
+
+```{r include=F}
+library(tidyverse)
+A2 <- c(1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4)
+Y2 <- c(110, 80, 50, 40, 170, 30, 70, 50, 110, 50, 180,
+   
+             130, 200, 150, 220, 210)
+m1 <- summary(Y2[A2 == 1])[[4]]
+m2 <-summary(Y2[A2 == 2 ])[[4]]
+m3 <- summary(Y2[A2 == 3 ])[[4]]
+m4 <- summary(Y2[A2 == 4 ])[[4]]
+```
+
+```{r}
+ggplot()+
+  geom_point(aes(A2, Y2))+
+  theme_classic(base_size = 14)+
+  scale_x_continuous(breaks = c(0,1))+
+  geom_label(aes(x=c(1,2,3, 4), y=c(195), label=c(m1, m2, m3, m4)))
+```
+
+## 0-100mg
+
+- Quanto é a predição para A=90?
+
+```{r echo=F}
+
+A3 <-c(3, 11, 17, 23, 29, 37, 41, 53, 67, 79, 83, 97, 60, 71, 15, 45)
+Y3 <-c(21, 54, 33, 101, 85, 65, 157, 120, 111, 200, 140, 220, 230, 217,
+    11, 190)
+
+ggplot()+
+  geom_point(aes(A3, Y3))+
+  theme_classic(base_size = 14)
+```
+:::
+
+## Parametric estimators of the conditional mean
+
+$E[Y|A]= \theta_0 + \theta_1A$
+
+-   modelo linear, $\theta$ são parâmetros.
+
+. . . 
+
+```{r echo=F}
+#install.packages("ggtext")
+library(ggtext)
+library(glue)
+modelo <- lm(Y3~A3)
+
+a <- format(round(modelo$coefficients[[1]], 1), decimal.mark = ",")
+b <- format(round(modelo$coefficients[[2]],1), decimal.mark = ",")
+
+theta0 <- modelo$coefficients[[1]]
+theta1 <- modelo$coefficients[[2]]
+
+ggplot()+
+  geom_point(aes(A3, Y3))+
+  geom_smooth(aes(A3, Y3),
+              method="lm", se=F, color="red")+
+    theme_classic(base_size = 14)+
+  geom_richtext(aes(50, 150, label=glue("E[Y|A] = {a} + {b}A ")),angle = 28)
+```
+
+```{r}
+(reta_90 <- theta0 + theta1*90)
+```
+
+ - A certain degree of model misspecification is almost always expected.
+
+
+
+## Mais parametros
+
+::: panel-tabset
+
+## Três parametros
+```{r echo=F, message=FALSE, warning=FALSE}
+library(geomtextpath)
+library(latex2exp)
+#> Loading required package: ggplot2
+a <- format(round(lm(Y3 ~ A3 + I(A3^2) )$coefficients[[1]],2),decimal.mark = ",")
+b <- format(round(lm(Y3 ~ A3 + I(A3^2) )$coefficients[[2]],2),decimal.mark = ",")
+c <- format(round(lm(Y3 ~ A3 + I(A3^2) )$coefficients[[3]],2),decimal.mark = ",")
+
+theta0 <- lm(Y3 ~ A3 + I(A3^2) )$coefficients[[1]]
+theta1 <- lm(Y3 ~ A3 + I(A3^2) )$coefficients[[2]]
+theta2 <- lm(Y3 ~ A3 + I(A3^2) )$coefficients[[3]]
+
+dado <-data.frame(A3, Y3)
+label <- expression("~A^2")
+
+
+ggplot(dado, aes(A3, Y3))+
+  geom_point()+
+   geom_textsmooth(aes(label = glue("E[Y|A] = {a} + {b}A + {c}A2")),
+                method = "lm",formula=y ~ poly(x, 3),  rich=TRUE,
+                size = 5, linetype = 3, 
+                fontface = 2, linewidth = 1, color="darkred") 
+```
+
+```{r}
+(parabola_90 <- theta0 + theta1*90 + theta2*90^2)
+```
+
+
+## 12 parametros
+
+```{r}
+ggplot(dado, aes(A3, Y3))+
+  geom_point()+
+   geom_smooth(method = "lm",formula=y ~ poly(x, 12),
+                size = 5, linetype = 3, se=F, 
+                linewidth = 1, color="darkred") 
+```
+
+- Often modeling can be viewed as a procedure to transform noisy data into more or less smooth curves. 
+:::
+
+
+
+## The bias-variance trade-off
+
+Qual o certo?
+
+```{r}
+paste(round(reta_90,2), "IC = 172.1 - 261.6)")
+paste(round(parabola_90 ,2), "IC = 142.8 - 251.5)")
+
+```
+
+- Acabou!
