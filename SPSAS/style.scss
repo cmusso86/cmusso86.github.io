@@ -1,0 +1,127 @@
+/*-- scss:defaults --*/
+
+// fonts
+$font-family-sans-serif: "Arial" !default;
+  
+$font-size-root: 12px; 
+
+$background-image: "img/fundo.png";
+$background-size: contain;
+.test-background {
+  background-image: "img/fundo.png";
+  background-size: contain;
+}
+// colors
+$body-bg: #FFFFFF !default;
+$body-color: #440404 !default;
+$link-color:#700404 !default;
+$selection-bg: #440404 !default;
+$presentation-heading-color: #700404;
+$presentation-h1-font-size: 2.4em; 
+$presentation-h2-font-size: 1.5em; 
+$presentation-h3-font-size: 1.1em; 
+$code-color:#700404;
+
+// headings
+$presentation-heading-font: "Arial" !default;
+$presentation-heading-color: #383d3d !default;
+
+/*-- scss:rules --*/
+
+.stacked-columns {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Optional: Center the columns horizontally */
+  }
+
+  /* Optional: Set a maximum width for the columns */
+  .quarto-column {
+    max-width: 600px; /* Adjust the value as needed */
+  }
+.text-col {
+  height: 80%;
+  background-color: lightgray;
+  padding-left: 10px;
+  box-sizing: border-box;
+}
+
+.begebox {
+  width: 700px;
+  text-align: center;
+  border-radius: 25px;
+  background-color: #ffe4cc;
+  padding: 20px;
+  margin: 10px;
+}
+
+.bege2box {
+  width: 300px;
+  height: 100px;
+  font-style: bold;
+  text-align: center;
+  font-size: 24px;
+  border-radius: 25px;
+  background-color: #ffe4cc;
+  padding: 20px;
+  margin: 10px;
+}
+
+.rosa1box {
+  width: 180px;
+  font-size: 28px;
+  border-radius: 25px;
+  background-color:#ecd4dc;
+  padding: 20px;
+  margin: 10px;
+}
+
+.greenbox {
+  width: 180px;
+  font-size: 28px;
+  border-radius: 25px;
+  background-color: #e4ece4;
+  padding: 20px;
+  margin: 10px;
+}
+
+.bluebox {
+  width: 180px;
+  height: 200px;
+  font-size: 30px;
+  border-radius: 25px;
+  background-color: #d0dcfc;
+  padding: 20px;
+  margin: 10px;
+}
+
+.roxobox {
+  width: 180px;
+  font-size: 28px;
+  border-radius: 25px;
+  background-color:#dcd4ec;
+  padding: 20px;
+  margin: 10px;
+}
+
+.rosa2box {
+  width: 180px;
+  height: 200px;
+  font-size: 30px;
+  border-radius: 25px;
+  background-color: #f8cccc;
+  padding: 20px;
+  margin: 10px;
+}
+
+.empty {
+  width: 300px;
+  font-size: 30px;
+  border-radius: 25px;
+  font-size: 24px;
+  background-color: white;
+  padding: 20px;
+  margin: 10px;
+}
+.reveal a {
+  line-height: 1.1em;
+}

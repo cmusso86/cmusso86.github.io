@@ -1,0 +1,285 @@
+---
+title: Integração R e Python
+---
+
+<section>
+
+<h1 style="text-align: center">
+
+Estrutura da apresentação
+
+</h1>
+
+-   Motivação
+
+-   Introdução à linguagem python
+
+-   Integração R/python
+
+-   Equivalências do da disciplina no python
+
+-   ML com scikit-learn no R
+
+</section>
+
+<section class="title-slide">
+
+<h1 style="text-align: center">
+
+R ou Python?
+
+</h1>
+
+</section>
+
+<section>
+
+<h2>Uma briga (*quase*) superada ...</h2>
+
+::: columns
+::: {.column width="50%"}
+<img src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/r/r.png" style="width:192px;height:192px;"/>
+
+::: {style="font-size:34px"}
+-   Criado / Lançado em [1993/1995](https://www.stat.auckland.ac.nz/~ihaka/downloads/Interface98.pdf "R: Past and Future History") e mantido pela [R-Foundation](https://www.r-project.org/foundation/ "R Foundation")
+
+-   Estatísticos da Universidade de Aukland, NZ
+
+-   [Robert Gentleman](https://computationalbiomed.hms.harvard.edu/about/people/robert-gentleman-phd/), [Ross Ihaka](https://www.stat.auckland.ac.nz/~ihaka/), S Language
+:::
+:::
+
+::: {.column width="50%"}
+<img src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/python/python.png" style="width:192px;height:192px;"/>
+
+::: {style="font-size:34px"}
+-   Criado/Lançado em [1989/1991](https://python-history.blogspot.com/2009/01/brief-timeline-of-python.html), mantido pela [Python Sftware Foundation](https://www.python.org/psf/about/ "PSF")
+
+-   Por pelo programador holandês [Guido van Rossum](https://gvanrossum.github.io "Guido van Rossum")
+
+-   Que aparentemente gostava muito de [Monty Python](https://pt.wikipedia.org/wiki/Monty_Python)
+:::
+:::
+:::
+
+</section>
+
+<section>
+
+<h2>Uma briga (quase) superada ...</h2>
+
+<img src="https://miro.medium.com/max/960/0*9Zh9OeGCgskDRZRR." style="display: block; margin-left: auto; margin-right: auto; width: 50%;"/>
+
+<h3 style="text-align: center">
+
+Qual vocês acham que é o R?
+
+</h3>
+
+</section>
+
+<section>
+
+<h2>Uma briga (quase) superada ...</h2>
+
+::: columns
+::: {.column width="50%"}
+<img src="src/motivacao/pop.png" style="display: block; margin-left: auto; margin-right: auto; width: 100%;"/>
+:::
+
+::: {.column width="50%"}
+<img src="src/motivacao/pyrboth.png" style="display: block; margin-left: auto; margin-right: auto; width: 100%;"/>
+:::
+:::
+
+Fonte: [DataCamp](https://www.datacamp.com/tutorial/r-or-python-for-data-analysis?gclid=CjwKCAjwx7GYBhB7EiwA0d8oe62HIH4PhZvzKsYS7ig8sm5KpoMdMs1nUUrU1fqplcuyUb5XL0KESxoCU04QAvD_BwE)
+
+</section>
+
+<section>
+
+<h2 style="text-align: center">
+
+[Hadley Wickham](https://hadley.nz)
+
+</h2>
+
+<img src="https://i.kinja-img.com/gawker-media/image/upload/…w_1600,h_900/a982ee645c2255de2f9cc08c55c649d3.JPG" style="display: block; margin-left: auto; margin-right: auto; width: 50%;"/>
+
+<h3 style="text-align: center">
+
+Cientista chefe na RStudio (futura Posit)
+
+</h3>
+
+"*Não é uma batalha \[...\] use o que te faz feliz!*" , [2019](https://qz.com/1661487/hadley-wickham-on-the-future-of-r-python-and-the-tidyverse/)
+
+</section>
+
+<section data-background-iframe="https://insights.stackoverflow.com/survey/2021#section-salary-salary-and-experience-by-language">
+
+</section>
+
+<section>
+
+<h3>Diferenças, vantagens, desvantagens....</h3>
+
+::: columns
+::: {.column width="50%"}
+::: {style="color:#2596be"}
+[**R**]{.underline}
+:::
+
+::: {style="font-size:30px"}
+-   **Usuários:** Acadêmicos, estatísticos, biólogos, economistas ...
+
+-   Modelos em poucas linhas, possibilidade de escrever de várias formas.
+
+-   Estatística e visualização ([ggplot2!](https://qz.com/1007328/all-hail-ggplot2-the-code-powering-all-those-excellent-charts-is-10-years-old/))
+
+-   CRAN, GitHub: + pacotes, + fáceis de instalar e mais documentados.
+:::
+:::
+
+::: {.column width="50%"}
+::: {style="color: green"}
+[**Python**]{.underline}
+:::
+
+::: {style="font-size: 30px"}
+-   **Usuários:** Cient. computação, Eng. software ...
+
+-   Sensível a indentação.
+
+-   ETL/ML workflows e ambientes de produção escaláveis
+
+-   Pacotes/dependências mais "chatinhos"
+:::
+:::
+:::
+
+</section>
+
+<section>
+
+<h2>E porque integrar R/python afinal?</h2>
+
+### 
+
+**Argumento 1:** Uma pode ser melhor que a outra para um determinado problema.
+
+::: columns
+::: {.column width="50%"}
+::: {style="color:green"}
+[Python melhor:]{.underline}
+:::
+
+<img src="https://requests.readthedocs.io/en/latest/_static/requests-sidebar.png" style="display: block; margin-left: auto; margin-right: auto; width: 30%;"/>
+
+-   2012: todos os requisitos.
+:::
+
+::: {.column width="50%"}
+::: {style="color: white"}
+::: {style="color:#2596be"}
+[R veio depois com:]{.underline}
+:::
+
+<img src="https://rvest.tidyverse.org/logo.png" style="display: block; margin-left: auto; margin-right: auto; width: 30%;"/>
+
+-   2014: ~~crawling~~
+
+-   2017: [RCrawler](https://www.softxjournal.com/article/S2352-7110(17)30011-0/fulltext "RCrawler")
+:::
+:::
+:::
+
+::: incremental
+-   Resumindo: O foco é resolver o [**problema**]{.underline}. Leia o [post](https://medium.com/built-to-adapt/8-simple-guidelines-for-data-projects-859a1a738ffc "Medium").
+:::
+
+</section>
+
+<section>
+
+<h2>E porque integrar R/python afinal?</h2>
+
+-   **Argumento 1:** Uma pode ser melhor que a outra para um determinado problema.
+
+    ::: columns
+    ::: {.column width="50%"}
+    ::: {style="color:#2596be"}
+    [R melhor:]{.underline}
+    :::
+
+    <img src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" style="display: block; margin-left: auto; margin-right: auto; width: 30%;"/>
+
+    <img src="https://github.com/rstudio/rmarkdown/raw/main/man/figures/logo.png" style="display: block; margin-left: auto; margin-right: auto; width: 30%;"/>
+    :::
+
+    ::: {.column width="50%"}
+    ::: {style="color: #2596be"}
+    RStudio recentemente:
+    :::
+
+    [Shiny for Python](https://shiny.rstudio.com/py/)
+
+    <img src="src/motivacao/quarto_logo.png" style="display: block; margin-left: auto; margin-right: auto; width: 100%;"/>
+    :::
+    :::
+
+    </section>
+
+<section>
+
+<h2>E porque integrar R/python afinal?</h2>
+
+**Argumento 2:** A sua equipe pode ter pessoas de diferentes linguagens.
+
+<img src="src/motivacao/srp.png" style="display: block; margin-left: auto; margin-right: auto; width: 50%;"/>
+
+*(ou uma mistura dos dois!)*
+
+</section>
+
+<section>
+
+<h4 style="text-align: center">
+
+Exemplos
+
+<h4>
+
+**1)** A preparação dessa apresentação
+
+**2)** Esta apresentação no rstudio::conf(2022) [![](src/motivacao/mix.png){style="display: block; margin-left: auto; margin-right: auto;" width="100%"}](https://github.com/melissavanbussel/rstudio-conf-2022/blob/main/VanBussel_Slides.pdf)
+
+<h4 style="text-align: center">
+
+Diversidade de pensamento
+
+<h4>
+
+*Mais chances de encontrar a **melhor** solução para um problema de forma mais **eficiente***. [Leia](https://www.rstudio.com/blog/r-vs-python-what-s-the-best-for-language-for-data-science/)
+
+</section>
+
+<section>
+
+<h3>Basicamente ...</h3>
+
+-   **A RStudio correu atrás**
+
+-   [RStudio: A Single Home for R and Python](RStudio:%20A%20Single%20Home%20for%20R%20&%20Python "RStudio: A Single Home for R & Python").
+
+    -   Pacote reticulate.
+
+    -   Quarto: (algo incrível aconteceu 😱)
+
+    -   outros produtos...
+
+-   Ah, uma parte dessa introdução desse seminário foi inpirado [apresentação](https://beatrizmilz.github.io/python-brasil-2021-reticulate/#18 "Bea Milz") da [Bea Milz](https://beatrizmilz.com).
+
+-   Então, vamos aprender um pouco de python agora?
+
+</section>

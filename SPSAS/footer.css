@@ -1,0 +1,7 @@
+.reveal .slide-footer {
+  background-image: url('img/logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  padding-bottom: 50px; /* Adjust as needed */
+}

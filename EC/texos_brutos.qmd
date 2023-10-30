@@ -1,0 +1,226 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+## https://m-clark.github.io/bayesian-basics/intro.html
+
+FOTO BAYES - FOI DESENVOLVIDO EM TANTO - SO GANHOU MAIS FORÇA AGORA COM O GANHO DE PODER COMPUTACIONAL
+
+One reason for the dramatic growth in Bayesian modeling is the availabil- ity of computational algorithms to compute the range of integrals that are necessary in a Bayesian posterior analysis.
+
+The Bayesian approach itself is very old at this point. Bayes and Laplace started the whole shebang in the 18th and 19th centuries1, and even the modern implementation of it has its foundations in the 30s, 40s and 50s of last century2. So while it may still seem somewhat newer relative to more common techniques, much of the groundwork has long since been hashed out, and there is no more need to justify a Bayesian analysis any more than there is to use the standard maximum likelihood or other approach3.
+
+While there are perhaps many reasons why the Bayesian approach to analysis did not catch on until relatively recently, perhaps the biggest is simply computational power. Bayesian analysis requires an iterative and time-consuming approach that simply wasn't viable for most applied researchers until modern computing. But nowadays, one can conduct such analysis even on their laptop very easily.
+
+## o q eh
+
+he Bayesian approach to data analysis requires a different way of thinking about things, but its implementation can be seen as an extension of traditional approaches. In fact, as we will see later, it incorporates the very likelihood one uses in standard statistical techniques. The key difference regards the notion of probability, which, while different than Fisherian or frequentist statistics, is actually more akin to how the average Joe thinks about probability
+
+## Prior, likelihood, & posterior distributions
+
+-   exemplo do futebol
+
+-   there is no free lunch
+
+-   subjetividade
+
+## ta esse foi um exemplo simples
+
+• write short scripts to define a Bayesian model • use or write functions to summarize a posterior distribution • use functions to simulate from the posterior distribution • construct graphs to illustrate the posterior inference
+
+## STAN
+
+Stan is freedom-respecting, open-source software (new BSD core, some interfaces GPLv3) for facilitating statistical inference at the frontiers of applied statistics.
+
+## artigo
+
+Stan, named after Stanislaw Ulam, a mathematician who was one of the devel- opers of the Monte Carlo method in the 1940s (Metropolis & Ulam, 1949), is a Cþþ program to perform Bayesian inference. The code is open source and is available at http://mc-stan.org/ along with instructions and a 500-page user manual. Stan 1.0 was released in 2012 and, as of this writing, is currently in Version 2.6.
+
+(
+
+The one unifying aspect of probabilistic programming is the use of computer programs to represent probability distributions and their transformations under various operations. Ambiguities arise, however, when specifying exactly which probability distributions and probabilistic operations are within the scope of a given probabilistic programming language.
+
+## stan
+
+The scope of the Stan project is large enough that it can be overwhelming for new and even advanced users. Its [massive cultural influence](https://twitter.com/betanalpha/status/999106548688400384) can make it seem even less accessible.
+
+Before going into any depth let's first motivate the basic functionality of Stan with a simple example.
+
+*Stan* is a comprehensive software ecosystem aimed at facilitating the application of Bayesian inference. It features an expressive probabilistic programming language for specifying sophisticated Bayesian models backed by extensive math and algorithm libraries to support automated computation. This functionality is then exposed to common computing environments, such as `R`, `Python`, and the command line, in user-friendly interfaces.
+
+Stan can be thought of as similar to Bugs (Lunn, Thomas, Best, & Spiegelhal- ter, 2000) and Jags (Plummer, 2003) in that it allows a user to write a Bayesian model in a convenient language whose code looks like statistics notation. Or Stan can be thought of as an alternative to programming a sampler or optimizer 530 Gelman et al. oneself. Stan uses the no-U-turn sampler (Hoffman & Gelman, 2014), an adap- tive variant of Hamiltonian Monte Carlo (Neal, 2011), which itself is a general- ization of the familiar Metropolis algorithm, performing multiple steps per iteration to move more efficiently through the posterior distribution.
+
+Stan is a free and open-source C++ program that performs Bayesian inference or optimization for arbitrary user-specified models and can be called from the command line, R, Python, Matlab, or Julia and has great promise for fitting large and complex statistical models in many areas of application. We discuss Stan from users' and developers' perspectives and illustrate with a simple but nontrivial nonlinear regression example.
+
+Consequently when supported by algorithms that require only density functions a probabilistic programming language can automatically implement conditioning and the estimation of conditional expectation values.
+
+density function but differentiable density functions defined over continuous product spaces.Continuous product spaces are vast span the majority of statistical applications, but this restriction does limit the scope of the language. What can't be captured, however, are largely probability distributions that we cannot faithfully compute anyways.
+
+A Stan program defines a product space consisting of unbound continuous components and bound continuous and discrete components, and an unnormalized probability density function over that product space. When evaluated at the bound variables this density function defines an a continuous, unnormalized conditional density function over the unbound variables suitable for algorithms like Hamiltonian Monte Carlo.
+
+## NUTS
+
+https://discourse.mc-stan.org/t/nuts-vs-hmc/16453
+
+Most of the computation is done using Hamiltonian Monte Carlo. HMC requires some tuning, so Matt Hoffman up and wrote a new algorithm, Nuts (the "No-U-Turn Sampler") which optimizes HMC adaptively. In many settings, Nuts is actually more computationally efficient than the optimal static HMC!
+
+Currently Stan uses an advanced dynamic Hamiltonian Monte Carlo algorithm that is not the No-U-Turn sampler. Just about every element of the algorithm has been improved based on theoretical guidance supported by empirical studies.
+
+http://www.stat.columbia.edu/\~gelman/research/unpublished/nuts.pdf This section refers to Betancourt 2016b, and would indicate to a very careful reader that Stan is using a version of NUTS that has been adapted/improved from the original specification of Hoffman and Gelman (2014). However, this distinction is easy to miss. It would be nice if a phrase/sentence or two could be added in key places (e.g., both in this section and in the overall introduction to this section that clarified that a variant was being used. (See this tweet from 2016.
+
+Hamiltonian Monte Carlo corresponds to an instance of the Metropolis--Hastings algorithm, with a Hamiltonian dynamics evolution simulated using a time-reversible and volume-preserving numerical integrator (typically the leapfrog integrator) to propose a move to a new point in the state space. Compared to using a Gauss
+
+Stan is a state-of-the-art platform for statistical modeling and high-performance statistical computation. Thousands of users rely on Stan for statistical modeling, data analysis, and prediction in the social, biological, and physical sciences, engineering,
+
+full Bayesian statistical inference with MCMC sampling (NUTS, HMC)
+
+approximate Bayesian inference with variational inference (ADVI)
+
+penalized maximum likelihood estimation with optimization (L-BFGS)
+
+Stan interfaces with the most popular data analysis languages (R, Python, shell, MATLAB, Julia, Stata) and runs on all major platforms (Linux, Mac, Windows). To get started using Stan begin with the Installation and Documentation pages.
+
+## Como o stan funciona
+
+Our first interaction with Stan as a user will be to specify a complete Bayesian model. This requires defining the observational space, y∈Y , the model configuration space, θ∈Θ , and then a joint probability density function over the product of these two spaces, π(y,θ).
+
+## funciona
+
+The Stan modeling language specifies each element of a Bayesian model through programming blocks. First the data block defines the components of the observational space,
+
+```{stan}
+data {
+  int N;
+  real y[N];
+}
+```
+
+Then the parameters block defines a parameterization of the components of the model configuration space,
+
+```{stan}
+
+parameters {
+  real theta;
+}
+```
+
+Finally the model block defines the target log probability density function by adding up each contributing log probability density function into a global target accumulator variable,
+
+```{stan}
+vector[N] mu;
+  mu = X * beta;            // Creation of linear predictor
+  
+  // priors
+  beta  ~ normal(0, 10);  
+  sigma ~ cauchy(0, 5);
+  
+  // likelihood
+  y ~ normal(mu, sigma);
+```
+
+```{stan}
+data {
+  int N;
+  real y[N];
+}
+
+parameters {
+  real theta;
+}
+
+model {
+  target += normal_lpdf(theta | 0, 1);
+  for (n in 1:N)
+    target += normal_lpdf(y[n] | theta, 1);
+}
+```
+
+Note that input variables are not given values within a Stan program but rather by the algorithms that evaluate a Stan program. Consequently they can be used within a Stan program without specifying explicit values.
+
+```{stan}
+functions {
+  real baseline(real a1, real a2, real theta) {
+    return a1 * theta + a2;
+  }
+}
+
+data {
+ real y;
+}
+
+transformed data {
+  real sigma = 1;
+}
+
+parameters {
+  real a1;
+  real a2;
+}
+
+transformed parameters {
+  real mu = baseline(a1, a2, 0.5);
+}
+
+model {
+  target += normal_lpdf(a1 | 0, 1);
+  target += normal_lpdf(a2 | 0, 1);
+  target += normal_lpdf(y | mu, sigma);
+}
+
+generated quantities {
+  int y_predict = normal_rng(mu, sigma);
+}
+```
+
+## diference de complilado e interpretado
+
+## algo parecido com rstanarm
+
+https://mc-stan.org/rstanarm/articles/rstanarm.html \## stan intefaxe
+
+Once we have specified our model we need to evaluate the components of the observational space on their observed values and compute the corresponding posterior expectation values. The conditioning and probabilistic computation is handled by the core libraries of Stan that convert a given Stan program into an executable program capable of evaluating the log posterior density function and its gradient function in order to run a high-performance implementation of Hamiltonian Monte Carlo. All of this machinery, however, is concealed behind an interface into which users input the observed data and from which they receive algorithm output and diagnostics.
+
+## librarys
+
+language library, a math library, an algorithm library, and a set of interfaces.
+
+## Documentos
+
+-   user guide https://mc-stan.org/docs/stan-users-guide/index.html
+-   reference manual https://mc-stan.org/docs/reference-manual/includes.html \## shiny stan
+
+install.packages("shinystan")
+
+## c++ compilacao
+
+The C++ backend allows for very fast computation, especially on commodity hardware like desktop and laptop computers. Moreover, the automated parsing of a Stan program into a C++ program, and then an executable program, gives users the benefit of that performance without limiting their modeling freedom or requiring any knowledge of C++ itself.
+
+Unfortunately this approach is not without its costs. In order for Stan to be able to compile models on the fly the user has to not only install a C++ toolkit on their computer but also direct the interface to that toolkit. Furthermore new features and improvements often require that users regularly update their toolkits. Installing and maintaining a C++ toolkit is a relatively advanced task, and the specific instructions can vary wildly from operating system to operating system, especially compared to the relatively straightforward installation of packages in environments like R and Python. The Stan development team puts untold numbers of hours into streamlining this process, but it is still likely to be the source of most difficulties when first acclimating to Stan.
+
+With that in mind, let's go into a little more depth about each element of the Stan ecosystem.
+
+The Stan Language Library consists of the specification of the Stan Modeling Language and its translation into a C++ function that exposes the target log probability density function. We will go into much more depth about the structure of the Stan Modeling Language in Section 4.
+
+The Stan compiler, also known as the Stan parser, translates or transpiles -- most people in the Stan community tend to use parse, compile, translate, and transpile as synonyms even though there are subtle differences between each -- a Stan program into a C++ program. The compiler recently underwent a complete rewrite which in the near future will allow for much more sophisticated analysis and manipulation of Stan programs during this compilation process.
+
+## MAth library
+
+In order to use a C++ program output by the compiler all of the expressions in that program need to have well-defined implementations. The Stan Math Library implements an expansive set of C++ functions from basic mathematics to linear algebra and probability theory to more advanced features like ordinary differential equation and algebraic equation solvers.
+
+Critically the Stan Math Library also implements automatic differentiation for all of its functions. Automatic differentiation is a technique for efficiently evaluating the exact values of the gradient of a C++ function at a given set of inputs. This means that every Stan program defines both a target log probability density function and the corresponding gradient function without any additional effort from the user. This then allows the use of extremely effective gradient-based algorithms like Hamiltonian Monte Carlo without the user having to pour through pages upon pages of analytic derivative calculations.
+
+The cost of automatic differentiation is only a small overhead relative to the cost of the evaluating the C++ function itself, but that overhead can be important in performance-limited circumstances. A key feature of advanced Stan use is identifying programming patterns with excessive overhead and replacing them with code that leads to more efficient automatic differentiation. 2.3 The Stan Algorithm Library The Stan Algorithm Library contains three gradient-based C++ algorithms that implement some form of probabilistic computation for models specified by Stan programs. A high-performance implementation of dynamic Hamiltonian Monte Carlo serves as the workhouse of the Stan Algorithm Library. Also included are a limited-memory Broyden--Fletcher--Goldfarb--Shanno optimizer for point estimation and a highly experimental version of automatic differentiation variational inference, or ADVI.
+
+The flexibility of the Stan Modeling Language is critical for the specifying the sophisticated models that live on the frontiers of applied statistics, but that breadth also stresses even the most advanced algorithms. Ultimately the user is responsible for verifying that a given algorithm has yielded estimation sufficiently accurate for their application, using whatever diagnostics are provided. Extensive theoretical and empirical work have verified that the dynamic Hamiltonian Monte Carlo algorithm in Stan is robust to a diversity of Stan programs with diagnostics that clearly identify failures. Modal estimation using the optimizer and variational estimation using ADVI have proven to be much more fragile, with failures manifesting in subtle ways that are often hard to diagnose.
+
+We will be working with dynamic Hamiltonian Monte Carlo exclusively in this case study and beyond.
+
+## pacotes
+
+-   Rstan
+-   rstanarm https://cran.r-project.org/web/packages/shinystan/shinystan.pdf \## Open Code & Reproducible Science Stan is freedom-respecting, open-source software (new BSD core, some interfaces GPLv3). Stan is associated with NumFOCUS, a 501(c)(3) nonprofit supporting open code and reproducible science, through which you can help support Stan.
+
+{r}
+1 + 1
