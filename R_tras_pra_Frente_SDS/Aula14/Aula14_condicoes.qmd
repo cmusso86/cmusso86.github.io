@@ -1,0 +1,514 @@
+---
+title: "Condições e fatores"
+subtitle: "Aula 14, M2"
+author: "Carolina Musso"
+institute: "Sala de Situação - UnB"
+title-slide-attributes:
+    data-background-image: img/fundo.png
+    data-background-size: cover
+    font-family: "Lato"
+format:
+  revealjs:
+    embed-resources: true
+    multiplex: true
+    incremental: true
+    logo: img/logo.png
+    scrollable: true
+    highlight-style: arrow
+    theme: [style.scss]
+    transition: fade
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+---
+
+## Esta semana
+
+### Aula 14 
+
+- As funções if(), if_else() e case_when() 
+
+- Pacotw forcats
+
+### Aula 24 - Tabela
+
+ - Finalizando noções sobre o pacote flextable()
+
+## Leituras para aprofundamento
+
+-   [EpiR-Handbook, 8 Cleaning and Core functions](https://epirhandbook.com/en/cleaning-data-and-core-functions.html)
+
+-   [Curso-R, 3.12.1 Condicionamento](https://livro.curso-r.com/3-12-controle-de-fluxo.html#condicionamento-if-e-else)
+
+-   [R4DS, 19.4. Conditional Execution](https://r4ds.had.co.nz/functions.html?q=else#conditional-execution)
+
+## if else
+
+As estruturas if e else servem para executarmos um código apenas se uma condição (teste lógico) for satisfeita.
+
+A estrutura geral de um `if statement` é como a seguir:
+
+. . . 
+
+```{r eval=F, echo=T}
+if (condition) {
+  # código a executar se a condição for verdadeira (retornar TRUE)
+} else {
+  # código a executar se a condição for falsa (retornar FALSE)
+}
+```
+
+## Exemplo
+
+-   Vamos tentar entender a lógica geral
+
+. . .
+
+```{r}
+x <- 2
+
+if (x == 1) {         
+  Sys.time()
+}
+```
+
+-   Nada acontece
+
+. . .
+
+```{r}
+if (x == 2) {         
+  Sys.time()
+}
+
+```
+
+## if else
+
+```{r}
+x <- 2
+
+if (x == 1) {         
+  Sys.time()
+} else {
+  "x não é 1"
+}
+
+```
+
+## É muito útil mas...
+
+-   Acho que ainda um pouco avançado para esse momento.
+-   Muito útil para escrever as próprias funções
+
+. . .
+
+```{r}
+
+
+minha_funcao <- function(x) {
+  if (x == 1) {         
+  Sys.time()
+} else {
+  "x não é 1"
+}
+} 
+  
+minha_funcao(2)
+```
+
+. . .
+
+```{r}
+minha_funcao(1)
+```
+
+-   Nós vamos focar em formas mais "enxuta": ifelse() e case_when()
+
+## Criando novas variáveis
+
+-   Com o mutate(), lembram?
+-   Agora juntamente com um ifelse() ou case_when()
+
+. . .
+
+```{r eval=F}
+dados %>% 
+  mutate(nova_var = ifelse(condição, "Caso afirmativo", "Caso negativo") )
+```
+
+## Um exemplo
+
+```{r echo=F}
+pacman::p_load(tidyverse, rio)
+dados_debola <- import("Exercicios/linelist_cleaned.rds") %>% as_tibble()
+```
+
+```{r}
+dados_debola %>% 
+  mutate(Port_Hospital = ifelse(hospital == "Port Hospital", "Sim", "Não")) %>% 
+  select(hospital, Port_Hospital) %>% 
+  head(10)
+```
+
+## Outro exemplo
+
+```{r}
+dados_debola %>% 
+  mutate(Fase = ifelse(age_years < 18, "Criança", 
+                       ifelse(age_years > 60, "Idoso", "Adulto"))) %>% 
+  select(age_years, Fase ) %>% 
+  head(10)
+  
+```
+
+-   mas
+
+. . .
+
+![](img/ifelse.png)
+
+## Recomendação nesse caso
+
+-   A função cut()
+-   Ótima para discretizar variáveis quantitativas
+
+. . .
+
+```{r}
+dados_debola %>% 
+  mutate(Faixa = cut(age_years, breaks=c(0, 20, 40, 60, 80, 100),
+                    right=F) )%>% 
+  select(age_years, Faixa ) %>% 
+  head(10)
+  
+```
+
+-   Posso mudar os labels
+
+. . .
+
+```{r}
+dados_debola %>% 
+  mutate(Faixa = cut(age_years, breaks=c(0, 20,  40,  60,  80, 100),
+                    labels= c("< 20 anos", "21-40 anos", "31-60 anos", 
+                              "61-80 anos", "> 80 anos"), 
+                    right=F) )%>% 
+  select(age_years, Faixa ) %>% 
+  head(10)
+  
+```
+
+## Ou case_when()
+
+```{r}
+dados_debola %>% 
+  mutate(idade_anos = case_when(
+       age_unit == "years"  ~ age,       
+       age_unit == "months" ~ age/12) ) %>% 
+  select(age_unit, age, idade_anos) %>% 
+  group_by(age_unit) %>% 
+  sample_n(3)
+
+```
+
+. . .
+
+```{r}
+dados_debola %>% 
+  mutate(Desfecho = case_when(
+       outcome == "Death"  ~ "Óbito",       
+       outcome == "Recover" ~ "Recuperado",
+      .default  = "Investigar")) %>% 
+  select(outcome, Desfecho) %>% 
+  group_by(outcome) %>% 
+  sample_n(3)
+```
+
+
+# Fatores
+
+## Leituras para aprofundamento
+
+-   [EpiHandbook, 11. Factor](https://epirhandbook.com/en/factors.html)
+
+-   [Curso - R, 7.4 O pacote forcats](https://livro.curso-r.com/7-6-forcats.html)
+
+-   [DataCamp, Categorical Data in tidyverse](https://app.datacamp.com/learn/courses/categorical-data-in-the-tidyverse)
+
+-   [R4DS, 15. Factors](https://r4ds.had.co.nz/factors.html)
+
+-   [forcats, Cheatsheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/factors.pdf)
+
+## Fatores
+
+-   Variáveis do tipo caractere mas...
+
+    -   Que têm uma ordem inata
+
+-   Variável qualitativa/categórica ordinal
+
+-   Possui níveis (não necessariamente alfabético).
+
+. . .
+
+<center><img src="img/forcats.png" height="320px&quot;"/></center>
+
+## Ordem do R
+
+::: panel-tabset
+## Importando
+
+```{r }
+rm(list=ls()) # só para limpar o ambiente
+pacman::p_load(tidyverse, rio, janitor)
+
+linelist <- import("Exercicios/linelist_cleaned.rds")
+```
+
+## Preparando
+
+```{r }
+linelist <- linelist %>% 
+  mutate(delay_cat = case_when(
+    # criteria                                   # new value if TRUE
+    days_onset_hosp < 2                        ~ "< 2 dias",
+    days_onset_hosp >= 2 & days_onset_hosp < 5 ~ "2-5 dias",
+    days_onset_hosp >= 5                       ~ "> 5 dias")) %>% 
+  filter(!is.na(delay_cat)) %>% 
+  select(hospital, date_onset, days_onset_hosp, delay_cat, ct_blood)
+```
+
+## Os dados
+
+```{r}
+str(linelist)
+```
+
+## Gráfico
+
+```{r }
+ggplot(data = linelist)+
+  geom_bar(  #semelhante ao geom_hist mas para categóricas
+    mapping = aes(x = delay_cat))+
+  theme_classic(base_size = 16)
+```
+:::
+
+## Mudar a ordem
+
+Para ver as categorias que tenho:
+
+```{r}
+#unique(dados$nome_coluna) estrutura
+unique(linelist$delay_cat)
+```
+
+```{r, echo=F}
+linelist_fator <- linelist %>%
+  mutate(delay_cat = fct_relevel(delay_cat))
+```
+
+-   Caso ela já fosse um fator:
+
+. . .
+
+```{r}
+unique(linelist_fator$delay_cat)
+```
+
+. . .
+
+```{r}
+str(linelist_fator)
+```
+
+-   Pronto, agora que sei o que tem, posso reordenar.
+
+## Reordenando
+
+::: panel-tabset
+## Pacote forcats
+
+```{r}
+linelist_fator <- linelist %>%
+  mutate(delay_cat = fct_relevel(delay_cat, 
+                                 "< 2 dias", 
+                                 "2-5 dias","> 5 dias"))
+
+unique(linelist_fator$delay_cat)
+```
+
+-   As funções começam com "fct\_"...
+
+-   A variável não precisa ser fator de antemão, mas automaticamente virará.
+
+## R base
+
+```{r}
+linelist_fator <- linelist %>%
+  mutate(delay_cat = factor(delay_cat, 
+                            levels=c("< 2 dias", 
+                                 "2-5 dias","> 5 dias")))
+```
+:::
+
+# Como ficou
+
+```{r fig.align='center'}
+ggplot(linelist_fator )+
+  geom_bar(mapping = aes(x = delay_cat))+
+  theme_classic(base_size = 16)
+```
+
+## Diretamente no gráfico
+
+```{r eval=F}
+ggplot(data = linelist)+
+  geom_bar(mapping = aes(x = fct_relevel(delay_cat, 
+                    c("< 2 dias", 
+                                 "2-5 dias","> 5 dias"))))+
+  theme_classic(base_size = 16)
+```
+
+. . .
+
+```{r echo=F, fig.align='center'}
+ggplot(data = linelist)+
+  geom_bar(mapping = aes(x = fct_relevel(delay_cat, 
+                    c("< 2 dias", 
+                                 "2-5 dias","> 5 dias"))))+
+  theme_classic(base_size = 16)
+```
+
+-   Vocês já sabem mudar os eixos!
+
+# Outras formas
+
+-   Mudar apenas uma posição.
+
+. . .
+
+```{r}
+
+linelist %>% 
+  mutate(delay_cat = fct_relevel(delay_cat, "< 2 dias", after = 1)) %>% 
+  tabyl(delay_cat)
+```
+
+-   *Novidade pra vocês:* função `tabyl()` pacote `janitor`.
+
+## Pela frequência:
+
+::: panel-tabset
+## Decrescente
+
+```{r}
+linelist %>% 
+ggplot(aes(x = fct_infreq(delay_cat)))+
+  geom_bar()+
+  labs(x = "Oportunidade sintomas-internação (dias)",
+       title = "Ordenado por frequência decrescente")+
+  theme_classic(base_size = 16)
+```
+
+## Crescente
+
+```{r}
+linelist %>% 
+ggplot(data = , aes(x = fct_rev(fct_infreq(delay_cat))))+
+  geom_bar()+
+  labs(x = "Oportunidade sintomas-internação (dias)",
+       title = "Ordenado por frequência crescente")+
+  theme_classic(base_size = 16)
+```
+:::
+
+## Pela frequência
+
+::: panel-tabset
+## Original
+
+```{r}
+linelist %>% 
+ggplot( )+
+  geom_boxplot(aes(x = delay_cat,y = ct_blood))+
+  theme_classic(base_size = 16)
+```
+
+## Pela mediana
+
+```{r}
+linelist %>% 
+ggplot( )+
+  geom_boxplot(
+    aes(x = fct_reorder(delay_cat, ct_blood, "median"),
+        y = ct_blood))+
+  theme_classic(base_size = 16)
+```
+:::
+
+## Número de níveis
+
+::: panel-tabset
+## Adicionar
+
+```{r}
+
+linelist %>% 
+  mutate(delay_cat = fct_expand(delay_cat,
+                                "Não adimitido", 
+                                "Transferido")) %>%
+tabyl(delay_cat) #pacote janitor
+```
+
+## Remover
+
+```{r}
+linelist %>% 
+  mutate(delay_cat = fct_drop(delay_cat)) %>% 
+  tabyl(delay_cat)
+```
+:::
+
+## Agrupar em "outros"
+
+::: panel-tabset
+## Escolha previamente
+
+```{r}
+linelist %>% 
+ mutate(hospital = fct_other(                      
+    hospital,
+    keep = c("Port Hospital", "Central Hospital"),  
+    other_level = "Outros")) %>% 
+  tabyl(hospital)    
+```
+
+## Escolha os mais frequêntes
+
+```{r}
+linelist %>% 
+mutate(hospital = fct_lump(                     
+    hospital,
+    n = 2,                                           
+    other_level = "Outros")) %>%           
+  tabyl(hospital)  
+```
+
+## Mudando os nomes
+
+```{r}
+ linelist %>% 
+  mutate(hospital = fct_lump(hospital,
+    n = 2, other_level = "Outros")) %>%     
+  mutate(hospital = fct_recode(
+    hospital,
+    "Faltante" = "Missing")) %>% 
+  tabyl(hospital)
+```
+:::
+
+# Obrigada!
+
