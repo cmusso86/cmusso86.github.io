@@ -1,0 +1,91 @@
+---
+title: "Exercicio aula 23 - ifelse() e outras funções"
+author: "Carolina Musso"
+date: "2023-04-02"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, flextable, officer,  scales)
+
+
+# Bancos e manipulações----
+
+dados_covid <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+  
+  
+sort(unique(dados_covid$Country))
+```
+
+# 1) 
+Inicie a análise filtrando a base para que ela contenha apenas notificações do Brasil, Portugal, Nigéria, Índia, Estados Unidos e Austrália. (Dica, usando o operador %in% pode ser mais fácil). 
+
+Também exclua da base as linhas em que q quantidade de novos casos foi negativa. 
+
+Em seguida, encadeie o resultado com o pipe e crie uma variável binária (ou seja, só pode ter dois valores possíveis) chamada `Houve_Casos`  utilizando o mutate() e o ifelse(). Essa variável deve indicar se naquele dia ocorreu algum caso (pelo menos 1) de covid ou nenhum caso. Salve isso em um novo objeto.
+
+```{r}
+paises <- c("Brazil", "Portugal", "Australia","United States of America", "India", "Nigeria" )
+
+dados_trat <- dados_covid %>% 
+  filter(Country %in% paises,
+         New_cases>=0) %>% 
+  mutate(Houve_Casos = ifelse(New_cases>0,"Sim","Nao"))
+
+```
+
+# 2) 
+Vamos praticar um pouco mais outras funções que já vimos no curso. 
+
+Com o objeto criado acima, encadeie um pipe novamente, agora para a função group_by(), onde você agrupará segundo três variáveis: região WHO, o país e também a nova variável criada (`Houve_Casos` ). Chame o pipe novamente e sumarize os resultados utilizando a função count(). Você pode salvar essa nova manipulação como um novo objeto. 
+
+Obs: A função count() é especial, não precisa ser apresentada dentro da função summarize() e é apresentada diretamente. Caso prefira manter a lógica do group_by() + summarize() você pode usar a funcao n(), que não recebe nenhum argumento. 
+
+```{r}
+(dados_trat_resumo <- dados_trat %>% 
+  group_by(WHO_region, Country, Houve_Casos) %>% 
+  count())
+
+(dados_trat_resumo <- dados_trat %>% 
+  group_by(WHO_region, Country, Houve_Casos) %>% 
+  summarise(N=n()))
+
+```
+
+# 3) 
+
+Use a função case_when() para "traduzir" as siglas da região WHO (EMRO, AMRO) desse novo objeto, para os nomes dos principais continentes em Português (as regiões da WHO não são exatamente os continentes, mas isso será equivalente nesse exemplo específico).
+
+Em seguida, exclua da base a coluna antiga de WHO_region, usando a função select() ( Lembre-se que os dados foram agrupados segundo essa coluna, então para conseguir excluí-la você irá precisar usar o ungroup() na base primeiro). 
+
+```{r}
+dados_trat_resumo_trad <- dados_trat_resumo %>% 
+  mutate(Continente= case_when(WHO_region =="AFRO" ~ "África",
+                               WHO_region =="AMRO" ~ "Américas",
+                               WHO_region =="EURO" ~ "Europa",
+                               WHO_region =="SEARO" ~ "Ásia",
+                                WHO_region =="WPRO" ~ "Oceania")) %>% 
+  ungroup() %>% 
+  select(-WHO_region)
+```
+
+
+# 4) 
+
+Na base criada na questao 1, use a função cut() para criar uma nova variável categórica chamada Quantidade_casos que apresente o número de casos diários como os grupos: "Nenhum","Algumas unidades",  "Dezenas de casos", "Centenas de casos" ou "Milhões de casos". Talvez a informação que o máximo de casos ocorridos até hoje em um dia no mundo foi de ~ 7 milhões na China. 
+
+Em seguida agrupe por país e essa nova variável e conte quantos dias acotecem em cada uma dessas categorias. Qual país chegou a apresentar dias com mais de um milhão de casos, e quantos dias foram?
+
+```{r}
+dados_trat %>% 
+  mutate(Quantidade_casos=cut(New_cases, breaks = c(0, 3, 10, 100, 100000, 1265520 ))) %>% 
+  group_by(Country, Quantidade_casos) %>% 
+  count()
+```
+
