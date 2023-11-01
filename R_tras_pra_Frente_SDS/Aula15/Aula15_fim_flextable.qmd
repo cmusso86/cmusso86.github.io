@@ -1,0 +1,295 @@
+---
+title: "Flextable final"
+subtitle: "Aula 15, M2"
+author: "Carolina Musso"
+institute: "Sala de Situação - UnB"
+title-slide-attributes:
+    data-background-image: img/fundo.png
+    data-background-size: cover
+    font-family: "Lato"
+format:
+  revealjs:
+    embed-resources: true
+    multiplex: true
+    incremental: true
+    logo: img/logo.png
+    scrollable: true
+    highlight-style: arrow
+    preview-links: true
+    theme: [style.scss]
+    transition: fade
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+## Esta semana
+
+
+### Aula 14 {style="color: gray;"}
+
+- [As funções if(), if_else() e case_when()]{style="color: gray;"}
+
+- [Pacote forcats]{style="color: gray;"}
+
+### Aula 15 - Tabela
+
+ - Mais sobre o pacote `flextable`: mesclar células e condicionamento
+
+## Leituras para aprofundamento
+
+-   [EpiR-Handbook, 29. Tables for presentation](https://ardata-fr.github.io/flextable-book/)
+
+-   [flextable book](https://ardata-fr.github.io/flextable-book/)
+
+-   [flextable overview](https://mran.revolutionanalytics.com/snapshot/2019-02-07/web/packages/flextable/vignettes/overview.html)
+
+-   [flextable gallery](https://ardata-fr.github.io/flextable-gallery/gallery/)
+
+-   [flextable RDocumentation](https://www.rdocumentation.org/packages/flextable/versions/0.7.0)
+
+```{r echo=F}
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, flextable, scales, officer)
+  
+knitr::opts_chunk$set("ft.shadow" = FALSE)
+
+# importando a base
+dados_covid <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv", na.strings = "")
+
+```
+
+## Dados de Hoje
+
+-   Incrementando nosso código
+
+. . .
+
+```{r out.width="50%"}
+
+paises <- c("Brazil", "Italy", "France", "Uruguay")
+
+letalidade <- dados_covid %>% 
+  filter(Country %in% paises, 
+         New_cases>0) %>% 
+  separate(Date_reported, c("Ano", "Mês", "Dia")) %>% 
+  filter(Ano=="2023"|Ano=="2022") %>% 
+  mutate(Country=case_when(
+    Country=="Brazil" ~ "Brasil",
+    Country=="Italy" ~ "Itália",
+    Country=="France" ~ "França",
+    Country=="Uruguay" ~ "Uruguai")) %>% 
+  mutate(letalidade_diaria = New_deaths/New_cases*100)%>% 
+   mutate(Continente = ifelse(Country=="Brasil"|Country=="Uruguai",
+                              "América do Sul", "Europa")) %>% 
+  group_by( Ano, Continente, Country) %>% 
+  summarise(letalidade_media = mean(letalidade_diaria), 
+            desvio_padrao = sd(letalidade_diaria ),
+            Casos_maximo = max(New_cases),
+            Obitos_maximo = max(New_deaths)) %>% 
+  ungroup() %>% 
+  mutate_if(is.numeric, ~format(., big.mark=".", decimal.mark=",", digits=2)) 
+  
+
+ letalidade
+```
+
+## flextable
+
+```{r eval=F}
+flextable(letalidade)
+```
+
+```{r include=FALSE}
+flextable( letalidade) %>% 
+  save_as_image("img/tab1.png")
+```
+
+![](img/tab1.png){fig-alt="Tab1" fig-align="center" width="150%"}
+
+## Editando com o que já sabemos
+
+. . .
+
+```{r eval=F}
+
+tab1 <- flextable( letalidade) %>% 
+  autofit() %>% 
+  align(align="r", part="all") %>% 
+  align(align="c", j=c(1,2),  part="all") %>% 
+  bold(part="header") %>% 
+  bold(j=c(1,2)) %>% 
+  bg(bg="lightgrey", j=1, part="all") %>% 
+  bg(bg="grey", j=c(2,3), part="all") %>% 
+  hline(i=c(2,4,6)) %>% 
+  vline(j=c(1,2,3)) %>% 
+  set_header_labels( 
+  Country="País", 
+  letalidade_media="Letalidade Média Diária",
+  desvio_padrao="Desvio Padrão",
+  Casos_maximo="Máximo de casos em 24h", 
+  Obitos_maximo="Máximo de óbitos em 24h")
+  
+  
+tab1
+```
+
+```{r include=FALSE }
+tab1 <- flextable( letalidade) %>% 
+  autofit() %>% 
+  align(align="r", part="all") %>% 
+  align(align="c", j=c(1,2),  part="all") %>% 
+  bold(part="header") %>% 
+  bold(j=c(1,2)) %>% 
+  bg(bg="lightgrey", j=1, part="all") %>% 
+  bg(bg="grey", j=c(2,3), part="all") %>% 
+  hline(i=c(2,4,6)) %>% 
+  vline(j=c(1,2,3)) %>% 
+  set_header_labels( 
+  Country="País", 
+  letalidade_media="Letalidade Média Diária",
+  desvio_padrao="Desvio Padrão",
+  Casos_maximo="Máximo de casos em 24h", 
+  Obitos_maximo="Máximo de óbitos em 24h")
+  
+  
+tab1 %>% save_as_image("img/tab2.png")
+```
+
+![](img/tab2.png){fig-alt="Tab2" fig-align="center" width="100%"}
+
+## Mesclando celulas
+
+```{r eval=F}
+
+tab2 <- tab1 %>% 
+  merge_v(j=c(1,2)) 
+
+tab2
+```
+
+```{r include=F}
+
+tab2 <- tab1 %>% 
+  merge_v(j=c(1,2))  %>% 
+  fix_border_issues(part="body")
+
+tab1 %>%  save_as_docx(path="img/tab3.docx")
+```
+
+![](img/tab3.png){fig-alt="Tab3" fig-align="center" width="100%"}
+
+-   Procure sobre a função fix_border_issues()
+
+## Coloração condicional
+
+```{r eval=F}
+tab3 <- tab2 %>% 
+  bg(i = ~ Country =="Brasil" ,  # nome da coluna original 
+     j = c(6,7),
+     bg="red")
+
+tab3
+```
+
+```{r include=FALSE}
+tab3 <- tab2 %>% 
+  bg(i = ~ Country =="Brasil" ,  # nome da coluna original 
+     j = c(6,7),
+     bg="red")
+
+tab3 %>% save_as_image("img/tab4.png")
+```
+
+![](img/tab4.png){fig-alt="Tab4" fig-align="center" width="100%"}
+
+## Coloração condicional
+
+```{r echo=F}
+tab2_num <- dados_covid %>% 
+  filter(Country %in% paises, 
+         New_cases>0) %>% 
+  separate(Date_reported, c("Ano", "Mês", "Dia")) %>% 
+  filter(Ano=="2023"|Ano=="2022") %>% 
+  mutate(Country=case_when(
+    Country=="Brazil" ~ "Brasil",
+    Country=="Italy" ~ "Itália",
+    Country=="France" ~ "França",
+    Country=="Uruguay" ~ "Uruguai")) %>% 
+  mutate(letalidade_diaria = New_deaths/New_cases*100)%>% 
+   mutate(Continente = ifelse(Country=="Brasil"|Country=="Uruguai",
+                              "América do Sul", "Europa")) %>% 
+  group_by( Ano, Continente, Country) %>% 
+  summarise(letalidade_media = mean(letalidade_diaria), 
+            desvio_padrao = sd(letalidade_diaria ),
+            Casos_maximo = max(New_cases),
+            Obitos_maximo = max(New_deaths)) %>% 
+  ungroup() %>% 
+  flextable() %>% 
+  autofit() %>% 
+  align(align="r", part="all") %>% 
+  align(align="c", j=c(1,2),  part="all") %>% 
+  bold(part="header") %>% 
+  bold(j=c(1,2)) %>% 
+  bg(bg="lightgrey", j=1, part="all") %>% 
+  bg(bg="grey", j=c(2,3), part="all") %>% 
+  hline(i=c(2,4,6)) %>% 
+  vline(j=c(1,2,3)) %>% 
+  set_header_labels( 
+  Country="País", 
+  letalidade_media="Letalidade Média Diária",
+  desvio_padrao="Desvio Padrão",
+  Casos_maximo="Máximo de casos em 24h", 
+  Obitos_maximo="Máximo de óbitos em 24h")
+```
+
+```{r eval=F}
+tab4 <- tab2_num  %>% 
+ bg(i = ~ Casos_maximo >200000 ,  # nome da coluna original 
+     bg="yellow") %>% 
+  colformat_double(decimal.mark = ",",
+                   digits = 2) %>% 
+  colformat_int(big.mark = ".")
+
+tab4
+```
+
+```{r include=F}
+tab4 <- tab2_num  %>% 
+  bg(i = ~ Casos_maximo >200000 ,  # nome da coluna original 
+     bg="yellow") %>% 
+  colformat_double(decimal.mark = ",",
+                   big.mark = ".",
+                   digits = 2) %>% 
+  colformat_int(big.mark = ".")
+
+tab4 %>%  save_as_image(path="img/tab5.png")
+```
+
+![](img/tab5.png){fig-alt="Tab3" fig-align="center" width="100%"}
+
+## COMENTÁRIOS
+
+-   Tem que ser o nome original na base! Sugestão: deixe para mudar os nomes só no final
+
+-   Vantagem: Não preciso dizer o número das linhas , ele vai atualizar baseado no valor do banco! Isso é mais reprodutível.
+
+-   **PARA CONDICIONAR SOBRE OS NÚMEROS, O R TEM QUE ESTAR RECONHECENDO COMO NUMÉRICO**
+
+    -   Por isso removi o mutate_if() que haviamos feito no início da manipulação.
+    -   Há possibilidade de mudar isso na própria tabela.
+
+## Tarefa do fim do módulo
+
+-   Entregar uma tabela em Word (.docx) criada com o **flextable** com uma base de dados do seu interesse. O código .Rmd deve ser entregue juntamente com a tabela gerada.
+
+-   Sugiro não utilizar as mesmas bases que usamos aqui na aula, a não ser que faça uma abordagem muito diferentes das já feitas.
+
+-   Para chegar na tabela, você deve usar funções de manipulações de dados de acordo como seu objetivo. Deve conter pelo menos alguma manipulação com o *filter()* e com o *mutate()*, **no mínimo**.
+
+-   Deve conter pelo menos 3 funções de formatação da tabela.
+
+-   **Defafio:** usar funções novas de formatação ou manipulação não apresentadas na aula.
+
+# Até o próximo módulo!
