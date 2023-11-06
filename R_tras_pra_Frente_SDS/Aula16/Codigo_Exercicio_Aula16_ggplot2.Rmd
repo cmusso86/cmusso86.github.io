@@ -1,0 +1,58 @@
+---
+title: "Aula 25 - ggplot2"
+output:
+  word_document
+---
+
+
+```{r pacotes, include=F }
+
+# PREPARAÇÕES  INICIAIS ----
+
+rm(list=ls())  #limpa  o ambient
+if (!require(pacman)) install.packages("pacman") #garante que tem o pacman
+pacman::p_load(tidyverse) #carrega 4 pacotes
+```
+
+```{r bancos, echo=F, message=F, warning=F }
+
+# BANCOS ----
+
+# banco bruto, como é baixado
+who_bruto <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv", na.strings = "")
+
+#banco somente com as colunas que quero trabalhar
+who_trat<-who_bruto %>% 
+  select(Date_reported,Country,New_cases,Cumulative_cases, New_deaths)
+
+
+```
+
+```{r, include=F}
+
+# MANIPULAÇÕES NO BANCO -----------
+
+# calculo dos casos acumulados 
+
+who_acumulado<-who_trat %>% 
+  group_by(Country) %>% # agrupando  (tabela dinamica)
+  summarise(Acumulado=max(Cumulative_cases, na.rm=T)) %>% # agrupando  (tabela dinamica)
+  filter (Acumulado > 10000000) # filtrando os que tem mais de 10 milhões
+
+
+# calculo por semana epidemiologica 
+
+who_semana <-who_trat %>% 
+  mutate(Ano=format(Date_reported, "%Y"),
+         semana=epiweek(Date_reported)) %>% 
+  filter(Ano=="2021") %>% 
+  group_by(semana) %>% 
+  summarise(Casos_Mundo=sum(New_cases, na.rm=T),
+            Obitos_Mundo=sum(New_deaths, na.rm=T)) 
+
+```
+
+# Crie ao menos 2 gráficos diferentes para visualizar alguma variável do seu interesse usando algum dos objetos criados acima.
+
+
+
