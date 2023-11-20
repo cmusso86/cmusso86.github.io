@@ -1,0 +1,207 @@
+---
+title: "Graficos"
+author: "`r Sys.Date()`"
+date: "2022-05-17"
+output:
+  word_document
+---
+
+```{r pacotes, include=F }
+
+# PREPARAÇÕES  INICIAIS ----
+
+rm(list=ls())  #limpa  o ambient
+if (!require(pacman)) install.packages("pacman") #garante que tem o pacman
+pacman::p_load(tidyverse, rio, sf, rnaturalearth, geobr, 
+               lubridate, ggspatial, ggthemes, gsubfn) 
+
+pacman::p_install_gh("yutannihilation/ggsflabel")
+
+# installr::install.Rtools(keep_install_file=TRUE)
+
+funcao_limpeza<-function(x){
+  limpeza_acentos <- list('Š'='S', 'š'='s', 'Ž'='Z', 'ž'='z', 'À'='A', 'Á'='A', 'Â'='A', 'Ã'='A', 'Ä'='A', 'Å'='A', 'Æ'='A', 'Ç'='C', 'È'='E', 'É'='E','Ê'='E', 'Ë'='E', 'Ì'='I', 'Í'='I', 'Î'='I', 'Ï'='I', 'Ñ'='N', 'Ò'='O', 'Ó'='O', 'Ô'='O', 'Õ'='O', 'Ö'='O', 'Ø'='O', 'Ù'='U','Ú'='U', 'Û'='U', 'Ü'='U', 'Ý'='Y', 'Þ'='B', 'ß'='Ss' )
+  gsubfn(paste(names(limpeza_acentos),collapse='|'), limpeza_acentos,x)}
+```
+
+```{r bancos, echo=F, message=F, warning=F }
+
+# BANCOS DE CASOS----
+
+#MUNDO
+#banco bruto da OMS, como é baixado da internet, Casos Covid, reais
+who_bruto <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv", na.strings = "")
+
+# BRASIL
+brasil_bruto<-import("covid_br_2022.csv")
+
+#DF
+df_bruto<-import("https://covid19.ssp.df.gov.br/resources/dados/dados-abertos.csv?param=[random]")
+
+
+# SHAPEFILES ----
+
+# online
+
+#MUNDO
+mundo<-ne_countries(scale = "medium", returnclass = "sf") %>% 
+  dplyr::rename(Country=admin) # PARA PODER FAZER O JOIN
+
+# BRASIL
+estados<- read_sf( dsn = "shapefiles/.",
+                  layer="UFBR")%>% 
+  rename(estado=SIGLA) 
+
+#no disco
+#DF
+ras_df <- read_sf( dsn = "shapefiles/.",
+                  layer="Regioes_Administrativas")%>% 
+  mutate(RA=funcao_limpeza(ra)) 
+
+```
+
+```{r MANIPULACOES , include=F}
+
+# MANIPULAÇÕES NO BANCO -----------
+
+#banco somente com as colunas que quero trabalhar na OMS
+who_trat<-who_bruto %>% 
+  dplyr::select(WHO_region,Date_reported,Country,New_cases,Cumulative_cases, New_deaths)
+# calculo dos casos acumulados 
+
+who_acumulado<-who_trat %>% 
+  dplyr::group_by(WHO_region, Country) %>% # agrupando  (tabela dinamica)
+  dplyr::summarise(Acumulado=max(Cumulative_cases, na.rm=T)) 
+
+# calculo por semana epidemiologica 
+
+who_semana <-who_trat %>% 
+  mutate(Ano=format(Date_reported, "%Y"),
+         semana=epiweek(Date_reported)) %>% 
+  filter(Ano=="2021") %>% 
+  group_by(semana) %>% 
+  summarise(Casos_Mundo=sum(New_cases, na.rm=T),
+            Obitos_Mundo=sum(New_deaths, na.rm=T)) 
+
+
+# covid Brasil
+
+brasil_acumulado<-brasil_bruto %>% 
+  filter(municipio!="")%>% 
+  group_by(estado) %>% 
+  summarise(Acumulado=sum(casosNovos, na.rm=T))
+
+
+# covid df
+
+df_trat<-df_bruto %>% 
+  filter(!is.na(RA)) %>% 
+  mutate(RA=toupper(RA))
+
+df_acumulado<-df_trat %>% 
+  group_by(RA) %>% 
+  summarise(Acumulado=n()) %>% 
+  mutate(RA=funcao_limpeza(RA)) %>% 
+  group_by(RA) %>% 
+  mutate(Acumulado=sum(Acumulado))
+
+```
+
+
+# Joins
+
+```{r}
+covid_mundo_com_shape<-left_join(who_acumulado,  mundo)
+
+covid_brasil_com_shape<-left_join(brasil_acumulado, estados)
+```
+
+
+# Mapas
+
+## Mundo
+
+```{r}
+ggplot2::ggplot(mundo)+
+  geom_sf(aes(geometry=geometry))
+```
+
+```{r}
+eixo = function(x) format(x, big.mark = ".",   decimal.mark = ",",scientific = FALSE)
+
+ggplot(covid_mundo_com_shape,aes(geometry=geometry))+
+  geom_sf(aes(fill=Acumulado ))+
+  scale_fill_distiller(direction=1, labels = eixo)+
+  theme_map()
+
+
+```
+
+- E agora? Alguma idéia?
+
+Trabalhar o banco para inconsistências no nome. Sugestão, usar o código ISO
+
+```{r}
+mundo_iso<-ne_countries(scale = "medium", returnclass = "sf") %>% 
+  dplyr::rename(iso=iso_a2)
+
+who_acumulado_iso<-who_bruto %>% 
+  dplyr::group_by(Country_code) %>% #iso
+  dplyr::summarise(Acumulado=max(Cumulative_cases, na.rm=T)) %>% 
+  rename(iso=Country_code)
+
+covid_mundo_com_shape_iso <- left_join(who_acumulado_iso, mundo_iso)
+
+```
+
+
+## Brasil
+
+```{r}
+ggplot(estados)+
+  geom_sf(aes(geometry=geom)) # quando chama "geom" ele reconhece automatico!
+```
+
+
+```{r}
+ggplot(covid_brasil_com_shape)+
+  geom_sf(aes(geometry=geom, fill=Acumulado))# quando chama "geom" ele reconhece automatico!
+  
+```
+
+
+```{r}
+ggplot(covid_brasil_com_shape)+
+  geom_sf(aes(geometry=geom))+
+  geom_sf(aes(geometry=centro, size=Acumulado), color="red", alpha=0.5)
+  
+```
+
+# Região Administrativa
+
+```{r}
+
+# consertar problemas
+
+```
+
+
+# Firulas
+
+```{r}
+coord_sf(xlim = c(-88, -78), ylim = c(24.5, 33), expand = FALSE)
+
+geom_sf_text(aes(label=estado, geometry=centro), size=2.5, fontface="bold")
+
+geom_sf_label(aes(geometry=centro,label = estado))
+
+scale_size(range = c(0, 10))+
+
+theme_map()
+  
+annotation_scale(location="br")
+
+
+    
+```
+
