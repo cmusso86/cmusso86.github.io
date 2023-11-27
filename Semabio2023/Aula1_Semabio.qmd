@@ -1,0 +1,436 @@
+---
+title: "Aula 1 "
+subtitle: "Semabio"
+author: "Carolina Musso"
+institute: "IB/UnB"
+title-slide-attributes:
+    data-background-image: img/fundo.png
+    data-background-size: contain
+    font-family: "Lato"
+format:
+  revealjs:
+    embed-resources: true
+    multiplex: true
+    incremental: true
+    logo: img/logo.png
+    scrollable: true
+    highlight-style: arrow
+    theme: [style.scss]
+    transition: fade
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Sobre o curso
+
+-   Origens
+
+-   **Estrutura**:
+
+    -   Aula 1: Instalação e Rmarkdown
+    -   Aula 2: Erros comuns e gráficos com ggplot
+    -   Aula 3: Tabelas resumo e testes estatísticos
+    -   Aula 4: Pendências e Relatório automatizado final
+
+## Nossa bibliografia
+
+-   [The Epi-R Handbook](https://epirhandbook.com/en/index.html)
+
+-   [CURSO-R Ciência de Dados em R](https://livro.curso-r.com/index.html)
+
+-   [R for data Science](https://r4ds.had.co.nz)
+
+-   **Outras** . . .
+
+-   [Data Analysis and Visualisation in R for Ecologists](https://datacarpentry.org/R-ecology-lesson/00-before-we-start.html)
+
+-   [R for ecological sciences](https://brouwern.github.io/BOOK_R_Ecological_Data_Science/)
+
+-   [Modern Statistics with R](https://www.modernstatisticswithr.com)
+
+## Quem somos nós?
+
+::: columns
+::: {.column width="50%"}
+![](img/sara.jpg)
+:::
+
+::: {.column width="50%"}
+-   Bióloga, doutora em ecologia de vegetal 🌱
+
+-   Servidora da SES/DF - Vigilância Epidemiológica
+
+-   Pesquisadora Colaboradora UnB
+
+-   Estudante (eternamente) de Estatística na UnB
+
+-   Fã de [Sara's Scribbles](https://sarahcandersen.com/about) e outros cartoons
+:::
+:::
+
+::: footnote
+cmusso86\@gmail.com; GitHub: [cmusso86](https://github.com); Linkedin: [cmusso86](www.linkedin.com/in/cmusso86)
+:::
+
+## Mas o que eu faço mesmo na prática?
+
+-   Ajudo as pessoas com análises em R.
+
+-   Já ouvira falar? **Enquete**
+
+-   Que nada a ver...
+
+-   Mas peraí, essa apresentação é pra ficar falando de você ou é pra ajudar a gente em alguma coisa afinal?
+
+. . .
+
+<center>![](img/smurf.webp){height="250"}</center>
+
+## Calma jovem padawan ...
+
+-   Vamos chegar lá!
+
+-   O que todo esse caminho tem em comum?
+
+-   **Análise de dados!**
+
+. . .
+
+<center>![](img/data-analysis.gif){width="400"}</center>
+
+## A revolução dos dados
+
+"Entre o início da civilização e 2003, foram criados 5 exabytes de informação, mas atualmente essa quantidade de informação é gerada a cada 2 dias, e o ritmo está acelerando."
+
+> -   Eric Schmidt, CEO Google
+
+
+## Importância da reprodutibilidade
+
+-   Crise de repoducibilidade/replicabilidade
+
+    <center>![](images/economist%202.png)</center>
+
+-   [Why](https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0020124)
+
+## O que é o R
+
+**Enquete**
+
+-   Um programa de análise Estatística?
+
+-   Uma linguagem de programação?
+
+-   Um ambiente de programação?
+
+-   Uma comunidade?
+
+-   **TODAS AS ALTERNATIVAS!**
+
+## O que é uma linguagem de programação?
+
+-   Instruções que damos para a máquina resolver problemas.
+
+-   Mais flexível e poderoso do que operar somente a interface
+
+. . .
+
+![](img/pseudocodigo.png){fig-align="center" width="567"}
+
+## E o que dá pra fazer no R?
+
+-   Testes Estatísticos
+
+-   Gráficos
+
+-   Tabelas
+
+-   Mapas
+
+-   Web Apps
+
+-   Desenvolver pacotes...
+
+-   Sua monografia/tese/relatórioIC INTEIRA. Do início ao fim.
+
+## E o que dá pra fazer no R?
+
+Resumindo... Tudo!
+
+![](images/canivete.jpg){fig-align="center" width="325"}
+
+
+
+## Enquete (é difícil?)
+
+. . .
+
+[Jornada do Herói](https://www.ted.com/talks/matthew_winkler_what_makes_a_hero?utm_campaign=tedspread&utm_medium=referral&utm_source=tedcomshare)
+
+::: centered
+![](images/heros.png){width="300/"}
+:::
+
+## Exemplos
+
+-   Esta apresentação.
+-   [Livros](https://r4ds.had.co.nz)
+-   [Dashboards](https://psim.shinyapps.io/business_game/?_ga=2.140054067.1043151216.1676939547-1137527662.1676939547)
+-   Uma infinidade de gráficos: [R gallery](https://r-graph-gallery.com), [Data-to-Viz](https://www.data-to-viz.com)
+-   [Blogs](https://beamilz.com)
+-   [Relatórios automatizados](https://www.saude.df.gov.br/documents/37101/0/Boletim_Covid_932.pdf)
+
+## Outras vantagens
+
+-   **Gratuito e open source:**
+    -   Vai conseguir usar sempre!
+-   **Um grande processo colaborativo:**
+    -   O que você imaginar alguém já fez! (E provavelmente vai te ajudar)
+-   **"Conversa" com outras linguagens e ambientes.**
+    -   LateX, Markdown, Python, Collab, GitHub...
+-   **REPRODUTIBIBILIDADE DAS SUAS ANÁLISES.**
+    -   Bom pra você e para a ciência!
+
+## Cursos
+
+-   [DataCamp](https://app.datacamp.com/learn/courses/free-introduction-to-r)
+-   [Coursera](https://www.coursera.org/learn/data-analysis-r)
+-   [Udemy](https://www.udemy.com/course/introducao-a-programacao-para-biologosbiologicas-com-r/)
+-   [Harvad edX](https://www.edx.org/course/data-science-r-basics?index=product&queryID=15beff7b3e86fcef93ef76b044533a37&position=1)
+-   [Future Learn](,https://www.futurelearn.com/subjects/it-and-computer-science-courses/r-programming%3E)
+-   [Curso-R](https://curso-r.com)
+
+## Outras recomendações
+
+-   Muitos livros gratuitos online:
+    -   [R para usuários de Excel](https://rstudio-conf-2020.github.io/r-for-excel/)
+    -   [RMarkdown: The Defenitive Guide](https://bookdown.org/yihui/rmarkdown/)
+-   Canais e site:
+    -   [Marcel Santos](https://www.youtube.com/channel/UCO6x7sQurFTw0Su0vsexE5g)
+    -   [Beatriz Milz](https://beamilz.com)
+    -   [RLadies](https://www.rladies.org),[StatQuest](https://www.youtube.com/watch?v=pYxNSUDSFH4),[CheatSheets](https://posit.co/resources/cheatsheets/), [Reproducible Analysis with R](https://nceas.github.io/sasap-training/materials/reproducible_research_in_r_fairbanks/), [Esse Post](https://marcoarmello.wordpress.com/2019/06/03/rstats/), [Statistics By Jim](https://marcoarmello.wordpress.com/2019/06/03/rstats/)
+
+# Aceite o desafio!
+
+## Quem criou o R
+
+-   Criado / Lançado em [1993/1995](https://www.stat.auckland.ac.nz/~ihaka/downloads/Interface98.pdf "R: Past and Future History") e mantido pela [R-Foundation](https://www.r-project.org/foundation/ "R Foundation")
+
+-   Estatísticos da Universidade de Aukland, NZ
+
+-   [Robert Gentleman](https://computationalbiomed.hms.harvard.edu/about/people/robert-gentleman-phd/), [Ross Ihaka](https://www.stat.auckland.ac.nz/~ihaka/), S Language . . .
+
+. . .
+
+![](img/rlogo.jpg){fig-align="center" width="314"}
+
+## E o R-Studio?
+
+-   Criado pela empresa RStudio, atualmente [Posit](https://posit.co)
+
+    ![](img/posit_logo.jpg){width="356"}
+
+-   [Hadley Wickham](https://hadley.nz): Cientista de dados chefe
+
+-   Esforços atualmente para integrar com outras linguagem além do R
+
+## Dois softwares
+
+-   Um é a linguagem em si o cérebro: R
+
+-   O outro É a interface: O RStudio
+
+    -   Existem outras formas de usar o R, mas a mais intuitiva e a que vamos nos familirizar aqui é por meio do RStudio.
+
+. . .
+
+![](img/rstudio_logo.png){fig-align="center" width="395"}
+
+## Instalando o R
+
+-   Vamos seguir as istruções da mantenedora do RStudio, que é a Posit:
+
+    -   [Instalar](https://posit.co). www.posit.co
+
+    -   Canto superior direito
+
+-   [Tutorial](https://www.youtube.com/watch?v=A8A-OU_nlsw)
+
+-   Resumindo: Baixe tanto o R quanto o RStudio e instale ambos seguindo a configuração padrão
+
+## Material para aprofundamento
+
+-   [EpiHandbook, 1. Porque usar o R.](https://epirhandbook.com/en/r-basics.html)
+
+-   [Instalação do R](https://livro.curso-r.com/1-1-instalacao-do-r.html)
+
+-   Aulas na SDS, Unb: [1](https://youtu.be/AgmOlK0ABx8) e [2](https://youtu.be/LkAzLDEgGgk)
+
+## Como é a cara do R (sem RStudio)
+
+-   meio assustador não é?
+
+    ![](img/giphy.gif){width="390"}
+
+## Os Quatro Paineis do R-Studio
+
+![](img/paineis.png)
+
+# Prática
+
+# Rmarkdown
+
+## Vamos ver algo especial do R
+
+-   Bem diferente de como foi criado nos anos 90
+
+-   Rmarkdown ![](img/rmarkdown.png){width="164"}
+
+-   Quarto ![](img/quarto.png){width="330" height="92"}
+
+- [YiHui](https://yihui.org/en/)
+
+## R de trás-pra-frente
+
+-   Vamos ver um código pronto!
+
+-   Faça o download do arquivo disponível na plataforma e dê uma olhada no código por um tempo!
+
+-   Coloque as suas percepções, pontos que achou interessante, pontos que conseguiu "entender" no fórum de discussões!
+
+. . .
+
+## Em seguida, faça como eu!
+
+-   Se deu tudo errado, não se desespere!
+
+![](img/meg.webp){fig-align="center" width="384"}
+
+# Prática!
+
+## Você conseguiu diferenciar essas partes?
+
+::: columns
+::: {.column width="20%"}
+-   Cabeçalho
+
+-   Texto
+
+-   Código
+:::
+
+::: {.column width="80%"}
+![](img/tela_markdown.png){fig-align="center" width="859"}
+:::
+:::
+
+## Cabeçalho
+
+-   Metadados
+
+-   Linguagem YAML
+
+-   É MUITO sensível (qualquer coisa atrapalha)
+
+    ![](img/Captura%20de%20Tela%202022-10-24%20a%CC%80s%2017.41.50.png){width="455"}
+
+## Texto
+
+-   Markdown
+
+    ![](img/texto.png)
+
+## Código
+
+-   É o coração do R mesmo
+
+    -   Linguagem de programação
+
+    -   Como que difere de Excel (apontar e clicar?)
+
+        ![](img/chunk.png)
+
+## Brincando com o código
+
+![](img/dog.webp){fig-align="center" width="383"}
+
+-   Mudar de cor, posição ...
+
+## O que são esses chunks afinal?
+
+-   O "código" própriamente dito
+
+-   As partes dos chunks
+
+    -   cabeçalho (do chunk)
+    -   conteúdo
+        -   código
+        -   comentários
+
+## Desafio
+
+-   **Hashtag**: Qual a diferença dele (#) na parte do texto e dentro dos chunks de código?
+-   **Código inline**: Há outro tipo de escrita de código em R no script sem ser dentro dos chunks. Tente encontra-lo e coloque seus comentários no fórum!
+
+# Pacotes
+
+## E os pacotes o que são?
+
+-   Extensões do R
+
+-   Teremos uma aula só sobre o uso de pacotes
+
+    -   [CRAN](https://cran.r-project.org)
+
+    -   Vamos usar muito o [tidyverse](https://r4ds.had.co.nz)
+
+# Erros comuns
+
+-   [Erros comuns](https://epirhandbook.com/en/common-errors.html?q=error#common-errors)
+
+-   [Pedindo Ajuda](https://livro.curso-r.com/3-1-pedindo-ajuda.html)
+
+-   [Geting Help](https://epirhandbook.com/en/getting-help.html?q=help#getting-help)
+
+-   [Palestra Latin-R: Conquistando Errores en R](https://www.youtube.com/watch?v=CAw3-pZhzfk), [material](https://paocorrales.github.io/errores_tutorial/)
+
+## Primeira coisa
+
+-   Ler o erro! 😂
+    -   Nem sempre ajuda muito...mas sempre comece por aí!
+
+    -   Atenção que as vezes não é um Erro, e sim um "Warning"
+
+        ![](img/warning.png)
+
+## Em seguida
+
+-   Perguntar ao ***Google!*** (ou ao ChatGPT)
+    -   Simplesmente copie e cole o erro lá!
+
+        ![](img/fut.png){fig-align="center" width="412"}
+
+## No Google
+
+-   Dê preferêcia resultados do:
+
+    -   **StackOverflow ;** RBloggers ; RStudio / RProject
+
+        ![](img/preg.jpeg){fig-align="center" width="386"}
+
+-   E no ChatGPT?
+
+## Documentação oficial
+
+-   Buscar no CRAN o pdf da documentação oficial
+
+-   Procurar na aba ajuda pela documentação da função que está tentando usar
+
+-   Vamos lá!
+
+## Quiz
+
+# Até amanhã!
