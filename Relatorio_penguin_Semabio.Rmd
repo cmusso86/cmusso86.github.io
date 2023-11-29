@@ -1,0 +1,183 @@
+---
+title: "Gráficos com dados de Pinguins"
+author: "Carolina Musso"
+date: "2023-11-29"
+output:
+  html_document:
+    self-contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+```
+
+## Introdução
+
+Este relatório apresenta uma análise a da base de dados 'Palmer Penguins', um recurso emergente e instrutivo no domínio da ciência de dados e estatística. A base de dados foi coletada pela Dra. Kristen Gorman com o Programa de Pesquisa Polar Palmer Station, Antártica. Os dados abrangem três espécies de pinguins encontradas nas ilhas próximas à Estação Palmer: Adelie, Chinstrap e Gentoo.
+
+Com 344 observações, esta base de dados inclui medidas como o tamanho do bico, a profundidade do bico, o comprimento das nadadeiras, a massa corporal dos pinguins, além de informações sobre a espécie, sexo e local de coleta. 
+
+Este relatório não apenas serve como uma exploração aprofundada da base de dados biológicos realista e relevante, mas também como um exemplo prático da utilização do relatorios automatizados em Rmarkdown.
+
+# Material e métodos
+
+Neste relatório, utilizaremos métodos de análise exploratória de dados para explorar as características físicas dos pinguins e as diferenças entre as espécies. Nosso foco será em destacar padrões interessantes, identificar correlações potenciais e proporcionar insights visuais por meio de gráficos e análises estatísticas.
+
+```{r}
+# Carregando os pacotes necessários
+if (!require(pacman)) install.packages("pacman")
+pacman::p_load(palmerpenguins, tidyverse, 
+               ggstatsplot,gtsummary, ggpubr)
+
+# Carregando os dados
+data("penguins")
+penguins <- na.omit(penguins)  # Removendo observações com valores ausentes
+
+```
+
+
+
+```{r}
+ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
+  geom_point() +
+  labs(title = "Comprimento x Profundidade do Bico por Espécie",
+       x = "Comprimento do Bico (mm)",
+       y = "Profundidade do Bico (mm)")
+
+```
+
+
+
+
+```{r}
+# Carregar o pacote ggpubr
+ggscatter(penguins,
+          x = "bill_length_mm", 
+          y = "bill_depth_mm",
+          add = "reg.line",                         # Add regression line
+          conf.int = TRUE,                          # Add confidence interval
+          color = "species", palette = "jco",           # Color by groups "cyl"
+          shape = "species"
+          )+
+  stat_cor(aes(color = species), label.x = 3)  
+
+
+library(ggpubr)
+
+ggscatter(penguins,
+          x = "bill_length_mm", 
+          y = "bill_depth_mm",
+          add = "reg.line",                         # Adicionar linha de regressão
+          conf.int = TRUE,                          # Adicionar intervalo de confiança
+          color = "species", 
+          palette = "Set1"
+         ) +
+  stat_cor(aes(color = species), 
+           label.x = c(30, 40, 50),label.y=22)  +
+  labs(x="Comprimento do Bico (mm)",
+       y= "Profundidade do Bico (mm)") # Ajustar posição dos labels
+
+
+
+ggscatter(
+  data = penguins, 
+  x = "bill_length_mm", 
+  y = "bill_depth_mm", 
+  color = "species",
+  palette = "jco",
+  add = "reg.line", 
+  conf.int = TRUE,
+  cor.coef = TRUE, 
+  cor.method = "pearson",
+  xlab = "Comprimento do Bico (mm)", 
+  ylab = "Profundidade do Bico (mm)",
+  ggtheme = theme_pubr()
+) + 
+  theme(
+    plot.title = element_text(size = 14)
+  ) +
+  labs(
+    title = "Dispersão do Tamanho do Bico por Espécie"
+  )
+
+```
+
+
+```{r}
+# Tabela resumo com gtsummary
+table1 <- penguins %>% 
+  select(-year) %>% 
+  tbl_summary(
+  by = species,
+  type = list(
+    where(is.numeric) ~ "continuous",
+    where(is.factor) ~ "categorical"
+  ),
+  statistic = list(
+    all_continuous() ~ "{mean} ({sd})",
+    all_categorical() ~ "{n} / {N} ({p}%)"
+  )
+)
+
+# Adicionar testes estatísticos
+table1 <- table1 %>%
+  add_p(test = list(
+    where(is.numeric) ~ "kruskal.test",
+    where(is.factor) ~ "chisq.test"
+  ))
+
+# Mostrar a tabela
+table1
+
+```
+
+```{r}
+# Carregar pacote necessário
+library(ggpubr)
+library(dplyr)
+
+# Função para criar um gráfico para uma espécie específica
+create_species_plot <- function(species_name) {
+  penguins %>%
+    filter(species == species_name) %>%
+    ggscatter(
+      x = "bill_length_mm", 
+      y = "bill_depth_mm", 
+      add = "reg.line", 
+      conf.int = TRUE,
+      cor.coef = TRUE, 
+      cor.method = "pearson",
+      xlab = "Comprimento do Bico (mm)", 
+      ylab = "Profundidade do Bico (mm)",
+      ggtheme = theme_pubr()
+    ) + 
+    labs(
+      title = paste("Dispersão do Tamanho do Bico para", species_name)
+    )
+}
+
+# Criar gráficos separados para cada espécie
+plot_adelie <- create_species_plot("Adelie")
+plot_chinstrap <- create_species_plot("Chinstrap")
+plot_gentoo <- create_species_plot("Gentoo")
+
+# Combinar os gráficos
+ggarrange(plot_adelie, plot_chinstrap, plot_gentoo, ncol = 3, nrow = 1)
+
+```
+
+# Bonus
+
+## Testes bayesianos
+
+```{r}
+ggbetweenstats(
+  data = penguins, 
+  x = species, 
+  y = body_mass_g,
+  title = "Comparação da Massa Corporal entre Espécies",
+  xlab = "Espécie",
+  ylab = "Massa Corporal (g)"
+)
+
+```

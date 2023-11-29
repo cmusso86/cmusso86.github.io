@@ -1,0 +1,127 @@
+---
+title: "Meu primeiro arquivo automático"
+author: "Meu nome"
+date: "`r format(Sys.Date(),'%d/%m/%Y')`"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r sets, echo=F, message=F, warning=F }
+# COMENTÁRIOS INICIAIS ----
+
+#  tá vendo que eu estou escrevendo em uma parte que tem um fundo cinza? Isso é chamado de "chunk" que significa pedaço em inglês. Um "chunk" é onde a gente vai escrever os códigos de R mesmo.  Depois vamos voltar a esses assuntos com mais detalhes!
+
+# PRE-SETS ----
+rm(list=ls()) # limpa  o ambiente
+
+pasta=paste0("Saidas-Exercicios-", Sys.Date()) #cria uma pasta para as saídas do dia
+if(!dir.exists(pasta)) dir.create(pasta) #cria uma pasta para as saídas do dia
+```
+
+```{r pacotes, echo=F, message=F, warning=F }
+# PACOTES ----
+
+# agora vou caggerar os pacotes que vamos usar usando uma função especial. Não se preocupe em entender isso agora. Apenas rode! Vai instalar os pacotes que não tiver instalados no seu computador. E carregar todos. 
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, flextable, officer, knitr, rmarkdown)
+```
+
+```{r bancos, echo=F, message=F, warning=F }
+# BANCOS ----
+
+who_bruto <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+```
+
+## Aqui é o subtítulo que você quiser
+
+Daí, aqui você escreve o que você achar interessante sobre os dados.
+
+## Número de casos acumulados
+
+```{r manipulacoes, include=TRUE}
+# MANIPULAÇÕES NO BANCO ----
+who_trat<-who_bruto %>% 
+  select(Date_reported,Country,New_cases,Cumulative_cases) %>% #colunas q quero
+  group_by(Country) %>% # agrupando  (tabela dinamica)
+  summarise(Acumulado=max(Cumulative_cases, na.rm=T)) %>% # agrupando  (tabela dinamica)
+  filter (Acumulado > 10000000) # filtrando os que tem mais de 10 milhões
+
+# MEU PRIMEIRO COMENTÁRIO ----
+
+# VALORES PARA O TEXTO ----
+
+# VALOR PARA BRA
+Valor_BRA<-(who_trat %>% 
+  filter(Country=="Brazil"))$Acumulado
+  
+```
+
+```{r include=F}
+# função para ver  as 5 primeiras por padrão
+head(who_trat) 
+```
+
+Ao analisar os dados de *casos acumulados* por local de ocorrência, observa - se que o **Brasil** registrou até o momento `r Valor_BRA`.
+
+## Um gráfico aqui
+
+```{r figura1,  include=F}
+# Gerando a figura 1 ----
+ggplot(who_trat)+
+  geom_bar(aes(x=Country, y=Acumulado), stat="identity", color="blue", fill="pink")+
+  coord_flip()+
+  theme_classic()
+
+# Dados da figura 1 ----
+img1_path<-paste0(pasta, "/Graf1_Casos_acumulados_7paises.png")
+
+ggsave(filename =img1_path, width=6, height=3 )
+
+legenda1<- "Minha legenda da figura"
+```
+
+```{r echo=F, fig.cap=legenda1}
+img1_path<-img1_path
+knitr::include_graphics(img1_path)
+```
+
+## E pra finalizar uma tabelinha aqui
+
+```{r tabela1, echo=F, include=F}
+
+# Gerando e editando a tabela ----
+(Tab1<-who_trat %>% 
+  flextable() %>% 
+  width(width=2) %>% 
+  style(pr_t=fp_text(font.size=13,
+                     font.family='Calibri'), part="body")%>%
+  style(pr_t=fp_text(font.size=13,
+                     font.family='Calibri'), part="header")%>%
+  bold(part="header")%>%
+  bold(part="body", j=1)%>%
+  hline( border=fp_border(color="black", width = 0.5))%>%
+  align( align = "center", part = "all")%>%
+  bg(bg="orange", part="header") )
+ 
+# salvando e dados da tabela ----
+
+
+titulo1<-"Titulo Tabela 1"
+
+tab1_path<-paste0(pasta,"/Tab1_Casos_acumulados_7paises.docx")
+
+save_as_docx(Tab1,path=tab1_path)
+
+
+```
+
+```{r echo=F}
+# Tabela no documento 
+
+  Tab1%>% 
+  set_caption(caption = titulo1, autonum = run_autonum()) %>%
+    autofit()
+
+```
