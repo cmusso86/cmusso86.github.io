@@ -1,0 +1,78 @@
+---
+title: "Teste de Hipóteses"
+subtitle: "Prova Didática: Seleçao professor substituto"
+author: "Carolina Musso"
+institute: "Departamento de Estatística - UnB"
+bibliography: biblio/referencias.bib
+csl: biblio/abnt.csl
+format:
+  revealjs:
+    embed-resources: true
+    multiplex: true
+    incremental: true
+    logo: imagens/unb.png
+    scrollable: true
+    highlight-style: arrow
+    theme: [style.scss]
+    transition: fade
+knitr:
+  opts_chunk:
+    echo: false
+    warnings: false
+---
+
+## O que vimos até aqui
+
+- Estatística Descritiva
+- Distribuição normal
+  - Distribuição Amostral
+- Intervalos de Confiança
+- Testes de Hipótese
+
+## Para aprofundamento
+
+- [Fernanda Pered](https://www.youtube.com/@FernandaPeres)
+- [Statistics by Jim](https://statisticsbyjim.com/hypothesis-testing/t-tests-excel/)
+- [Stat Quest](https://statquest.org)
+- [Tom Faulkenberry](https://www.youtube.com/@TomFaulkenberry)
+- [P-value](https://youtu.be/ukcFrzt6cHk?si=Soczzf-QL5oIuTF5)
+- [Statistics with Mia](https://youtu.be/mLhzq9omhZ4?si=SZtQ3pAwBCdlX3i5)
+- [Modern Statitics in Biology](https://web.stanford.edu/class/bios221/book/06-chap.html)
+- [Estatistica Aplicada Psicologia](https://sites.google.com/site/araujolb/disciplinas/EstatApliPsico?pli=1)
+- [Maricopa Comunity College](https://open.maricopa.edu/psy230mm/chapter/9-hypothesis-testing/)
+- [Jason Delaney](https://youtu.be/E3AF3ebEsjY?si=KTMDYUn9pcmMvPNR)
+- [Fernanda Maciel](https://www.youtube.com/watch?v=vK_FBEwDidE)
+## Conceitos
+
+- Amostras, População, Probabilidade
+- A lógica básica: Quando usamos uma amostra para fazer inferências sobre os parâmetros da população, queremos saber se nossa amostra provém de uma população que é melhor descrita pela hipótese nula.
+- A hipótese nula é uma declaração que geralmente estamos tentando rejeitar em nossa pesquisa.
+
+## A intuição
+
+Hypothesis testing is an important feature of science, as this is how theories are developed and modified. A good theory should generate testable predictions (hypotheses), and if research fails to support the hypotheses, then this suggests that the theory needs to be modified in some way.
+
+## Receita
+
+1. Faça algumas afirmações sobre os parâmetros da população: uma hipótese nula e uma hipótese alternativa (de pesquisa).
+2. Determine as características da distribuição de comparação, assumindo que a hipótese nula seja verdadeira.
+3. Estabeleça um ponto de "corte" (valor crítico) na distribuição de comparação no qual a hipótese nula deve ser rejeitada.
+4. Determine a probabilidade da sua estatística de amostra, assumindo que a hipótese nula seja verdadeira.
+5. Se essa probabilidade ultrapassar o ponto de "corte", rejeite a hipótese nula. Se não, mantenha-a.
+
+
+
+## A importância
+
+
+## A Definição
+
+When you click the **Render** button a document will be generated that includes:
+
+-   Content authored with markdown
+-   Output from executable code
+
+## Aplicação
+
+When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+

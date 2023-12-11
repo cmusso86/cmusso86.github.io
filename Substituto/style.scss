@@ -1,0 +1,91 @@
+/*-- scss:defaults --*/
+
+// fonts
+@font-face {
+  font-display: swap; 
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/Users/carolinamusso/Downloads/unb/unb-office_regular.ttf');
+}
+
+$font-family-sans-serif: 'Lato';
+//$font-family-monospace: 'Lato';
+$font-size-root: 12px; 
+$presentation-heading-font: "Lato", sans-serif;
+
+// border-image-slice: ;
+.reveal .footer {
+  font-size: 0.35em !important;
+  text-align: right !important;
+}
+
+
+
+.reveal .slide-logo {
+  display: block;
+  position: left;
+  bottom: unset !important;
+  right: 1200px;
+  top: 8px;
+  left: unset !important;
+  height: 50px !important;
+  width: 90px !important;
+  max-width: unset !important;
+  max-height: unset !important;
+}
+
+
+
+// colors
+$body-bg: #FFFFFF !default;
+$body-color: #006630 !default;
+$link-color: #003366 !default;
+$selection-bg: #003366  !default;
+$presentation-heading-color: #003366;
+$presentation-h1-font-size: 2.0em; 
+$presentation-h2-font-size: 1.2em; 
+$presentation-h3-font-size: 0.9em; 
+$code-color:#003366;
+$code-block-bg: #ffddbf;
+$code-block-border-color:#006630;
+
+
+
+/*-- scss:rules --*/
+
+#title-slide {
+  
+  font-family: 'Lato';
+    src: url('../../../../../lato/Lato-Regular.ttf');
+  text-align: left;
+  .quarto-title-authors {
+    justify-content: left;
+    .quarto-title-author { // optional, test it for yourself
+      padding-left: 0;
+      padding-right: 0;
+      width: 45%;
+    }
+  }
+}
+
+
+/*-- scss:rules --*/
+
+.stacked-columns {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Optional: Center the columns horizontally */
+  }
+
+  /* Optional: Set a maximum width for the columns */
+  .quarto-column {
+    max-width: 600px; /* Adjust the value as needed */
+  }
+.text-col {
+  height: 80%;
+  background-color: lightgray;
+  padding-left: 10px;
+  box-sizing: border-box;
+}
+
