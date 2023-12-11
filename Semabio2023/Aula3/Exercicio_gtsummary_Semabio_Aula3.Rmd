@@ -1,0 +1,50 @@
+---
+title: "gtsymmary"
+author: "Carolina Musso"
+date: "2023-11-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+pacman::p_load(gtsummary, tidyverse, palmerpenguins)
+```
+
+
+## 1) 
+
+Procure na documentação da função tbl_summary sobre as estatísticas dispoiniveis. O código abaixo, por exemplo esta mostrando a media e o min-max (range). Tente modificar para que mores a mediana (primmeiro quatil , terceiro quartil). Lembre que
+```{r}
+iris %>% 
+  mutate(Species=as.character(Species)) %>% 
+  filter(Species!="setosa") %>% 
+tbl_summary(,
+            by = Species,
+            statistic = list(all_continuous() ~ "{mean} ({min}-{max})"),
+            label = list(
+              Sepal.Length ~ "Comprimento da Sépala",
+              Sepal.Width ~ "Largura da Sépala",
+              Petal.Length ~ "Comprimento da Pétala",
+              Petal.Width ~ "Largura da Pétala")) %>% 
+  modify_header(label ~ "**Variável (cm)**")
+```
+#  2
+
+Tente fazer uma tabela parecida para os dados dos pinguins.
+
+```{r}
+data(penguins)
+```
+
+
+# 3
+
+Em uma das duas tabelas, filtre os dados para conter apenas duas especies (no exemplo iris acima isso ja foi feito, mas você pode fazer de forma semelhante para os pinguins para remover uma das 3 especies). Em seguida acrescente uma coluna de p-valor para um teste-t. 
+
+```{r}
+
+```
+

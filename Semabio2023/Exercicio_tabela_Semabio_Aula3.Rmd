@@ -1,0 +1,73 @@
+---
+title: "Exercicio Tabela"
+author: "Carolina Musso"
+date: "2023-11-29"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, 
+                 flextable, officer,  
+                 scales, palmerpenguins)
+
+
+# Bancos e manipulações----
+
+data(penguins)
+```
+
+# 1) Algumas manipulações
+
+Abaixo, foram feitas novas manipulações nos dados,. Explique o que você entende que cada linha está fazendo utilizando comentarios (#). 
+
+```{r}
+penguins_trat <- penguins %>% 
+  filter(complete.cases(.)) %>% 
+  mutate(volume = pi*(bill_depth_mm/2)*bill_length_mm) %>% 
+  group_by(island, species) %>% 
+  summarise(mediana=quantile(prob=0.5, volume, na.rm=T), 
+            media = mean(volume, na.rm=T),#na.rm remove valores faltantes
+            dp = sd(volume, na.rm=T),
+            cv = dp/media*100)
+```
+
+
+## 2) 
+
+Na tabela abaixo, explique o que cada linha de formatação está fazendo
+
+
+```{r}
+tab1 <- flextable (penguins_trat) %>% 
+  autofit() %>%  # essa é uma função nova %>% 
+  align(align="left", j=1, part="all") %>% 
+  align(align="right", j=c(2,3), part="all") %>% 
+  bold(j=1, part="all") %>% 
+  bold(part="header")
+
+tab1
+  
+```
+
+## 3) 
+
+Acrescente linhas a tabela
+
+```{r}
+
+```
+
+## 4) 
+
+Procure pela função merge_v para unir os nomes iguais na coluna das ilhas. 
+
+
+
+
+
