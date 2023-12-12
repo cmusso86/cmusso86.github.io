@@ -1,6 +1,6 @@
 ---
-title: "Teste de Hipóteses"
-subtitle: "Prova Didática: Seleçao professor substituto"
+title: "Testes de Hipóteses"
+subtitle: "Prova Didática: Seleção professor substituto"
 author: "Carolina Musso"
 institute: "Departamento de Estatística - UnB"
 bibliography: biblio/referencias.bib
@@ -23,56 +23,422 @@ knitr:
 
 ## O que vimos até aqui
 
-- Estatística Descritiva
-- Distribuição normal
-  - Distribuição Amostral
-- Intervalos de Confiança
-- Testes de Hipótese
+-   Estatística Descritiva
+    -   Tendência Central e de Dispersão
+-   Distribuição normal
+    -   Distribuição Amostral
+-   Intervalos de Confiança
+
+. . .
+
+### Hoje
+
+-   Testes de Hipótese
+
+## Uma motivação
+
+-   Imagine existe uma forma de medir a ansiedade com um número (uma nota). Nesse exemplo **fictício**, essa escala ansiedade que pode ter valores negativos (se a pessoa é muito calma) e valores positivos (pessoas mais ansiosas).
+
+-   Vamos supor ainda que um censo realizado nos anos 90 mostrou que na população do Distrito Federal, a média de ansiedade é 0 unidades de ansiedade (angustigramas), ou seja $\mu_{1990} = 0$ , com desvio padrão de 5 ($\sigma = 5$). Ou seja, em média, o brasiliense não é ( ou pelo menos não era) nem muito ansioso nem muito calmo.
+
+## Resultado censo
+
+```{r echo=F}
+pacman::p_load(tidyverse, BSDA)
+ggplot()+
+  geom_density(aes(rnorm(100000, 0, 5)), 
+               fill="#007940",alpha=0.5)+
+  theme_classic()+
+  labs(x="Valor de Ansiedade", y = "Densidade")+
+  geom_vline(xintercept = 0, color="red3")+
+  geom_vline(xintercept = c(-10, 10), linetype="dotted")+
+  geom_text(aes(6, 0.07, label="~95%"))
+  
+```
+
+## Motivação
+
+-   **Desconfiamos** que esse nível de ansiedade **aumentou**.
+
+    -   Esse ano não foi possível fazer um censo, mas somente medir a ansiedade em uma **amostra aleatória** de 1000 (mil pessoas) do DF.
+
+-   A média na amostra foi de **0,32 angustigramas**.
+
+    -   Será que essa média é *mesmo* maior que meu valor de referência (média 0)?
+
+    -   Será que por acaso que selecionei justamente as pessoas ansiosas nessa amostra?
+
+    -   Qual a chance de, ao acaso, eu ter selecionado justamente as pessoas mais ansiosas?
+
+## Lembra?
+
+-   A distribuição amostral da média.
+
+. . .
+
+$E[\bar{x}] = \mu$ ; $s = \frac{\sigma}{\sqrt{n}}$
+
+. . .
+
+```{r echo=F}
+set.seed(42)
+n=1000
+x_new=0.32
+pvalue <- round(1 - pnorm((x_new), 0, (5/sqrt(n))),4)
+
+ggplot()+
+  geom_density(aes(rnorm(n, 0, (5/sqrt(n)))), 
+               fill="#008960",alpha=0.5)+
+  theme_classic()+
+  labs(x="Valor médio de Ansiedade", y = "Densidade")+
+  geom_vline(xintercept = 0, color="red3")+
+  geom_vline(xintercept = x_new, color="red3", linetype="dotted")+
+  xlim(-1,1)+
+  geom_text(aes(0.7,0.6, label=pvalue), size=5)+
+  geom_text(aes(0.32,-0.1, label=0.32), size=3)+
+  geom_curve(aes(x = 0.35, y = 0.06, xend = 0.55, 
+                 yend = 0.6),curvature = -0.5,
+  arrow = arrow(length = unit(0.03, "npc"),type = "closed"))
+
+
+```
+
+## E se a média da população tiver mesmo mudado?
+
+```{r echo=F}
+set.seed(42)
+n=1000
+x_new=0.32
+pvalue <- round(1 - pnorm(x_new, 0.25, (5/sqrt(n))),4)
+
+ggplot()+
+  geom_density(aes(rnorm(n, 0.25, (6/sqrt(n)))), 
+               fill="#003366",alpha=0.5)+
+  geom_density(aes(rnorm(n, 0, (5/sqrt(n)))), 
+               fill="#008960",alpha=0.5)+
+  theme_classic()+
+  labs(x="Valor médio de Ansiedade", y = "Densidade")+
+  geom_vline(xintercept = 0, color="red3")+
+  geom_vline(xintercept = x_new, color="red3", linetype="dotted")+
+  xlim(-1,1)+
+  geom_text(aes(0.8,0.9, label=pvalue), size=5)+
+  geom_text(aes(0.32,0, label=0.32), size=3)+
+  geom_curve(aes(x = 0.4, y = 0.6, xend = 0.75, 
+                 yend = 0.73),
+  arrow = arrow(length = unit(0.03, "npc"),type = "closed"))
+
+
+```
+
+## Tipos de Erro que posso cometer
+
+|          | Rejeita H0                       | Não-rejeita H0                    |
+|------------------|--------------------------|----------------------------|
+| H0 verd. | [Erro tipo I]{style="color:red"} | Correto!                          |
+| H0 falsa | Correto!                         | [Erro tipo II]{style="color:red"} |
+
+. . .
+
+![](images/erros2.webp){fig-align="center" width="800"}
+
+## Tipos de Erro que posso cometer
+
+```{r}
+set.seed(42)
+n=1000
+x_new=0.32
+pvalue <- round(1 - round(pnorm(x_new, 0, (5/sqrt(n))),3),3)
+
+beta <- round( pnorm(x_new, 0.6, (5/sqrt(n))),3)
+
+ggplot()+
+  geom_density(aes(rnorm(n, 0.6, (5/sqrt(n)))), 
+               fill="#003366",alpha=0.5)+
+  geom_density(aes(rnorm(n, 0, (5/sqrt(n)))), 
+               fill="#008960",alpha=0.5)+
+  theme_classic()+
+  labs(x="Valor médio de Ansiedade", y = "Densidade")+
+  geom_vline(xintercept = 0, color="red3")+
+  geom_vline(xintercept = x_new, color="red3", linetype="dotted")+
+  xlim(-1,1)+
+  geom_text(aes(0.5,0.4, label=pvalue), size=5) +
+  geom_text(aes(0.1,0.5, label=beta), size=5) +
+  geom_curve(aes(x = 0.350, y = 0.1, xend = 0.5, 
+                 yend = 0.3),
+  arrow = arrow(length = unit(0.03, "npc"),type = "closed"))+
+  geom_curve(aes(x = 0.22, y = 0.06, xend = 0.1,
+                 yend = 0.4), curvature = -0.5,
+  arrow = arrow(length = unit(0.03, "npc"), type = "closed"))
+```
+
+## Qual a intuição do teste de hipótese
+
+-   **Inferência:** Fazer conclusões sem ter acesso a toda a informação.
+    -   Amostras, População, Probabilidade
+-   Também pode ser visto: Sinal / Ruído
+    -   A "razão sinal-ruído" (ou SNR, do inglês Signal-to-Noise Ratio) é uma medida que compara a intensidade ou força do sinal desejado com a intensidade do ruído de fundo. Em outras palavras, é uma relação que nos diz o quanto o sinal é "forte" em comparação com o "ruído".
+
+## Teste de Hipótese
+
+O que é uma hipótese?
+
+![](images/metodo.webp){fig-align="center" width="800"}
+
+## Já fizemos algo parecido...
+
+-   Na aula passada
+
+. . .
+
+$$
+IC = (-0.31, 0.31)
+$$
+
+-   O teste de hipótese pode nos dar mais informações!
+
+## Formulação de um teste de hipótese
+
+$H_0: \mu_{2023} \le 0$
+
+$H_1: \mu_{2023} > 0$
+
+-   A **hipótese nula** é uma declaração que geralmente estamos "tentando" rejeitar em nossa pesquisa.
+-   A lógica básica: Quando usamos uma amostra para fazer inferências sobre os parâmetros da população, queremos saber se nossa amostra provém de uma população é bem definida pela hipótese nula.
+
+## Precisamos calcular um número!
+
+-   Uma estatística.
+-   Um valor que a gente consegue calcular e que sabemos a distribuição!
+-   Uma amostra de uma distribuição normal, ou grande o suficiente, e se eu conheço a variância populacional:
+
+. . .
+
+$$Z = \frac{(\bar{x} - \mu_{nula})}{\frac{\sigma}{\sqrt{n}}} \sim N(0,1)$$
+
+-   (Podemos olhar na Tabela!)
+
+## Quanto estou disposto a errar?
+
+-   $\alpha=0.05$ é um dos mais comuns.
+
+. . .
+
+-   Fixe a probabilidade \alpha de cometer o erro de tipo I e use este valor para construir uma região (regra de decisão). Para tal, vamos usar a estatística que definimos e os valores de parâmetro hipotetizados por $H_0$
+
+## Cálculo e Conclusão
+
+-   Use as observações da amostra para calcular o valor da estatística do teste.
+
+-   Se o valor da estatística calculado com os dados da amostra pertencer à região crítica, rejeite $H_0$; caso contrário, não rejeite $H_0$.
+
+# "Receita"
+
+## **Formulação de Hipóteses:**
+
+-   **Hipótese Nula ((H_0)):** É a hipótese inicial, frequentemente assumindo que não há efeito ou diferença significativa. Geralmente, é representada como uma igualdade ((=, \leq, \geq)).
+
+-   **Hipótese Alternativa ((H_1) ou (H_a)):** É a hipótese que se quer testar, indicando a presença de um efeito ou diferença significativa. Pode ser formulada como uma desigualdade ((\<, \>, \neq)).
+
+## **Escolha do Nível de Significância ((**\alpha)):
+
+-   O nível de significância ($\alpha$), que é a probabilidade de cometer um erro do tipo I, ou seja, rejeitar ( $H_0$) quando ela é verdadeira. É geralmente escolhido a priori (por exemplo, 0,05 ou 5%).
+
+## **Computando a Estatísticas do Teste:**
+
+-   Calcula-se a estatística do teste apropriada com base nos dados amostrais. A escolha da estatística depende da natureza do teste (estamos vendo o teste z. Mas há outros!).
+
+## **Decisão e Conclusão:**
+
+-   Compara-se a estatística do teste com uma região crítica determinada pela distribuição de probabilidade sob a **suposição de que a hipótese nula é verdadeira**. - Se a estatística do teste estiver na região crítica, rejeita-se ( $H_0$) em favor de ( $H_1$). Se não estiver, não se rejeita ( $H_0$). - Se $H_0$ for rejeitada, há evidências suficientes para afirmar ( $H_1$) é uma hipótese mais razoável.
+
+# Um exemplo utilizando a região crítica
+
+Voltando ao nosso exemplo da ansiedade
+
+## 1) Hipóteses
+
+$H_0: \mu_{2023} = 0$
+
+$H_1: \mu_{2023} > 0$
+
+Estatística $Z \sim N(0,1)$
+
+## Significância
+
+$\alpha=0.05$
+
+-   Definir a região crítica.
+
+. . .
+
+![](imagens/z.png){fig-align="center"}
+
+## Computar a estatística
+
+. . .
+
+$$Z = \frac{0.32 - 0}{\frac{5}{\sqrt(1000)}} =2.023858 $$
+
+## Comparação e Conclusão
+
+$Z = 2.023858 > 1.645$
+
+Está na região crítica!
+
+. . .
+
+Rejeita-se a Hipótese Nula. Há evidencias que a média de ansiedade na população do DF aumentou.
+
+## Uma outra forma de fazer
+
+Qual seria minha região crítica na escala da média, e não de Z?
+
+. . . 
+
+$$1.64 = \frac{\bar{x}_{crit} - 0}{\frac{5}{\sqrt(1000)}}$$
+
+\
+$$ \bar{x}_{crit} = 0.2583$$
+
+\
+$$0.32 > 0.2593068$$, rejeita-se a Hipótese nula.
+
+## Mais uma forma...
+
+O p-valor
+
+$Z = 2.02$
+
+![](imagens/z2.png){fig-align="center"}
+
+. . .
+
+```{r}
+set.seed(42)
+n=100000
+
+
+ggplot()+
+  geom_density(aes(rnorm(n)), 
+               fill="#003366",alpha=0.5)+
+  theme_classic()+
+  labs(x="z", y = "Densidade")+
+  geom_vline(xintercept = 1.654, color="red3", linetype="dotted")+
+    geom_vline(xintercept = 2.202, color="green", linetype="dotted")+
+  xlim(-5,5)+
+  geom_text(aes(3.5, 0.1, label=pvalue), size=5) +
+  geom_text(aes(1.85, 0.3, label="a = 0.05"), size=4, angle="270") +
+  geom_curve(aes(x =2.5, y = 0.01, xend = 3.5, 
+                 yend = 0.08),
+  arrow = arrow(length = unit(0.03, "npc"),type = "closed"))
+```
+
+## Que teste fizemos?
+
+-   Teste para uma amostra de uma população normal
+    -   Ou uma amostra suficientemente grande
+-   Variância conhecia
+-   Unilateral
+
+## Como seria o bilaterial?
+
+$$
+H_0: \mu_{2023} = 0\\
+H_{1}: \mu_{2023} \neq 0
+$$
+
+. . .
+
+```{r}
+set.seed(42)
+n=100000
+
+
+ggplot()+
+  geom_density(aes(rnorm(n)), 
+               fill="#003366",alpha=0.5)+
+  theme_classic()+
+  labs(x="z", y = "Densidade")+
+  geom_vline(xintercept = 1.96, color="red3", linetype="dotted")+
+  geom_vline(xintercept = -1.96, color="red3", linetype="dotted")+
+  xlim(-5,5)+
+  geom_text(aes(2.2, 0.3, label="0.025"), size=4, angle="90") +
+  geom_text(aes(-2.2, 0.3, label="0.025"), size=4, angle="90") 
+```
+
+
+
+
+## Exercício
+
+Desafios:
+
+-   Leia sobre o teste de proporção. Tente relacionar com a média.
+-   Nomeie pelo menos 2 outros testes de hipótese que existem.
+
+# Exemplo Excel
+
+## Para os mais corajosos
+
+Exemplo R
+
+```{r}
+set.seed(42)
+n <- 1000
+EP <- (5/sqrt(1000))
+mu <- 0
+
+amostra <- rnorm(n, 0.32, EP )
+media <- mean(amostra)
+
+z <- (media-mu)/EP
+pvalor <- 1- pnorm(z) # acumulado à esquerda
+pvalor <- 1 - pnorm(media, 0, EP)
+
+##
+
+library(BSDA)
+pvalor <- z.test(amostra, 
+                 mu = 0,
+                 sigma.x = 5,
+                 alternative = "greater")$p.value
+
+pvalor
+```
+
+-  [GitHub](https://github.com/cmusso86/cmusso86.github.io/tree/master/Substituto)
+
+## "p-hacking"
+
+-   Discussão
+
+[![](imagens/sci.jpg){fig-align="center" width="455"}](https://www.amazon.com/Science-Fictions-Negligence-Undermine-Search/dp/1250222699)
 
 ## Para aprofundamento
 
-- [Fernanda Pered](https://www.youtube.com/@FernandaPeres)
-- [Statistics by Jim](https://statisticsbyjim.com/hypothesis-testing/t-tests-excel/)
-- [Stat Quest](https://statquest.org)
-- [Tom Faulkenberry](https://www.youtube.com/@TomFaulkenberry)
-- [P-value](https://youtu.be/ukcFrzt6cHk?si=Soczzf-QL5oIuTF5)
-- [Statistics with Mia](https://youtu.be/mLhzq9omhZ4?si=SZtQ3pAwBCdlX3i5)
-- [Modern Statitics in Biology](https://web.stanford.edu/class/bios221/book/06-chap.html)
-- [Estatistica Aplicada Psicologia](https://sites.google.com/site/araujolb/disciplinas/EstatApliPsico?pli=1)
-- [Maricopa Comunity College](https://open.maricopa.edu/psy230mm/chapter/9-hypothesis-testing/)
-- [Jason Delaney](https://youtu.be/E3AF3ebEsjY?si=KTMDYUn9pcmMvPNR)
-- [Fernanda Maciel](https://www.youtube.com/watch?v=vK_FBEwDidE)
-## Conceitos
+Bibliografia básica:
 
-- Amostras, População, Probabilidade
-- A lógica básica: Quando usamos uma amostra para fazer inferências sobre os parâmetros da população, queremos saber se nossa amostra provém de uma população que é melhor descrita pela hipótese nula.
-- A hipótese nula é uma declaração que geralmente estamos tentando rejeitar em nossa pesquisa.
+- @bussab Disponível: [USP](https://edisciplinas.usp.br/pluginfile.php/7552971/mod_resource/content/0/Bussab%20e%20Morettin%20%282010%29%20A%20estatística%20básica_Cap6e7.pdf)
+- @barbetta
 
-## A intuição
+- @lapponi
 
-Hypothesis testing is an important feature of science, as this is how theories are developed and modified. A good theory should generate testable predictions (hypotheses), and if research fails to support the hypotheses, then this suggests that the theory needs to be modified in some way.
-
-## Receita
-
-1. Faça algumas afirmações sobre os parâmetros da população: uma hipótese nula e uma hipótese alternativa (de pesquisa).
-2. Determine as características da distribuição de comparação, assumindo que a hipótese nula seja verdadeira.
-3. Estabeleça um ponto de "corte" (valor crítico) na distribuição de comparação no qual a hipótese nula deve ser rejeitada.
-4. Determine a probabilidade da sua estatística de amostra, assumindo que a hipótese nula seja verdadeira.
-5. Se essa probabilidade ultrapassar o ponto de "corte", rejeite a hipótese nula. Se não, mantenha-a.
+. . . 
 
 
+**Bibliografia mais "lúdica"**
 
-## A importância
+-   [Fernanda Pered](https://www.youtube.com/@FernandaPeres)
+-   [Amour Learning](https://youtu.be/ChLO7wwt7h0?si=ubb6sZxPeNl0645C)
+-   [Statistics by Jim](https://statisticsbyjim.com/hypothesis-testing/t-tests-excel/)
+-   [Stat Quest](https://statquest.org)
+-   [Tom Faulkenberry](https://www.youtube.com/@TomFaulkenberry)
+-   [P-value](https://youtu.be/ukcFrzt6cHk?si=Soczzf-QL5oIuTF5)
+-   [Statistics with Mia](https://youtu.be/mLhzq9omhZ4?si=SZtQ3pAwBCdlX3i5)
+-   [Modern Statitics in Biology](https://web.stanford.edu/class/bios221/book/06-chap.html)
+-   [Estatistica Aplicada Psicologia](https://sites.google.com/site/araujolb/disciplinas/EstatApliPsico?pli=1)
+-   [Maricopa Comunity College](https://open.maricopa.edu/psy230mm/chapter/9-hypothesis-testing/)
+-   [Jason Delaney](https://youtu.be/E3AF3ebEsjY?si=KTMDYUn9pcmMvPNR)
+-   [Fernanda Maciel](https://www.youtube.com/watch?v=vK_FBEwDidE)
 
-
-## A Definição
-
-When you click the **Render** button a document will be generated that includes:
-
--   Content authored with markdown
--   Output from executable code
-
-## Aplicação
-
-When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
-
+## Referências
