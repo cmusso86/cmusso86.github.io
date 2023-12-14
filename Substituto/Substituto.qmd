@@ -235,11 +235,11 @@ $$Z = \frac{(\bar{x} - \mu_{nula})}{\frac{\sigma}{\sqrt{n}}} \sim N(0,1)$$
 
 ## **Formulação de Hipóteses:**
 
--   **Hipótese Nula ((H_0)):** É a hipótese inicial, frequentemente assumindo que não há efeito ou diferença significativa. Geralmente, é representada como uma igualdade ((=, \leq, \geq)).
+-   **Hipótese Nula ($H_0$):** É a hipótese inicial, frequentemente assumindo que não há efeito ou diferença significativa. Geralmente, é representada como uma igualdade (=, $\leq$, $\geq$).
 
--   **Hipótese Alternativa ((H_1) ou (H_a)):** É a hipótese que se quer testar, indicando a presença de um efeito ou diferença significativa. Pode ser formulada como uma desigualdade ((\<, \>, \neq)).
+-   **Hipótese Alternativa ((H_1) ou (H_a)):** É a hipótese que se quer testar, indicando a presença de um efeito ou diferença significativa. Pode ser formulada como uma desigualdade (\<, \>, $\neq$).
 
-## **Escolha do Nível de Significância ((**\alpha)):
+## Escolha do Nível de Significância (\alpha):
 
 -   O nível de significância ($\alpha$), que é a probabilidade de cometer um erro do tipo I, ou seja, rejeitar ( $H_0$) quando ela é verdadeira. É geralmente escolhido a priori (por exemplo, 0,05 ou 5%).
 
@@ -249,7 +249,11 @@ $$Z = \frac{(\bar{x} - \mu_{nula})}{\frac{\sigma}{\sqrt{n}}} \sim N(0,1)$$
 
 ## **Decisão e Conclusão:**
 
--   Compara-se a estatística do teste com uma região crítica determinada pela distribuição de probabilidade sob a **suposição de que a hipótese nula é verdadeira**. - Se a estatística do teste estiver na região crítica, rejeita-se ( $H_0$) em favor de ( $H_1$). Se não estiver, não se rejeita ( $H_0$). - Se $H_0$ for rejeitada, há evidências suficientes para afirmar ( $H_1$) é uma hipótese mais razoável.
+-   Compara-se a estatística do teste com uma região crítica determinada pela distribuição de probabilidade sob a **suposição de que a hipótese nula é verdadeira**. 
+
+- Se a estatística do teste estiver na região crítica, rejeita-se ( $H_0$) em favor de ( $H_1$). Se não estiver, não se rejeita ( $H_0$). 
+
+- Se $H_0$ for rejeitada, há evidências suficientes para afirmar ( $H_1$) é uma hipótese mais razoável.
 
 # Um exemplo utilizando a região crítica
 
