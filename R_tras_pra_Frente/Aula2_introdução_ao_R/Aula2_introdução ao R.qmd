@@ -1,0 +1,111 @@
+---
+title: "Aula 2 - Conhecendo o R e RStudio  "
+subtitle: "R de Trás-pra-frente"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    highlight-style: dracula
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: visual
+---
+
+## O que é o R
+
+1)  Um programa de análise Estatística?
+
+2)  Uma linguagem de programação?
+
+3)  Um ambiente de programação?
+
+4)  Uma comunidade?
+
+5)  **TODAS AS ALTERNATIVAS!**
+
+## O que é uma linguagem de programação?
+
+-   Instruções que damos para a máquina resolver problemas.
+
+-   Mais flexível e poderoso do que operar somente a interface
+
+![](img/pseudocodigo.png){width="423"}
+
+## Quem criou o R
+
+-   Criado / Lançado em [1993/1995](https://www.stat.auckland.ac.nz/~ihaka/downloads/Interface98.pdf "R: Past and Future History") e mantido pela [R-Foundation](https://www.r-project.org/foundation/ "R Foundation")
+
+-   Estatísticos da Universidade de Aukland, NZ
+
+-   [Robert Gentleman](https://computationalbiomed.hms.harvard.edu/about/people/robert-gentleman-phd/), [Ross Ihaka](https://www.stat.auckland.ac.nz/~ihaka/), S Language
+
+![](img/rlogo.jpg){width="314"}
+
+## E o R-Studio?
+
+-   Criado pela empresa RStudio, atualmente [Posit](https://posit.co)
+
+    ![](img/posit_logo.jpg){width="356"}
+
+-   [Hadley Wickham](https://hadley.nz): Cientista de dados chefe
+
+-   Esforços atualmente para integrar com outras linguagem além do R
+
+## Dois softwares
+
+-   Um é a linguagem em si o cérebro: R
+
+-   O outro É a interface: O RStudio
+
+    -   Existem outras formas de usar o R, mas a mais intuitiva e a que vamos nos familirizar aqui é por meio do RStudio.
+
+    ![](img/rstudio_logo.png){width="395"}
+
+## E os pacotes o que são?
+
+-   Extensões do R
+
+-   Teremos uma aula só sobre o uso de pacotes
+
+    -   [CRAN](https://cran.r-project.org)
+
+    -   Vamos usar muito o [tidyverse](https://r4ds.had.co.nz)
+
+## Instalando o R
+
+-   Vamos seguir as istruções da mantenedora do RStudio, que é a Posit:
+
+    -   [Instalar](https://posit.co). www.posit.co
+
+    -   Canto superior direito
+
+-   [Tutorial](https://www.youtube.com/watch?v=A8A-OU_nlsw)
+
+-   Resumindo: Baixe tanto o R quanto o RStudio e instale ambos seguindo a configuração padrão
+
+## Como é a cara do R (sem RStudio)
+
+-   meio assustador não é?
+
+    ![](img/giphy.gif){width="390"}
+
+## Os Quatro Paineis do R-Studio
+
+![](img/paineis.png)
+
+## Exercício
+
+-   Hoje temos um rápido quiz sobre a diferença entre o R e Rstudio e como se localizar nos paineis do RStudio!
+
+-   Se você teve dificuldade em instalar o R, não hesite em nos procurar!
+
+# Até a próxima aula!
