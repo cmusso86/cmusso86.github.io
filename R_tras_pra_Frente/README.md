@@ -1,5 +1,4 @@
-ESQUELETO CURSO R DE TRÁS-PRA-FRENTE
-1. Contexto
+CURSO R DE TRÁS-PRA-FRENTE
 
         As emergências em saúde pública exigem das esferas federal, estadual e municipais, o aprimoramento da capacidade de preparação e de resposta. A velocidade com que os dados são gerados e consumidos atualmente requer uma capacidade de análise e processamento de dados mais otimizada e, como consequência, a necessidade de um aperfeiçoamento das equipes responsáveis para subsidiar as tomadas de decisão. Nesse sentido, os profissionais da área de saúde se veem cada vez mais compelidos a dominar ferramentas poderosas de análise de dados.
 
