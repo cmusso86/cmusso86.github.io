@@ -1,4 +1,5 @@
-![logo1.png]  
+<img src="logo1.png" style="image-align: center;"
+width="100" /> 
 
 **CURSO R DE TRÁS-PRA-FRENTE**
 
