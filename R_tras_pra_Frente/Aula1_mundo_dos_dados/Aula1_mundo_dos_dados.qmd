@@ -1,0 +1,157 @@
+---
+title: "Aula 1 - O curso e o mundo dos dados "
+subtitle: "R de Trás-pra-frente"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: visual
+---
+
+## Aula de Hoje
+
+1)  Apresentação do curso
+
+2)  Introdução ao mundo dos dados
+
+    ![](img/seja-bem-vindo-ao-meu-mural-5.png){width="396"}
+
+## O curso R-de-trás pra frente
+
+-   **Três módulos:**
+
+    1)  Introdução a Linguagem R
+
+    2)  Trabalhando os dados
+
+    3)  Apresentando as análises
+
+-   Cada módulo tem um mês (4 semanas), cada semana tem três video-aulas.
+
+-   Exercícios de fixação ao final de cada aula
+
+-   Ao final de cada módulo uma tarefa que -\> compõe a tarefa principal final
+
+## Porque chama "de-trás-pra-frente"?
+
+-   Desde as primeiras aulas, vamos ver "códigos rodando".
+
+-   Trabalhar de forma intuitiva e ir definindo os conceitos ao longo do curso.
+
+```{r echo=T}
+rm(list=ls()) #limpa o ambiente
+
+#Carrega os pacotes
+if (!require(pacman)) install.packages("pacman") 
+pacman::p_load(tidyverse, data.table, flextable, officer)
+
+```
+
+## Nossa bibliografia
+
+-   [The Epi-R Handbook](https://epirhandbook.com/en/index.html)
+
+-   [CURSO-R Ciência de Dados em R](https://livro.curso-r.com/index.html)
+
+-   [R for data Science](https://r4ds.had.co.nz)
+
+## A primeira semana:
+
+1)  **Apresentação** do curso e bases de dados
+
+2)  **Introdução ao R e RStudio:** instalação e apresentação do software
+
+3)  **Motivação:** Porque trabalhar com o R e não outro software?
+
+## Aula de hoje ...
+
+### Introdução ao mundo dos dados.
+
+-   A base de tudo que vamos falar
+
+-   Vamos pensar de um ponto de vista mais abrangente
+
+-   O que é trabalhar com os dados?
+
+    -   Evidências
+
+    -   Saber extrair, interpretar e visualizar a partir de muitos números.
+
+## Base de dados
+
+-   Diferença de um banco de dados: servidor e gestão dos dados.
+
+-   Cuidado necessário com os dados
+
+-   Já ouviu e expressão: Entra lixo ... sai lixo
+
+    -   Como ter dados arrumados?
+
+## Planilhas
+
+-   Tem experiência com Excel?
+
+    -   YouTube: [Ninja do Excel](https://www.youtube.com/watch?v=I2taMQ3j6qo), [Jenifer Oliveira](https://www.youtube.com/c/jenniferoliveiraanalisededados), [Karine Lago](https://www.youtube.com/results?search_query=karine+lago)
+
+    -   Plataformas em inglês: [Coursera](https://www.coursera.org/learn/excel-basics-data-analysis-ibm), [Future Learn](https://www.futurelearn.com/courses/introduction-data-to-analysis-using-msft-excel), [HarvardEdx](https://www.edx.org/course/excel-for-the-99?index=product&queryID=5a0cd016d05f021be9c6048f0f324d97&position=1), [**DataCamp**](https://learn.datacamp.com/#)
+
+    -   Em português: [Udemy](https://www.udemy.com/course/curso-excel-completo/?gclid=Cj0KCQjw_4-SBhCgARIsAAlegrWWF6Pi_0Svpu2vBUULwEYJzhHAhCtN9dRSYrFrfWS5UB_Al62He78aArEjEALw_wcB&utm_campaign=Excel_new_v.PROF_la.PT_cc.BR_ti.6730&utm_content=deal4584&utm_medium=udemyads&utm_source=adwords-intl&utm_term=_._ag_105409574767_._kw_%2Bcurso+%2Bde+%2Bexcel+%2Bmicrosoft_._ad_590054678639_._de_c_._dm__._pl__._ti_kwd-412560187119_._li_1001541_._pd__._), [EVG](https://www.escolavirtual.gov.br/curso/406), [PROFESP](https://proepi.org.br/curso-excel/)
+
+    -   [Livro Data Smart](https://www.amazon.com.br/Smart-Science-Transformar-Informação-Insight/dp/855080021X/ref=asc_df_855080021X/?tag=googleshopp00-20&linkCode=df0&hvadid=379787347388&hvpos=&hvnetw=g&hvrand=2912942549553859478&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=1001541&hvtargid=pla-809202559176&psc=1). [Migrar do Excel para o R](https://epirhandbook.com/en/transition-to-r.html).
+
+    -   Grupo Telegram
+
+        ![](images/telegram.png){width="100"}
+
+## Dados organizados
+
+-   O que é bom para a máquina ler x bom para humanos lerem
+
+-   [Capítulo 4 livro](https://epirhandbook.com/en/transition-to-r.html)
+
+-   O ideal para análise:
+
+    -   Cada linha uma observacão
+
+    ![](img/tidydata.png)
+
+## Exemplos base bagunçada
+
+![](img/bagun%C3%A7ada.jpeg){width="683"}
+
+![](img/mess.png){width="683"}
+
+## Mas se eu não tiver dados "arrumados"
+
+-   Sempre vai precisar arrumar alguma coisa.
+
+-   Nem tudo está perdido, mas!
+
+    -   Vai dar mais trabalho e requer mais habilidades.
+
+-   Então vamos focar em deixar o mais arrumado possível desde o começo!
+
+-   No curso usaremos dados secundários (ou seja, já foram coletados por outras pessoas): note que eles estarão quase sempre nesse formato!
+
+## Exercício
+
+-   No exercício de hoje vocês terão alguns questionários que foram preenchidos. A tarefa será passar esses dados para o Excel de forma que os dados fiquem arrumados de maneira ideal para as análises.
+
+-   **Lembre-se:** cada linha é uma observação (pessoa) e cada coluna é uma variável (atributo medido) de forma que cada célula do Excel contenha um único valor!
+
+-   Conclua o excercício e compare com o gabarito para avançar para a próxima aula!
+
+-   Faça comentários no forum sobre problemas identificados nessa coleta de dados e como melhora-la.
+
+# Por hoje é só!
