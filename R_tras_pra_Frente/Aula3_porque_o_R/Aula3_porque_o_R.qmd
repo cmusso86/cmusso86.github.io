@@ -1,0 +1,116 @@
+---
+title: "Aula 3 - Porque o R"
+subtitle: "Módulo 1: Introdução ao R"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    highlight-style: dracula
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: visual
+---
+
+## Esta semana
+
+### Aula 1 - Introdução ao mundo dos dados
+
+Dados arrumados: "tidy data"
+
+### Aula 2 - R e RStudio
+
+Download, instalação e quem é quem.
+
+### Aula 3 - Porque o R
+
+Mas o R é tão difícil, porque não ficar só no Excel mesmo?
+
+## Material para aprofundamento
+
+-   [EpiHandbook, 1. Porque usar o R.](https://epirhandbook.com/en/r-basics.html)
+
+-   [Instalação do R](https://livro.curso-r.com/1-1-instalacao-do-r.html)
+
+-   Aulas na SDS, Unb: [1](https://youtu.be/AgmOlK0ABx8) e [2](https://youtu.be/LkAzLDEgGgk)
+
+## Motivação: A revolução dos dados
+
+### Lidar com um volume grande e constante de dados!
+
+-   "Houve cinco exabytes de informação criados entre o alvorecer da civilização até 2003, mas essa quantidade de informação agora é criada a cada dois dias, e o ritmo vem aumentando". - Eric Schmidt, CEO Google
+
+## A vida é uma jornada
+-   Ou melhor, uma jornada atrás da outra.
+[Jornada do Herói](https://www.ted.com/talks/matthew_winkler_what_makes_a_hero?utm_campaign=tedspread&utm_medium=referral&utm_source=tedcomshare)
+
+![](img/heroi.jpeg){fig-align="center"}
+
+## Análise de dados em saúde
+
+-   Carência desse tipo de conhecimento nos profissionais da área.
+
+    -   Muito difícil achar a combinação: Conhecimento em saúde + em análise de dados
+
+![](img/waldo.gif){fig-align="center"}
+
+## Falamos em Excel mas...
+
+-   O R vai muito além!
+-   O poder de dominar uma linguagem de programação.
+
+![](img/canivete.jpg){fig-align="center"}
+
+## Exemplos
+
+-   Esta apresentação.
+-   [Livros](https://r4ds.had.co.nz)
+-   [Dashboards](https://psim.shinyapps.io/business_game/?_ga=2.140054067.1043151216.1676939547-1137527662.1676939547)
+-   Uma infinidade de gráficos: [R gallery](https://r-graph-gallery.com), [Data-to-Viz](https://www.data-to-viz.com)
+-   [Blogs](https://beamilz.com)
+-   [Relatórios automatizados](https://www.saude.df.gov.br/documents/37101/0/Boletim_Covid_932.pdf)
+
+## Outras vantagens
+
+-   **Gratuito e open source:**
+    -   Vai conseguir usar sempre!
+-   **Um grande processo colaborativo:**
+    -   O que você imaginar alguém já fez! (E provavelmente vai te ajudar)
+-   **"Conversa" com outras linguagens e ambientes.**
+    -   LateX, Markdown, Python, Collab, GitHub...
+-   **REPRODUTIBIBILIDADE DAS SUAS ANÁLISES.**
+    - Bom pra você e para a ciência!
+
+## Cursos
+
+- [DataCamp](<https://app.datacamp.com/learn/courses/free-introduction-to-r>)
+- [Coursera](<https://www.coursera.org/learn/data-analysis-r>)
+- [Udemy](<https://www.udemy.com/course/introducao-a-programacao-para-biologosbiologicas-com-r/>)
+- [Harvad edX](https://www.edx.org/course/data-science-r-basics?index=product&queryID=15beff7b3e86fcef93ef76b044533a37&position=1)
+- [Future Learn](,https://www.futurelearn.com/subjects/it-and-computer-science-courses/r-programming>)
+- [Curso-R](<https://curso-r.com>)
+
+## Outras recomendações
+
+- Muitos livros gratuitos online: 
+  - [R para usuários de Excel](<https://rstudio-conf-2020.github.io/r-for-excel/>)
+  - [RMarkdown: The Defenitive Guide](<https://bookdown.org/yihui/rmarkdown/>)
+- Canais e site:
+  - [Marcel Santos](<https://www.youtube.com/channel/UCO6x7sQurFTw0Su0vsexE5g>)
+  - [Beatriz Milz](<https://beamilz.com>)
+  - [RLadies](<https://www.rladies.org>),[StatQuest](<https://www.youtube.com/watch?v=pYxNSUDSFH4>),[CheatSheets](<https://posit.co/resources/cheatsheets/>), [Reproducible Analysis with R](<https://nceas.github.io/sasap-training/materials/reproducible_research_in_r_fairbanks/>), [Esse Post](<https://marcoarmello.wordpress.com/2019/06/03/rstats/>), [Statistics By Jim](<https://marcoarmello.wordpress.com/2019/06/03/rstats/>)
+  
+# Aceite o Desafio!
+  
+  
+
+
+
