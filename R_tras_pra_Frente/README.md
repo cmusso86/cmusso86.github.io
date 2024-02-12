@@ -42,17 +42,17 @@ O curso de linguagem R destina-se aos profissionais do SUS, das três esferas,  
 
 **Bibliografia**
 
-BATRA, N., et al (2021) [The Epidemiologist R Handbook](https://epirhandbook.com/). 
-CHANG, W. (2022) [R graphics Cookbook](https://r-graphics.org)
-CURSO-R (2022) [Ciência de Dados em R](https://livro.curso-r.com/index.html
-DataCamp.https://www.datacamp.com/users/sign_in?redirect=http%3A%2F%2Fapp.datacamp.com%2Flearn)
-GOHEL D. (2022) [Using the flextable R package](https://ardata-fr.github.io/flextable-book/)
-GROLEMUND, G. (2014) [Hands-On Programming with R.](https://rstudio-education.github.io/hopr/index.html)
-LENTE, C. CURSO-R (2021) [Zen do R.](https://curso-r.github.io/zen-do-r/)
-[RStudio CheatSheets](https://www.rstudio.com/resources/cheatsheets/)
-{RStudio Education](https://education.rstudio.com/)
-WICKMAN, H. & GROLEMUND G. (2017)[R for Data Science](https://r4ds.had.co.nz)
-WICKMAN, H.; NAVARRO, D.; PEDERSEN, T. L. (2015) [ggplot2: Elegant Graphics for Data Analysts.](https://ggplot2-book.org/index.html).
-XIE Y.; DERVIEUX C., RIEDERER E. (2021) [RMarkdown Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/)
-XIE Y.; ALLAIRE, J. J.; GROLEMUND, G. (2022) [RMarkdown: The Defenitive Guide].(https://bookdown.org/yihui/rmarkdown/)
+- BATRA, N., et al (2021) [The Epidemiologist R Handbook](https://epirhandbook.com/).
+- CHANG, W. (2022) [R graphics Cookbook](https://r-graphics.org)
+- CURSO-R (2022) [Ciência de Dados em R](https://livro.curso-r.com/index.html)
+- [DataCamp](https://www.datacamp.com/users/sign_in?redirect=http%3A%2F%2Fapp.datacamp.com%2Flearn)
+- GOHEL D. (2022) [Using the flextable R package](https://ardata-fr.github.io/flextable-book/)
+- GROLEMUND, G. (2014) [Hands-On Programming with R.](https://rstudio-education.github.io/hopr/index.html)
+- LENTE, C. CURSO-R (2021) [Zen do R.](https://curso-r.github.io/zen-do-r/)
+- [RStudio CheatSheets](https://www.rstudio.com/resources/cheatsheets/)
+- [RStudio Education](https://education.rstudio.com/)
+- WICKMAN, H. & GROLEMUND G. (2017)[R for Data Science](https://r4ds.had.co.nz)
+- WICKMAN, H.; NAVARRO, D.; PEDERSEN, T. L. (2015) [ggplot2: Elegant Graphics for Data Analysts.](https://ggplot2-book.org/index.html).
+- XIE Y.; DERVIEUX C., RIEDERER E. (2021) [RMarkdown Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/)
+- XIE Y.; ALLAIRE, J. J.; GROLEMUND, G. (2022) [RMarkdown: The Defenitive Guide].(https://bookdown.org/yihui/rmarkdown/)
 
