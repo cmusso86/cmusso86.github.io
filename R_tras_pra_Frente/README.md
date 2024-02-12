@@ -21,8 +21,8 @@ O curso de linguagem R destina-se aos profissionais do SUS, das três esferas,  
 
 
 **Objetivos**
-   
-        O objetivo do curso é desenvolver habilidades de programação em linguagem R para análises de dados epidemiológicos no contexto do SUS, utilizando bases de interesse do serviço, possibilitando autonomia na resolução de problemas para a construção de relatórios e análises automatizadas.
+
+O objetivo do curso é desenvolver habilidades de programação em linguagem R para análises de dados epidemiológicos no contexto do SUS, utilizando bases de interesse do serviço, possibilitando autonomia na resolução de problemas para a construção de relatórios e análises automatizadas.
    
 *Ao final do curso, espera-se que o aluno seja capaz de:*
 
