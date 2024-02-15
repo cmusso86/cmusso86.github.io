@@ -16,7 +16,7 @@ knitr:
   opts_chunk:
     echo: true
     warnings: false
-editor: visual
+editor: source
 ---
 
 ## Aula de Hoje

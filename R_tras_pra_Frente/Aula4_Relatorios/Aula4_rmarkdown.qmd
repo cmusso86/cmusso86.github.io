@@ -1,0 +1,131 @@
+---
+title: "Documentos automatizados"
+subtitle: "R de Trás-pra-frente"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    highlight-style: dracula
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: visual
+---
+
+## Introdução
+
+### Muitas análises, tempo de analisá-las
+
+<center><img src="../img/ciclo.png" width="760px"/></center>
+
+-   Muito tempo + softwares + profissionais
+
+-   Maior possibilidade de erro
+
+## Documentos reprodutíveis
+
+-   Economia de tempo
+
+-   Não ficam atreladas a uma pessoa
+
+    ![](../img/repro.jpeg){width="528"}
+
+## Vamos ver algo especial do R
+
+-   Bem diferente de como foi criado nos anos 90
+
+-   Rmarkdown ![](../img/rmarkdown.png){width="164"}
+
+-   Quarto ![](../img/quarto.png){width="330" height="92"}
+
+## R de trás-pra-frente
+
+-   Vamos ver um código pronto!
+
+-   Faça o download do arquivo disponível na plataforma e dê uma olhada no código por um tempo!
+
+-   Coloque as suas percepções, pontos que achou interessante, pontos que conseguiu "entender" no fórum de discussões!
+
+    ![](../img/10min.jpg){width="257"}
+
+## Agora faça como eu!
+
+-   Se deu tudo errado, não se desespere!
+
+![](../img/meg.webp){fig-align="center" width="384"}
+
+## Você conseguiu diferenciar essas partes?
+
+::: columns
+::: {.column width="20%"}
+-   Cabeçalho
+
+-   Texto
+
+-   Código
+:::
+
+::: {.column width="80%"}
+![](../img/tela_markdown.png){fig-align="center" width="859"}
+:::
+:::
+
+## Cabeçalho
+
+-   Metadados
+
+-   Linguagem YAML
+
+-   É MUITO sensível (qualquer coisa atrapalha)
+
+    ![](../img/Captura%20de%20Tela%202022-10-24%20a%CC%80s%2017.41.50.png){width="455"}
+
+## Texto
+
+-   Markdown
+
+    ![](../img/texto.png)
+
+## Código
+
+-   É o coração do R mesmo
+
+    -   Linguagem de programação
+
+    -   Como que difere de Excel (apontar e clicar?)
+
+        ![](../img/chunk.png)
+
+## Brincando com o código
+
+![](../img/dog.webp){fig-align="center" width="383"}
+
+-   Mudar de cor, posição ...
+
+## O que são esses chunks afinal?
+
+-   O "código" própriamente dito
+
+-   As partes dos chunks
+
+    -   cabeçalho (do chunk)
+    -   conteúdo
+        -   código
+        -   comentários
+
+## Desafio
+
+-   **Hashtag**: Qual a diferença dele (#) na parte do texto e dentro dos chunks de código?
+-   **Código inline**: Há outro tipo de escrita de código em R no script sem ser dentro dos chunks. Tente encontra-lo e coloque seus comentários no fórum!
+
+## FIM DA AULA PILOTO
+
+![](../img/all.webp){fig-align="center" width="509"}
