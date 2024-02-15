@@ -1,0 +1,208 @@
+---
+title: "Aula 6 - Erros comuns"
+subtitle: "Módulo 1: Introdução ao R"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+-   Aula 4 - Relatórios automatizados
+
+-   Aula 5 - Pacotes
+
+-   Aula 6 - Erros comuns e como buscar ajuda
+
+## Erros
+
+**Fazemos de tudo pra minimizar... mas nunca eliminamos completamente**
+
+-   Codificação
+
+-   Coisas antigas na memória
+
+-   Pacotes
+
+-   Parenteses e aspas abertos
+
+-   Diferenças de erros no código R e erros de compilação
+
+-   ...
+
+## Leituras complementares
+
+-   [Erros comuns](https://epirhandbook.com/en/common-errors.html?q=error#common-errors)
+
+-   [Pedindo Ajuda](https://livro.curso-r.com/3-1-pedindo-ajuda.html)
+
+-   [Geting Help](https://epirhandbook.com/en/getting-help.html?q=help#getting-help)
+
+-   [Palestra Latin-R: Conquistando Errores en R](https://www.youtube.com/watch?v=CAw3-pZhzfk), [material](https://paocorrales.github.io/errores_tutorial/)
+
+## Primeira coisa a fazer quando dá um erro
+
+-   Ler o erro! 😂
+    -   Nem sempre ajuda muito...mas sempre comece por aí!
+
+    -   Atenção que as vezes não é um Erro, e sim um "Warning"
+
+        ![](../img/warning.png)
+
+## Em seguida (minha sugestão)
+
+-   Perguntar ao ***Google!*** (ou ao ChatGPT)
+    -   Simplesmente copie e cole o erro lá!
+
+        ![](../img/fut.png){fig-align="center" width="412"}
+
+## No Google
+
+-   Dê preferêcia resultados do:
+
+    -   **StackOverflow ;** RBloggers ; RStudio / RProject
+
+        ![](../img/preg.jpeg){fig-align="center" width="386"}
+
+## Documentação oficial
+
+-   Buscar no CRAN o pdf da documentação oficial
+
+-   Procurar na aba ajuda pela documentação da função que está tentando usar
+
+-   Vamos lá!
+
+## Erro de codificação
+
+-   Resumidamente...
+
+    ![](../img/encoding.png)
+
+-   Os caracteres especiais **no script** não são lidos corretamente
+
+-   Como resolver?
+
+    -   File -\> **Reopen with encoding**
+
+## "Erro de Diretório"
+
+-   **O script não acha os arquivos que você quer abrir!**
+
+-   Sempre abra o RStudio a partir do próprio script na pasta que você quer que ele rode, assim ele já estará "rodando" lá.
+
+## "Erro de Diretório"
+
+**OU**
+
+-   Session -\> Set Working Directory -\> To Source File Location
+
+**OU**
+
+-   Com linhas de código
+
+**Calma falaremos com calma sobre quando tivermos importanto bases de algum arquivo salvo no seu computador!**
+
+## Objetos antigos na memória
+
+**Como eu sempre começo meu código?**
+
+```{r eval=F}
+rm(list=ls())  #limpa  o ambiente
+```
+
+-   Isso vai garantir que você sempre vai começar com o "Ambiente Limpo"
+
+## E o contrário?
+
+### O que deveria estar na memória não estava
+
+-   Esqueci de rodar alguma coisa
+
+-   Lembre-se, para o computador, você tem que falar tudo em uma ordem muito específica.
+
+-   Afinal o que são os **objetos** no R?
+
+# Interlúdio:
+
+-   Vamos achar um objeto no nosso código ...
+
+## No R, usamos muitos pacotes
+
+-   Existe o chamado R base
+    -   são as funções **nativas**
+-   Mas usamos muitos pacotes!
+    -   Que vem com rotinas mais **amigáveis**.
+    -   vamos usar muito um que já devem ter ouvido falar: **tidyverse**
+-   Pra usar as funções precisamos antes **carregar o pacote**!
+    -   as funções são os que permites fazer as contas!
+    -   como a de filtrar paises com \> 10000 casos no exercício
+
+## Como geralmente fazem para carregar?
+
+**E que erro comum pode acontecer?**
+
+```{r}
+library(tidyverse)
+```
+
+![](../img/pacote.png)
+
+## Como costumam resolver?
+
+```{r eval=F}
+install.packages("tidyverse")
+# OU
+pacman::p_load(tidyverse)
+```
+
+## Objetos que o R não reconhece
+
+-   \# para comentários e funções para o código
+
+-   O que acontece se eu tirar um \# da frente de um comentário e tentar rodar o script?
+
+## Isso tem ou não tem aspas?
+
+Geralmente:
+
+-   **Não têm aspas**: Objetos, funções,parâmetros, Variáveis (o que seriam variáveis?) ...
+
+-   **"Têm aspas"** : Nomes, Legendas, opções do parâmetro (exceto se foram números).
+
+## Erros :
+
+### No R X na compilação : situações diferentes
+
+-   Fizemos com o Run All.
+
+-   Tentemos agora com o Knit (ou..)
+
+```{r, eval=F}
+# Outra forma de rodar sem ser clicando o Knitr
+rmarkdown::render("nome_do_arquivo.Rmd")
+```
+
+## Usando as funcionalidades do RStudio
+
+-   Cometários ficam verde
+
+-   Quando fechamos parênteses ele mostra de qual ele era referente
+
+-   A linha fica colorida de amarelo ou vermelho para chamar atenção de algum erro
+
+-   Com certeza tem mais coisa que nem eu descobri ainda...
+
+## Obrigada!

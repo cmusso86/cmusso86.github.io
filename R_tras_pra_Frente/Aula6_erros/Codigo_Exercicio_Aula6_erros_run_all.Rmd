@@ -1,0 +1,112 @@
+---
+title: "Ache meus erros e corrija"
+author: "`r Sys.Date()`"
+date: "2023-03-08"
+output: word_document
+---
+
+
+```{r pacotes, include=F }
+
+
+# PREPARAÇÕES  INICIAIS ----
+
+#  sempre começo o código limpando o ambiente para garantir que não tem nenhum
+# objeto "perdido" de outra seção anterior que rodei. Depois de limpar, garanto # que o pacote pacman está instalado (linha 32) e depois chamo a funçao pacman
+# e dentro do parenteses vou incluindo o nome de todos os pacotes que vou 
+# descobrindo ao longo do caminho que vou precisar.
+
+rm(list=ls())  #limpa  o ambient
+if (!require(pacman)) install.packages("pacman") #garante que tem o pacman
+pacman::p_load(tidyverse, data.table, flextable, officer, rio) #carrega 4 pacotes
+```
+
+```{r bancos, echo=F, message=F, warning=F }
+
+# BANCOS ----
+
+who_bruto <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+```
+
+## Subtítulo
+
+O que acha interessante dizer sobre os dados? Pode interpretar, enfim...
+
+## Vamos ver uma parte do aqui
+
+
+```{r include=F}
+
+# MANIPULAÇÕES NO BANCO -----------
+who_trat <- who_bruto %>% 
+  select(Date_reported,Country,New_cases,Cumulative_cases) %>%  # colunas q quero
+  group_by(Country) %>% # agrupando  (tabela dinamica)
+  summarise(Acumulado=max(Cumulative_cases, na.rm=T)) %>% # agrupando  (tabela dinamica)
+  filter (Acumulado > 10000000) # filtrando os que tem mais de 10 milhões
+
+# VALOR PARA BRASIL
+
+Valor_BRA <- (who_trat %>% 
+  filter(Country=="Brazil"))$Acumulado
+  
+# Gerando a figura 1 ----
+ggplot(who_trat)+
+  geom_bar(aes(x=Country, y=Acumulado), stat="identity", 
+           color=black, fill="orange")+
+  coord_flip()+
+  theme_classic()
+
+# Dados da figura 1 ----
+
+img1_path<-"Graf1_Casos_acumulados_7paises.png"
+
+ggsave(filename =img1_path, width=6, height=3 )
+
+legenda1<- "Minha legenda da figura"
+```
+
+```{r echo=T, fig.cap=legenda1}
+img1_path<-img1_path
+knitr::include_graphics(img1_path)
+```
+
+## E pra finalizar uma tabelinha aqui
+
+
+```{r tabela1, echo=F, include=F}
+
+
+# Gerando e editando a tabela ----
+(Tab1<-who_trat %>% 
+  flextable() %>% 
+  width(width=2) %>% 
+  style(pr_t=fp_text(font.size=13,
+                     font.family='Calibri'), part="body")%>%
+  style(pr_t=fp_text(font.size=13,
+                     font.family='Calibri'), part="header")%>%
+  bold(part="header")%>%
+  bold(part="body", j=1)%>%
+  hline( border=fp_border(color="black", width = 0.5))%>%
+  align( align = "center", part = "all")%>%
+  bg(bg="orange", part="header) )
+ 
+# salvando e dados da tabela ----
+
+
+titulo_1<-"Titulo Tabela 1"
+
+tab1_path<-"Tab1_Casos_acumulados_7paises.docx"
+
+save_as_docx(Tab1,path=tab1_path)
+
+
+```
+
+```{r echo=F}
+# Tabela no documento 
+
+  Tab1%>% 
+  set_caption(caption = titulo_1, autonum = run_autonum()) %>%
+    autofit(
+
+```

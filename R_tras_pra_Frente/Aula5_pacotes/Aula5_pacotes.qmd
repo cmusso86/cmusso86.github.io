@@ -1,0 +1,206 @@
+---
+title: "Aula 5 - Funções e Pacotes"
+subtitle: "Módulo 1: Introdução ao R"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Até agora
+
+-   Muitas coisas novas: Vamos recapitular, revisitar e aprofundar!
+
+-   Lembre que é um curso numa ordem não muito usual...
+
+![](../img/Immersion.jpg){fig-align="center" width="384"}
+
+## Hoje: O que são pacotes
+
+-   São como "extensões", um conjunto de funções
+    -   Muitos coisas novas desenvolvidas desde 1993
+    -   Afinal, é muito difícil sempre atualizar o código base
+    -   Além disso, nem todo mundo precisa de tudo...
+
+![](../img/pkg.png){fig-align="center"}
+
+## Sobre pacotes ...
+
+-   Usaremos muitos pacotes!
+    -   Vimos alguns no exercício da aula passada.
+    -   Dificilmente você fará as análises só com o Base
+    -   Dificilmente o pacote que você precisa não existe
+    -   Se não existir você pode desenvolver um um dia!
+
+## Estudo complementar
+
+-   [Sugestão de pacotes, EpiR-Handbook](https://epirhandbook.com/en/suggested-packages-1.html)
+
+-   [Instalação de pacotes, Curso-R](https://livro.curso-r.com/4-pacotes.html)
+
+-   [Tidyverse, R4DS](https://r4ds.had.co.nz/introduction.html?q=pac#other-packages)
+
+## CRAN
+
+-   Você mesmo pode desenvolver um pacote e disponibilizar para a comunidade.
+
+-   CRAN é o repositório oficial
+
+-   [Pacotes disponíveis](https://cran.r-project.org/web/packages/available_packages_by_name.html)
+
+![](../img/cran.png){fig-align="center"}
+
+## Github
+
+-   Pacotes que não estão no CRAN
+-   E/Ou versões ainda em desenvolvimento (mais recentes)
+-   [Um exemplo](https://github.com/rstudio/shiny)
+
+![](../img/git.jpg){fig-align="center"}
+
+## Instalar e Carregar
+
+Para utilizar um pacote é preciso instalá-lo (uma única vez) e depois carregá-lo (sempre que for usar)
+
+### Jeito clássico
+
+```{r eval=F}
+# para instalar
+install.packages("tidyverse") # precisa estar entre aspas
+
+# para carregar
+library(tidyverse) #pode estar entre aspas ou não
+```
+
+## Pacote Pacman
+
+Mas nós vamos fazer de outro jeito! Vamos usar um pacote que gerencia pacotes (eu disse que tinha pacotes para tudo!)
+
+```{r}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load("tidyverse")
+```
+
+-   Verifica a instalação e carrega! : Garantir reprodutibilidade e automatização.
+
+![](../img/pac.png){fig-align="center"}
+
+## Usamos isso na aula passada!
+
+-   Consegue identificar no código?
+
+-   A cada novo pacote que resolvermos usar: basta adicionar lista inicial
+
+-   Na primeira vez que rodar o script ele vai instalar, então vai demorar mais
+
+```{r eval=F}
+pacman::p_load(tidyverse, data.table, flextable, officer)
+```
+
+## O que são funções
+
+-   O pacote é um conjunto de funções... mas o que são funções?
+
+-   "Funções em programação é um conjunto de instruções para simplificar uma tarefa repetitiva"
+
+    -   Geralmente têm cara de "verbo"
+
+```{r eval=F}
+nome_da_função(argumento1="bla", argumento2="bla")
+```
+
+-   O R aceita os argumentos sem nome, se estiverem na ordem correta.
+-   Calma: Voltaremos a esse assunto nas próximas aulas!
+
+## Exemplos:
+
+### Função de instalação
+
+```{r eval=F}
+install.packages("tidyverse")
+install.packages(pkgs="tidyverse")
+```
+
+### Função de carregamento
+
+```{r}
+pacman::p_load("tidyverse")
+#OU
+library(pacman)
+p_load("tidyverse")
+```
+
+## Outros exemplos
+
+```{r}
+sqrt(9)
+round(3.89, digits = 0 )
+round(3.89,  0 )
+```
+
+## Carregar pacotes
+
+-   Para utilizar as funções deles
+-   usar o library ou explicitar o nome do pacote antes da função
+    -   só carrega para aquela função
+    -   pode ser útil quando há conflitos entre pacotes
+
+## Conflitos entre pacotes
+
+```{r}
+pacman::p_load(tidyverse, papeR)
+
+cars %>% 
+  summarise(media=mean(dist))
+
+cars %>% 
+  dplyr::summarise(media=mean(dist))
+```
+
+## O pacote tidyverse
+
+-   Deixou a linguagem bem mais simples
+
+![](../img/tidy.jpg){fig-align="center" width="493"}
+
+## RBase
+
+```{r}
+head(cars[cars$speed>7,],3)
+```
+
+### Com o tidyverse
+
+```{r}
+cars %>% #isso chama pipe
+  filter(speed>7) %>% 
+  head(3)
+```
+
+## O pipe
+
+O pipe %\>% é do pacote magrittr, mas!
+
+-   Todo mundo gostou tanto que agora o Rbase tem um desde a verão 4.2
+
+    -   `|>`
+
+-   Atalho no teclado: ctrl + m
+
+-   Falaremos mais dele quando aprendermos mais funções!
+
+# Até a próxima aula!
+
+-   Não se equeçam de fazer os exercícios e aprofundar as leituras!
