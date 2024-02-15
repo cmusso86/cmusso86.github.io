@@ -38,7 +38,7 @@ editor: visual
 
 -   Mais flexível e poderoso do que operar somente a interface
 
-![](img/pseudocodigo.png){width="423"}
+![](../img/pseudocodigo.png){width="423"}
 
 ## Quem criou o R
 
@@ -48,13 +48,13 @@ editor: visual
 
 -   [Robert Gentleman](https://computationalbiomed.hms.harvard.edu/about/people/robert-gentleman-phd/), [Ross Ihaka](https://www.stat.auckland.ac.nz/~ihaka/), S Language
 
-![](img/rlogo.jpg){width="314"}
+![](../img/rlogo.jpg){width="314"}
 
 ## E o R-Studio?
 
 -   Criado pela empresa RStudio, atualmente [Posit](https://posit.co)
 
-    ![](img/posit_logo.jpg){width="356"}
+    ![](../img/posit_logo.jpg){width="356"}
 
 -   [Hadley Wickham](https://hadley.nz): Cientista de dados chefe
 
@@ -68,7 +68,7 @@ editor: visual
 
     -   Existem outras formas de usar o R, mas a mais intuitiva e a que vamos nos familirizar aqui é por meio do RStudio.
 
-    ![](img/rstudio_logo.png){width="395"}
+    ![](../img/rstudio_logo.png){width="395"}
 
 ## E os pacotes o que são?
 
@@ -96,11 +96,11 @@ editor: visual
 
 -   meio assustador não é?
 
-    ![](img/giphy.gif){width="390"}
+    ![](../img/giphy.gif){width="390"}
 
 ## Os Quatro Paineis do R-Studio
 
-![](img/paineis.png)
+![](../img/paineis.png)
 
 ## Exercício
 

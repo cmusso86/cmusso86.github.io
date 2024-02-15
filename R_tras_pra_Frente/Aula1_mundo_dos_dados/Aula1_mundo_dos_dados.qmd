@@ -25,7 +25,7 @@ editor: visual
 
 2)  Introdução ao mundo dos dados
 
-    ![](img/seja-bem-vindo-ao-meu-mural-5.png){width="396"}
+    ![](../img/seja-bem-vindo-ao-meu-mural-5.png){width="396"}
 
 ## O curso R-de-trás pra frente
 
@@ -124,13 +124,13 @@ pacman::p_load(tidyverse, data.table, flextable, officer)
 
     -   Cada linha uma observacão
 
-    ![](img/tidydata.png)
+    ![](../img/tidydata.png)
 
 ## Exemplos base bagunçada
 
-![](img/bagun%C3%A7ada.jpeg){width="683"}
+![](../img/bagun%C3%A7ada.jpeg){width="683"}
 
-![](img/mess.png){width="683"}
+![](../img/mess.png){width="683"}
 
 ## Mas se eu não tiver dados "arrumados"
 
