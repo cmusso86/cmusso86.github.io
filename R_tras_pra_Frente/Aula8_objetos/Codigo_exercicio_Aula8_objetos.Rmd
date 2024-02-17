@@ -1,0 +1,114 @@
+---
+title: "Objetos"
+date: "`r Sys.Date()`"
+output:
+  word_document
+---
+
+```{r pacotes, include=F }
+
+# PREPARAÇÕES  INICIAIS ----
+
+rm(list=ls())  #limpa  o ambient
+if (!require(pacman)) install.packages("pacman") #garante que tem o pacman
+pacman::p_load( tidyverse,data.table,rio) 
+
+```
+
+```{r bancos, echo=F, message=F, warning=F }
+# BANCOS ----
+
+who_bruto <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv", na.strings = "")
+
+
+```
+
+
+# 1) Vetores numéricos
+
+a) Crie um vetor chamado "meu_primeiro_vetor" com cinco valores numéricos usando a função c().
+
+```{r , echo=F}
+meu_primeiro_vetor<-c()
+
+```
+
+b) Crie crie outro vetor com outro nome de sua preferência.
+
+```{r}
+
+```
+
+c) Aplique a função sqrt() que calcula a raiz quadrada e salve o resultado em um nome objeto com o nome de sua preferência.
+
+```{r}
+
+```
+
+d) Como posso observar esses objetos. Cite pelo menos duas formas diferentes.
+
+```{r}
+```
+
+# 2) Strings
+
+a) Corrija o comando abaixo para criar um vetor de caracteres com o nome dessas pessoas. 
+
+```{r}
+nomes_colegas<-c(Otto,Carol, Julio)
+```
+
+b) Corrija o comando abaixo para criar um vetor de caracteres com o nome dos colegas.
+
+```{r}
+nomes_colegas<-("Otto","Carol", "Julio")
+```
+
+c) Use a funçao class() para verificar os tipos de vetores criados ate agora
+
+```{r}
+
+```
+
+d) Observe os tipos de objetos criados até agora na aba Environment. Descreva o que pode ser obtido de informação nessas abas.
+
+
+e) Use a função sum()  para calcular a soma dos valores do vetor numérico criado anteriormente. Basta dar o nome do vetor numérico como argumento para essa função. Note que ela só aceita vetores numéricos, afinal, não é possível somar nomes. 
+
+```{r}
+sum()
+```
+
+f) Descubra (pode ser  no google ou com o coleguinha) qual a função para calcular a média dos valores do mesmo vetor. É importante exercitar essa capacidade de busca, mesmo que não tenhamos visto ainda essa função em aula. 
+
+```{r}
+
+```
+
+
+# 4) Data frame
+
+a) Use a função class() para verificar o tipo de objeto que é o "who_bruto" criado no início desse script.
+
+```{r}
+
+```
+
+d) Use a função dim() no mesmo objeto. Você consegue descobrir o que essa função faz?
+
+```{r}
+
+```
+
+e)  Use o atributo do R base $ para salvar a coluna New_Cases do objeto who_bruto em um novo objeto com um nome de sua preferência.
+
+```{r}
+
+```
+
+f) Veja um summary() desse vetor que acabou de criar
+
+```{r}
+
+```
+

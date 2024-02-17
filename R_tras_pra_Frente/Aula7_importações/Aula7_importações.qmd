@@ -1,0 +1,201 @@
+---
+title: "Aula 7 - Importações"
+subtitle: "Módulo 1: Introdução ao R"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    incremental: true 
+    theme: default
+    scrollable: true
+    preview-links: true
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Semana 3
+
+-   **Aula 7 - Importações**
+
+-   Aula 8 - Objetos importados
+
+-   Aula 9 - Exportações
+
+## Leituras de apoio
+
+-   [EpiHandbook, 7.Import/Expot](https://epirhandbook.com/en/import-and-export.html)
+
+-   [Curso-R, 5. Importação](https://livro.curso-r.com)
+
+-   [DataCamp, Introdução a importação de dados em R](https://app.datacamp.com/learn/courses/introduction-to-importing-data-in-r)
+
+-   [R4DS, 11. Data import](https://r4ds.had.co.nz/data-import.html)
+
+## Caso já esteja nesse ponto
+
+-   Se você já está nesse ponto de começar a escrever seus próprios scripts, **recomendo**:
+
+    -   Usar projetos: [EpiR-Handbook](https://epirhandbook.com/en/r-projects.html), [Curso-R](https://livro.curso-r.com/2-3-projetos.html)
+
+    -   Uma boa prática que deixa seu trabalho bem mais organizado!
+
+        ![](../img/project.png){fig-align="center" width="239"}
+
+## Importar dados
+
+-   Os dados vivem no seu computador (ou no computador de alguém)
+
+-   Você quer importá-lo opara dentro da sua sessão de R
+
+![](../img/importxl.png){fig-align="center" width="369"}
+
+## Recapitulando alguns conceitos
+
+-   **Objetos**: Valores aos quais eu dei um nome.
+
+    -   Crio usando funções e atribuindo com um símbolo \<- ou =
+
+    -   Depois de criados aparecem na aba **Environment**
+
+. . .
+
+```{r eval=F}
+# um único valor
+raiz_de_3 <- sqrt(9) 
+
+# uma base de dados
+dados_covid <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+```
+
+## Recapitulando
+
+-   **Funções**: Instruções, verbos, que "mandam" os dados fazerem alguma coisa.
+
+    -   Tem parênteses e argumentos separados por vírgulas.
+
+    -   Uso as funções **nos** objetos. Funções **não são** objetos.
+
+. . .
+
+```{r eval=F}
+dados_covid <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+# import() é a função
+# dados_covid é o objeto criado com o resultado da conta
+# o nome do arquivo é o argumento que essa função recebeu para operar
+```
+
+## Recapitulando
+
+-   **Pacotes**:
+
+-   O conjunto de funções que vou instalar
+
+-   Extensões das funções nativas do Rbase
+
+-   E carregar para conseguir usa-las!
+
+## Importando dados
+
+-   Primeira frustração para começar a analisar seus dados!
+
+-   O R tem que achar o arquivo no seu computador!
+
+-   O está "rodando" em um diretório (pasta) no seu computador.
+
+. . .
+
+```{r}
+getwd()
+```
+
+## Diretório de trabalho
+
+-   Se eu abro o programa -\> roda no diretório raiz
+
+-   Se abro o arquivo -\> roda no mesmo diretório do arquivo
+
+. . .
+
+![](images/clicar.png){fig-align="center" width="371"}
+
+## Opções:
+
+-   Colocar o arquivo na mesma pasta que ele está rodando
+
+-   Mudar o diretório do R para o diretório onde o arquivo está:
+
+    -   Session -\> Set Working Directory -\> To Source File Location
+
+-   Escrever o caminho (path) pra importação explicitamente
+
+## Com código: reprodutível
+
+-   indicar o caminho (path) com código (muda o diretório)
+
+. . .
+
+```{r eval=F}
+setwd("C:/Users/Carolina/Documentos")
+```
+
+-   .. (dois pontos consecutivos) indica o diretório anterior
+
+. . .
+
+### Dica
+
+Dê preferência a caminhos relativos do que caminhos absolutos.
+
+## Importação
+
+Hoje vamos aprofundar em como importar dados para o R
+
+-   Vamos favorecer a *função import()* do pacote rio
+
+    -   Consegue importar em diversos formatos (csv, excel, dbf...)
+
+    <center><img src="../img/rio.png" height="200px&quot;"/></center>
+
+## Outras funções
+
+-   read.csv {R base}
+
+-   read_csv e read_csv2 {tidyverse}
+
+    -   tem muitos argumentos interessantes e úteis mas é "lenta"
+
+-   read_excel {readxl}
+
+-   fread {data.table}
+
+## Opções point-click
+
+-   Importar com o importador
+
+    ![](../img/import.png){width="266"}
+
+-   Ou
+
+. . .
+
+```{r eval=F}
+my_data <- import(file.choose())
+```
+
+## Exemplo
+
+```{r eval=F}
+who_bruto <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+```
+
+-   Não se esqueça das aspas e da extensão!
+
+# Obrigada!

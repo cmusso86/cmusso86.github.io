@@ -1,0 +1,145 @@
+---
+title: "Objetos"
+date: "`r Sys.Date()`"
+output:
+  word_document
+---
+
+```{r pacotes, include=F }
+
+# PREPARAÇÕES  INICIAIS ----
+
+rm(list=ls())  #limpa  o ambient
+if (!require(pacman)) install.packages("pacman") #garante que tem o pacman
+pacman::p_load( tidyverse,data.table,rio) 
+
+```
+
+```{r bancos, echo=F, message=F, warning=F }
+# BANCOS ----
+
+who_bruto <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv", na.strings = "")
+
+
+```
+
+# >>> Aqui trazemos um exemplo de resolução de exercício <<< #
+
+# 1) Vetores numéricos
+
+a) Crie um vetor chamado "meu_primeiro_vetor" com cinco valores numéricos usando a função c().
+
+```{r , echo=F}
+meu_primeiro_vetor<-c(1, 3, 5, 7, 9)
+
+```
+
+b) Crie crie outro vetor com outro nome de sua preferência.
+
+```{r}
+uf_de_interesse=c("DF", "GO", "RS", "RN", "MA")
+
+```
+
+c) Aplique a função sqrt() que calcula a raiz quadrada e salve o resultado em um nome objeto com o nome de sua preferência.
+
+```{r}
+raiz_de_81<-sqrt(81)
+
+```
+
+d) Como posso observar esses objetos. Cite pelo menos duas formas diferentes.
+
+```{r}
+#Opção 1: Usar a função Class para ver a classe do objeto
+class(meu_primeiro_vetor)
+
+#Opção 2: Observar o Environment (canto superior direito)
+
+#Opção Extra: Usar a função View para ver o objeto (mais útil quando o objeto é uma base de dados)
+View(uf_de_interesse)
+
+```
+
+# 2) Strings
+
+a) Corrija o comando abaixo para criar um vetor de caracteres com o nome dessas pessoas. 
+
+```{r}
+nomes_colegas<-c("Otto","Carol", "Julio")
+```
+
+b) Corrija o comando abaixo para criar um vetor de caracteres com o nome dos colegas.
+
+```{r}
+nomes_colegas<-c("Otto","Carol", "Julio")
+```
+
+c) Use a funçao class() para verificar os tipos de vetores criados ate agora
+
+```{r}
+class(nomes_colegas)
+class(meu_primeiro_vetor)
+
+```
+
+d) Observe os tipos de objetos criados até agora na aba Environment. Descreva o que pode ser obtido de informação nessas abas.
+#Na aba Environment vemos os objetos criados até agora: who_bruto. meu_primeiro_vetor, nomes_colegas, raiz_de_81 e uf_de_interesse. Esses objetos estão divididos em duas categorias maiores Data (who_bruto) e Values (outros).
+#Para a base de dados Who_bruto vemos descrito ao lado do nome a quantidade de observações (274.920) e a quantidade de variáveis (8). Isso nos permite ter uma ideia da dimensão da base, mesmo antes de explorá-la.
+
+#Para os objetos da categoria Values, vemos ao lado do nome um descritivo do tipo de objeto ("num" pra númerico e "chr" para caracter). Vemos também a dimensão do objeto entre colchetes. O objeto "nomes_colegas", por exemplo, tem uma linha e 3 colunas [1:3]. Poderíamos interpreta-lo também como uma lista ou vetor de três elementos.
+
+#O Objeto "raiz_de_81" é apenas um número, por isso não vemos mais detalhes referentes a ele.
+
+
+
+e) Use a função sum()  para calcular a soma dos valores do vetor numérico criado anteriormente. Basta dar o nome do vetor numérico como argumento para essa função. Note que ela só aceita vetores numéricos, afinal, não é possível somar nomes. 
+
+```{r}
+sum(meu_primeiro_vetor)
+```
+
+f) Descubra (pode ser  no google ou com o coleguinha) qual a função para calcular a média dos valores do mesmo vetor. É importante exercitar essa capacidade de busca, mesmo que não tenhamos visto ainda essa função em aula. 
+
+```{r}
+mean(meu_primeiro_vetor)
+
+## Uma rápida busca no Google "como calcular média no R" nos traz essa alternativa. Caso tenha optado por outra forma, disponibilize sua solução no nosso fórum de debate.
+```
+
+
+# 4) Data frame
+
+a) Use a função class() para verificar o tipo de objeto que é o "who_bruto" criado no início desse script.
+
+```{r}
+class(who_bruto)
+
+## vemos que é um "data frame" (base de dados) do tipo "data table" (tabela de dados). Podemos simplesmente nos referir ao objeto como uma base de dados. 
+```
+
+d) Use a função dim() no mesmo objeto. Você consegue descobrir o que essa função fez?
+
+```{r}
+dim(who_bruto)
+
+## A função nos informa as dimensões do objeto em questão (quantidade de linhas e colunas). Como ja vimos, esse dado poderia ser obtido também ao observar o objeto no "Environment". 
+```
+
+e)  Use o atributo do R base $ para salvar a coluna New_Cases do objeto who_bruto em um novo objeto com um nome de sua preferência.
+
+```{r}
+casos_novos<-who_bruto$New_cases
+
+##Repare que o objeto foi salvo no Environment com alguns detalhes diferentes dos demais. Outro detalhe importante é que essa função só dará certo se usarmos o nome da coluna exatamente como está na base de dados.
+```
+
+f) Veja um resumo (use a função summary() ) desse vetor que acabou de criar
+
+```{r}
+ summary(casos_novos)
+## Aqui temos um resumo do vetor. Por ser um vetor numérico, veremos informações como Máxima, Mínima, média e etc.
+## Se quiser ver como a função se comporta com vetores não númericos, refaça o exercício anterior com outra variável.
+
+```
+

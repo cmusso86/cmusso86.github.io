@@ -1,0 +1,59 @@
+---
+title: "Exercicio aula 7 - import"
+author: "Carolina Musso"
+date: "2023-02-03"
+output:
+  word_document:
+---
+
+```{r sets, echo=F, warning=FALSE, include=F}
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(rio)
+```
+
+# Importando
+
+## 1) Leia a base abaixo com a função import.
+
+Porque nesse caso não foi preciso se preocupar com o caminho do arquivo? Ou seja, porque não precisem me preocupar de onde e sessão de R está rodando para encontrar este arquivo?
+
+```{r bancos, echo=F, message=F, warning=F }
+# BANCOS ----
+who_bruto <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+```
+
+## 2) Vamos importar agora um dado do disco fazendo testes como se pede na aula.
+
+```{r include=F}
+
+
+vacina_bruto <-import("vacinas.xlsx")
+
+```
+
+**Lembre-se, para que o R consiga abrir esse arquivo com o código da forma que está escrito, o arquivo deve estar na mesma pasta em que o ambiente do R etá rodando. Se está na dúvida onde você está rodando, tente o `getwd()`. Se precisar mudar de diretório, você pode ir em Session -> Set Working Directory**
+
+## 3) Vamos supor que seu arquivo esteja em uma pasta "acima" do ambiente que o R está rodando. Por exemplo, há uma pasta no seu desktop chamada "Curso de R" e a sessão de R está rodando dentro desta pasta. Entretanto, seu arquivo está fora desta pasta, solto no próprio desktop. Para ler esse arquivo você pode usar o seguinte código:
+
+```{r}
+dados <- import("../vacinas.xlsx")
+```
+
+Os ".." indicam que esse arquivo está uma pasta anterior da que você se encontra. 
+
+Agora vamos supor o contrário. Qua você deseja salvar a base de dados dentro de uma subpasta chamada "Dados" dentro da pasta "Curso de R". Ou seja, dentro de "Curso de R" há uma pasta chamada "Dados" e o arquivo `vacinas.xlsx` está lá dentro. Como você modificaria o código para aque ele leia essa arqivo nessa nova localização?
+
+```{r}
+
+```
+
+## 4) Escolha um arquivo de seu interesse e importe, salvando com o nome `meus_dados`. 
+
+```{r}
+
+```
+
