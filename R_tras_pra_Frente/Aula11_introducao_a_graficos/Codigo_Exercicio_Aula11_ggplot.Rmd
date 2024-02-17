@@ -1,0 +1,133 @@
+---
+title: "Graficos"
+author: "`r Sys.Date()`"
+date: "2023-03-10"
+output:
+  word_document
+---
+
+```{r pacotes, include=F }
+
+# PREPARAÇÕES  INICIAIS ----
+
+rm(list=ls())  #limpa  o ambient
+if (!require(pacman)) install.packages("pacman") #garante que tem o pacman
+pacman::p_load(tidyverse, data.table, flextable, officer, lubridate, rio) #carrega 4 pacotes
+
+# BANCOS ----
+
+# banco bruto, como é baixado
+who_bruto <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv", na.strings = "")
+
+#banco somente com as colunas que quero trabalhar (só para diminuir um pouco o objeto)
+who_trat<-who_bruto %>% 
+  select(Date_reported,Country,New_cases,Cumulative_cases, New_deaths)
+
+
+# MANIPULAÇÕES NO BANCO -----------
+
+# calculo dos casos acumulados 
+
+who_acumulado<-who_trat %>% 
+  group_by(Country) %>% # agrupando  (tabela dinamica)
+  summarise(Acumulado=max(Cumulative_cases, na.rm=T)) %>% # agrupando  (tabela dinamica)
+  filter (Acumulado > 10000000) # filtrando os que tem mais de 10 milhões
+
+# calculo por semana epidemiologica 
+
+who_semana <-who_trat %>% 
+  mutate(Ano=format(Date_reported, "%Y"),
+         semana=epiweek(Date_reported)) %>% 
+  filter(Ano=="2021") %>% 
+  group_by(semana) %>% 
+  summarise(Casos_Mundo=sum(New_cases, na.rm=T),
+            Obitos_Mundo=sum(New_deaths, na.rm=T)) 
+
+```
+
+# Gráficos 
+
+## Gráfico de barras 
+
+```{r , echo=F}
+# Gráfico de barras ---
+
+who_acumulado %>% 
+  ggplot(aes(x=Country, y=Acumulado)) + #repare comecei a usar o "+", não o "%>%"
+  geom_col(color="blue", fill="pink") +#parametros estáticos
+  coord_flip()+
+  theme_classic()
+```
+
+
+## Gráfico de linhas
+
+```{r}
+who_semana %>% 
+  ggplot(aes(x=semana) ) +
+  geom_line(aes(y=Casos_Mundo), color="green")+
+  #geom_line(aes(y=Obitos_Mundo))+
+  scale_x_continuous(breaks = seq(1,53, by=2), 
+                     labels = seq(1,53, by=2),
+                     name="Semana Epidemiológica")+
+  scale_y_continuous(name="Casos e  óbitos")+
+  theme_bw()
+  
+```
+
+## Gráfico de pontos
+
+```{r}
+who_bruto %>% 
+ggplot(aes(x=New_cases, y=New_deaths)) +
+  geom_point(color="red")
+  
+```
+
+#  VÁRIAS FORMAS DE FAZER A MESMA COISA
+
+## Gráfico de pontos opção 1
+
+```{r , echo=F}
+who_bruto %>% 
+ggplot(aes(x=New_cases, y=New_deaths)) +
+  geom_point()
+
+```
+
+## Gráfico de pontos opção 2
+
+```{r , echo=F}
+ggplot(who_bruto,aes(x=New_cases, y=New_deaths)) +
+  geom_point()
+                          
+```
+
+## Gráfico de pontos opção 3
+
+```{r , echo=F}
+  ggplot(who_bruto) +
+  geom_point(aes(x=New_cases, y=New_deaths))                         
+
+```
+
+## Gráfico de pontos opção 4
+
+```{r , echo=F}
+
+ggplot(data=who_bruto, mapping=aes(x=New_cases, y=New_deaths))+ 
+  geom_point()      
+
+ggplot(mapping=aes(x=New_cases, y=New_deaths), data=who_bruto) +
+  geom_point()         
+```
+
+## Gráfico de pontos opção 5
+
+```{r , echo=F}
+ggplot(who_bruto, mapping=aes(New_cases, New_deaths)) +
+  geom_point()                             
+
+```
+
+

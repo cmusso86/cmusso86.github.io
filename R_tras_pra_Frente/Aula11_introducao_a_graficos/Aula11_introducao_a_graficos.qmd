@@ -1,0 +1,245 @@
+---
+title: "Aula 11 - Introdução aos gráficos"
+subtitle: "Módulo 1: Introdução ao R"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    incremental: true 
+    scrollable: true
+    preview-links: true
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Semana 4
+
+-   [Aula 10 - Correção exercícios]{style="color: gray;"}
+
+-   Aula 11 - Introdução ao mundo dos gráficos
+
+-   Aula 12 - Fim do módulo e apresentação da tarefa
+
+## Leituras complementares
+
+-   [EpiHandbook, Cap.30](https://epirhandbook.com/en/ggplot-basics.html)
+
+-   Curso-R, [Livro, cap. 13.8](https://livro.curso-r.com/13-8-o-pacote-ggplot2-1.html); [Curso Visualização](https://curso-r.github.io/202207-visualizacao)
+
+-   [DataCamp, Introdução a visualização com ggplot](https://app.datacamp.com/learn/courses/introduction-to-data-visualization-with-ggplot2)
+
+-   [R4DS](https://r4ds.had.co.nz) *O livro começa com gráficos!*
+
+-   [GGPLOT](https://ggplot2-book.org/mastery.html)
+
+## O Poder da Visualização
+
+### Uma imagem vale mais do que mil palavras
+
+::: columns
+::: {.column width="50%"}
+-   DataViz, para os íntimos
+
+-   Muito importante já na parte de exploração dos dados
+
+    -   Ajudam ao cérebro a dar sentido em todas aquelas informações
+
+    -   Ajuda a levantar hipóteses
+
+-   Importante na apresentação final dos resultados
+:::
+
+::: {.column width="50%"}
+![](images/paste-86468225.png){fig-align="center" width="551"}
+:::
+:::
+
+## ggplot2
+
+Mas onde está o carregamento desse pacote no nosso software?
+
+![](ggplot.png){fig-align="center" width="233"}
+
+-   Ele faz parte do tidyverse!
+
+-   Falando nisso, a versão mais recente do tidyverse acabou de ser lançada ([2.0.0](https://www.tidyverse.org/blog/2023/03/tidyverse-2-0-0/)) - agora com lubridate.
+
+## O que vamos (começar) aprender nessa aula
+
+-   Uma forma mais rápida de visualizar (poucas linhas de código)
+
+    -   Sem muitas firulas visuais
+
+-   Não vamos focar, no momento, em deixar os gráficos muito bonitos.
+
+-   Adivinhem: o ggplot faz as duas coisas!
+
+    -   [Data-to-Viz](https://www.data-to-viz.com)
+    -   [R Gallery](https://r-graph-gallery.com)
+    -   [Bruno Mioto](https://brunomioto.com/charts.html)
+
+## A lógica do ggplot2
+
+-   Utiliza a [Gramática dos gráficos](https://link.springer.com/book/10.1007/0-387-28695-0) (daí o gg de ggplot): você precisa de atributos estéticos (cor, tamanho...) e atributos geométricos (pontos, linhas, colunas...).
+
+-   [São utilizadas camadas](https://vita.had.co.nz/papers/layered-grammar.html): Sobreposição de elementos visuais.
+
+## A lógica do ggplot
+
+```{r echo=F}
+# PREPARAÇÕES  INICIAIS ----
+
+rm(list=ls())  #limpa  o ambient
+if (!require(pacman)) install.packages("pacman") #garante que tem o pacman
+pacman::p_load(tidyverse, data.table, flextable, officer, lubridate) #carrega 4 pacotes
+
+# BANCOS ----
+
+# banco bruto, como é baixado
+who_bruto <- fread("https://covid19.who.int/WHO-COVID-19-global-data.csv", na.strings = "")
+
+#banco somente com as colunas que quero trabalhar (só para diminuir um pouco o objeto)
+who_trat<-who_bruto %>% 
+  select(Date_reported,Country,New_cases,Cumulative_cases, New_deaths)
+
+
+# MANIPULAÇÕES NO BANCO -----------
+
+# calculo dos casos acumulados 
+
+who_acumulado<-who_trat %>% 
+  group_by(Country) %>% # agrupando  (tabela dinamica)
+  summarise(Acumulado=max(Cumulative_cases, na.rm=T)) %>% # agrupando  (tabela dinamica)
+  filter (Acumulado > 10000000) # filtrando os que tem mais de 10 milhões
+
+# calculo por semana epidemiologica 
+
+who_semana <-who_trat %>% 
+  mutate(Ano=format(Date_reported, "%Y"),
+         semana=epiweek(Date_reported)) %>% 
+  filter(Ano=="2021") %>% 
+  group_by(semana) %>% 
+  summarise(Casos_Mundo=sum(New_cases, na.rm=T),
+            Obitos_Mundo=sum(New_deaths, na.rm=T)) 
+```
+
+::: panel-tabset
+### Primeira camada
+
+-   O "canvas" vazio
+
+```{r}
+who_bruto %>% 
+ggplot()
+```
+
+### Segunda camada
+
+-   Os dados (eixos)
+
+```{r}
+who_bruto %>% 
+  ggplot() +
+  aes(x=New_cases, y=New_deaths)
+```
+
+### Terceira camada
+
+-   A geometria
+
+```{r}
+who_bruto %>% 
+  ggplot() +
+  aes(x=New_cases, y=New_deaths) +
+  geom_point()
+```
+
+### ...
+
+-   As firulas
+
+```{r}
+who_bruto %>% 
+  ggplot() +
+  aes(x=New_cases, y=New_deaths) +
+  geom_point(color="aquamarine") +
+   labs(title = "Um título",
+    subtitle = "Um subtítulo",
+    x = "Número de Casos",
+    y = "Número de óbitos",
+    caption = "Fonte: WHO")+
+  theme_classic()+
+  scale_x_continuous(labels=function(x) format(x, 
+                                               big.mark = ".",
+                                               decimal.mark=",",
+                                               scientific = FALSE),
+                     breaks = seq(0, 10^7, by=10^6))+
+  theme(
+    legend.position = "bottom",                    
+    plot.title = element_text(size = 30),          
+    plot.caption = element_text(hjust = 0),        
+    plot.subtitle = element_text(face = "bold"), 
+    axis.text.x = element_text(color = "green", size = 10, angle = 45, vjust=0.65), 
+    axis.text.y = element_text(size = 15),         
+    axis.title = element_text(size = 20)          
+    )+
+  geom_smooth(color="indianred", se=T)+
+  annotate(
+    "label",
+    x = pull(who_bruto[who_bruto$New_cases>6500000 ,"New_cases"]),
+    y = pull(who_bruto[who_bruto$New_cases>6500000 ,"New_deaths"]),
+    label = paste0(pull(who_bruto[who_bruto$New_cases>6500000 ,"Country"])," in \n",
+                   pull(who_bruto[who_bruto$New_cases>6500000 ,"Date_reported"])),
+    hjust = 1,
+    vjust = -1) +
+   annotate(
+     "curve",
+   x = 6500000,
+   xend = pull(who_bruto[who_bruto$New_cases>6500000 ,"New_cases"]),
+   y = 3000,
+   yend = pull(who_bruto[who_bruto$New_cases>6500000 ,"New_deaths"]),
+   arrow = arrow(
+       type = "closed",
+       length = unit(.2, "cm")
+     ),
+     colour = "red",
+     curvature = -.4,
+   alpha=0.8
+   )
+```
+:::
+
+## Lógica do ggplot
+
+As camadas são adicionadas com um "+"
+
+-   Diferença **+** para **%\>%**
+-   Há as partes *estáticas* e partes que *dinâmicas* (que respondem aos dados)
+-   Cuidado com as aspas (principalmente nas opções de parâmetros)!
+-   Conheça as variáveis (numéricas ou categóricas)
+-   É preciso ter no mínimo a função ggplot() e uma função de geometria geom\_?()
+-   Há várias formas de escrever a mesma coisa!
+-   Vamos ao R-Studio!
+
+## Desafio
+
+-   Diferença do **fill=** dentro ou fora do **aes()** ?
+
+## Mais Dicas
+
+-   Podemos escolher [cores](https://www.color-hex.com) [exatas](https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3)
+
+-   [Temas](https://ggplot2.tidyverse.org/reference/ggtheme.html)
+
+-   [Cheat Sheets](https://www.maths.usyd.edu.au/u/UG/SM/STAT3022/r/current/Misc/data-visualization-2.1.pdf)
+
+# Obrigada!
