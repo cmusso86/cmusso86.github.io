@@ -1,0 +1,477 @@
+---
+title: "Aula 10 - Revisão e Correção de exercícios"
+subtitle: "Módulo 1: Introdução ao R"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    incremental: true 
+    scrollable: true
+    preview-links: true
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Semana 4
+
+-   Aula 10 - Correção exercícios
+
+-   Aula 11 - Introdução ao mundo dos gráficos
+
+-   Aula 12 - Fim do módulo e apresentação da tarefa
+
+## Aula 4
+
+-   O primeiro relatório automatizado
+
+-   Desafio:
+
+    -   Hashtag: Qual a diferença dele (#) na parte do texto e dentro dos chunks de código?
+
+    -   Código inline: Há outro tipo de escrita de código em R no script sem ser dentro dos chunks. Consegue encontrá-lo?
+
+## Aula 5
+
+-   Pacotes
+-   O pacote pacman
+
+. . .
+
+```{r}
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, data.table, flextable, officer)
+```
+
+## Aula 6
+
+-   Erros
+
+    -   No código (R)
+    -   De compilação (cabeçalho YAML ou outros)
+
+-   Vamos ao R-Studio!
+
+## Aula 7 - Importações
+
+Porque nesse caso não foi preciso se preocupar com o caminho do arquivo no seu computador? Ou seja, porque não precisamos nos preocupar onde a sessão de R está rodando?
+
+```{r echo=F}
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(rio, tidyverse)
+```
+
+```{r}
+who_bruto <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+```
+
+```{r echo=F}
+who_trat<-who_bruto %>% 
+  select(Date_reported,Country,New_cases,Cumulative_cases) %>%  # colunas q quero
+  group_by(Country) %>% # agrupando  (tabela dinamica)
+  summarise(Acumulado=max(Cumulative_cases, na.rm=T)) %>% # agrupando  (tabela dinamica)
+  filter (Acumulado > 10000000) # filtrando os que tem mais de 10 milhões
+```
+
+. . .
+
+-   Por que estamos baixando de uma página na interent. O "caminho" é o endereço da [web](https://covid19.who.int/data).
+
+## Aula 7 - Importações
+
+Vamos importar agora um dado do disco fazendo testes como se pede na aula.
+
+. . .
+
+```{r}
+getwd()
+```
+
+```{r}
+vacina_bruto <-import("vacinas.xlsx")
+```
+
+```{r}
+head(vacina_bruto)
+```
+
+-   Você pode ter recebido alguns "Warnings" vermelhos, mas não se preocupe!
+
+## Aula 7 - Importações
+
+Como ler o arquivo de uma pasta "acima".
+
+. . .
+
+```{r}
+getwd()
+```
+
+```{r eval=F}
+dados <- import("vacinas.xlsx")
+```
+
+\- Os ".." mostram o caminho de uma pasta anterior.
+
+## Aula 7 - importações
+
+-   Ler o arquivo em uma subpasta "Curso de R"
+
+. . .
+
+```{r}
+getwd()
+```
+
+```{r}
+dados <- import("Curso de R/vacinas.xlsx")
+```
+
+-   Inlcuir o nome da pasta e uma "/" antes do nome do arquivo
+
+## Aula 8 - vetores numéricos
+
+-   Crie um vetor numérico chamado "meu_primeiro_vetor" com cinco valores numéricos usando a função c()
+
+. . .
+
+```{r}
+meu_primeiro_vetor <- c(1 , 4, 9, 16, 25)
+
+```
+
+-   Crie crie outro vetor, com outro nome de sua preferência.
+
+. . .
+
+```{r}
+outro_vetor <- c(144, 169, 256)
+```
+
+## Aula 8 - vetores numéricos
+
+Aplique a função sqrt() que calcula a raiz quadrada no vetor numérico e salve o resultado em um objeto com o nome de sua preferência.
+
+```{r}
+raiz_quadrada1 <- sqrt(meu_primeiro_vetor)
+raiz_quadrada2 <- sqrt(outro_vetor)
+```
+
+## Aula 8 - vetores numéricos
+
+Como posso observar esses objetos. Cite pelo menos duas formas diferentes.
+
+. . .
+
+```{r}
+raiz_quadrada1
+raiz_quadrada2
+```
+
+-   Observando na aba Environment
+
+. . .
+
+![](../img/observar_aba.png)
+
+## Aula 8 - strings
+
+Corrija o comando abaixo para criar um vetor de caracteres com o nome dessas pessoas.
+
+. . .
+
+```{r eval=F}
+nomes_colegas <- c(Otto,Carol, Julio)
+```
+
+-   Correção
+
+. . .
+
+```{r}
+nomes_colegas <- c("Otto","Carol", "Julio")
+```
+
+-   Faltava as " "
+
+## Aula 8 - strings
+
+Corrija o comando abaixo para criar um vetor de caracteres com o nome dos colegas.
+
+. . .
+
+```{r eval = F}
+nomes_colegas <- ("Otto","Carol", "Julio")
+```
+
+-   Correção
+
+. . .
+
+```{r}
+nomes_colegas <- c("Otto","Carol", "Julio")
+```
+
+-   Faltava a função c()
+
+## Aula 8 - objetos
+
+Use a funçao class() para verificar os tipos de vetores criados ate agora
+
+. . .
+
+```{r}
+class(meu_primeiro_vetor)
+class(outro_vetor)
+class(nomes_colegas)
+```
+
+-   Desafio: que tipo de vetor terei se juntar números e nomes?
+
+. . .
+
+```{r}
+mistura <- c( "Carol", 42)
+class(mistura)
+```
+
+## Aula 8 - objetos
+
+Observe os tipos de objetos criados até agora na aba *Environment*. Descreva o que pode ser obtido de informação nessas abas.
+
+![](../img/objetos_aba.png)
+
+## Aula 8 - objetos
+
+Use a função sum() para calcular a soma dos valores do vetor numérico criado anteriormente. Basta dar o nome do vetor numérico como argumento para essa função. Note que ela só aceita vetores numéricos, afinal, não é possível somar nomes.
+
+. . .
+
+```{r}
+sum(meu_primeiro_vetor)
+```
+
+. . .
+
+```{r}
+sum(outro_vetor)
+```
+
+. . .
+
+```{r}
+sum(raiz_quadrada1)
+```
+
+## 
+
+## Aula 8 - objetos
+
+Descubra (pode ser no google ou com o coleguinha) qual a função para calcular a média dos valores do mesmo vetor. É importante exercitar essa capacidade de busca, mesmo que não tenhamos visto ainda essa função em aula.
+
+. . .
+
+```{r}
+mean(meu_primeiro_vetor)
+```
+
+. . .
+
+```{r}
+mean(outro_vetor)
+```
+
+. . .
+
+```{r}
+mean(raiz_quadrada1)
+```
+
+## Aula 8 - Data frame
+
+Use a função class() para verificar o tipo de objeto que é o "who_bruto" criado no início desse script.
+
+. . .
+
+```{r}
+class(who_bruto)
+```
+
+. . .
+
+![](../img/who_bruto.png)
+
+## Aula 8 - Data Frame
+
+Use a função dim() no mesmo objeto. Você consegue descobrir o que essa função fez?
+
+```{r}
+dim(who_bruto)
+```
+
+-   Mostra a dimensão: número de linhas e colunas
+
+## Aula 8 - data frame
+
+Use o atributo do R base \$ para salvar a coluna New_Cases do objeto who_bruto em um novo objeto com um nome de sua preferência.
+
+. . .
+
+```{r}
+Casos_novos <- who_bruto$New_cases
+```
+
+-   Veja um resumo (use a função summary() ) desse vetor que acabou de criar...
+
+. . .
+
+```{r}
+summary(Casos_novos)
+```
+
+## Aula 9 - exportar
+
+Abaixo, o código cria um gráfico e o salva como uma figura em .png. Como que ele sabe que objeto salvar, se não criei um obejeto e nem dei o nome desse objeto?
+
+```{r figura1}
+ ggplot(who_trat)+
+  geom_bar(aes(x=Country, y=Acumulado), stat="identity",
+           color="black", fill="orange")+
+  coord_flip()+
+  theme_classic()
+
+ggsave("Graf1.png")
+
+```
+
+-   O padrão dessa função é salvar o último gráfico criado!
+
+. . .
+
+![](../img/helpgg.png){fig-align="center"}
+
+## Aula 9 - exportações
+
+A função abaixo gera um erro. Tente descobrir o que aconteceu e como corrigir.
+
+. . .
+
+```{r eval=F}
+grafico1 <- ggplot(who_trat)+
+  geom_bar(aes(x=Country, y=Acumulado), stat="identity", 
+           color="black", fill="orange")+
+  coord_flip()+
+  theme_classic()
+
+ggsave(grafico1, "Graf1.png")
+
+```
+
+-   Nessa função específica, o nome do arquivo é o primerio argumento da função!
+-   **Atenção: Isto também é uma errata para o que foi apresentado na aula 9.**
+
+. . .
+
+```{r}
+?ggsave
+```
+
+![](../img/helpgg.png){fig-align="center"}
+
+. . .
+
+-   Para corrigir
+
+. . .
+
+```{r echo=F}
+grafico1 <- ggplot(who_trat)+
+  geom_bar(aes(x=Country, y=Acumulado), stat="identity", 
+           color="black", fill="orange")+
+  coord_flip()+
+  theme_classic()
+
+
+```
+
+. . .
+
+```{r }
+ggsave(grafico1, filename="Graf1.png")
+
+# OU
+
+ggsave ("Graf1.png", grafico1)
+```
+
+## Aula 9 - exportações
+
+-   Salve o arquivo em outro formato que não .png
+
+. . .
+
+```{r}
+ggsave ("Graf1.jpeg", grafico1)
+```
+
+-   Salve o arquivo numa pasta "acima" a que você se encontra.
+
+. . .
+
+```{r}
+ggsave ("../Graf1.jpeg", grafico1)
+```
+
+## Aula 9 - exportações
+
+Salve o gráfico em uma largura maior. Dica procure a ajuda do ggsave para ver os parâmetros dessa função.
+
+. . .
+
+```{r}
+?ggsave ## execute esse código para abrir a aba de ajuda dessa função
+```
+
+![](../img/helpgg.png)
+
+. . .
+
+```{r}
+ggsave ("Graf_maior.jpeg", grafico1, width=10)
+```
+
+## Aula 9 - Exportação: Tabelas
+
+Identifique a parte do código abaixo que está exportando a tabela para o disco e diga em qua formato ela está sendo exportada.
+
+. . .
+
+``` {.r code-line-numbers="14"}
+
+Tab1 <- who_trat %>% 
+  flextable() %>% 
+  width(width=2) %>% 
+  style(pr_t=fp_text(font.size=13,
+                     font.family='Calibri'), part="body")%>%
+  style(pr_t=fp_text(font.size=13,
+                     font.family='Calibri'), part="header")%>%
+  bold(part="header")%>%
+  bold(part="body", j=1)%>%
+  hline( border=fp_border(color="black", width = 0.5))%>%
+  align( align = "center", part = "all")%>%
+  bg(bg="orange", part="header")  %>% 
+  save_as_docx(Tab1,path="Tab1.docx")
+ 
+```
+
+-   última linha, está sendo salva em Word!
+
+# Obrigada!

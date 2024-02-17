@@ -1,0 +1,147 @@
+---
+title: "Exercicio aula 9"
+author: "Carolina Musso"
+date: "2023-03-07"
+output:
+  word_document:
+---
+
+```{r sets, echo=F, warning=FALSE, include=F}
+# COMENTÁRIOS INICIAIS ----
+
+
+# PRE-SETS ----
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, flextable, officer)
+
+# BANCOS ----
+who_bruto <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv", na.strings = "")
+
+# MANIPULAÇÕES NO BANCO -----------
+who_trat<-who_bruto %>% 
+  select(Date_reported,Country,New_cases,Cumulative_cases) %>%  # colunas q quero
+  group_by(Country) %>% # agrupando  (tabela dinamica)
+  summarise(Acumulado=max(Cumulative_cases, na.rm=T)) %>% # agrupando  (tabela dinamica)
+  filter (Acumulado > 10000000) # filtrando os que tem mais de 10 milhões
+
+
+# VALOR PARA BRASIL
+
+Valor_BRA<-(who_trat %>% 
+  filter(Country=="Brazil"))$Acumulado
+  
+```
+
+## 1) Exporte para um arquivo em Excel a dataframe who_trat criada acima. Não se esqueça da extensão!
+```{r}
+## para fazer isso tivemos que criar uma nova Chunk, já que o que é escrito fora da chunk será interpretado como texto e não como código.Isso pode ser feito copiando Chunks já criadas ou usando o botão verde "C" proximo ao botão "Run".
+
+## Ao exportar a base, você pode dar o nome que quiser. Não se esqueça, porém, de especificar o formato do arquivo.
+
+export(who_trat, "base de dados who_trat.xlsx")
+```
+
+
+## 2) Exportando gráficos
+
+a) Abaixo, o código cria um gráfico e o salva como uma figura em .png. Como que ele sabe  que objeto salvar, se não criei um obejeto e nem dei o nome desse objeto?
+
+```{r figura1,  include=F}
+ ggplot(who_trat)+
+  geom_bar(aes(x=Country, y=Acumulado), stat="identity", color="black", fill="orange")+
+  coord_flip()+
+  theme_classic()
+
+ggsave("Graf1.png")
+
+## Resposta: Quando não especificamos o nome do objeto, a função "ggsave" irá salvar o último gráfico gerado. Aqui nós conseguimos o resultado esperado, contudo, é sempre bom atribuir objetos aos elementos criados.
+
+```
+
+
+b) A função abaixo gera um erro. Tente descobrir o que aconteceu e como corrigir. 
+
+```{r figura1,  include=F}
+grafico1 <- ggplot(who_trat)+
+  geom_bar(aes(x=Country, y=Acumulado), stat="identity", color="black", fill="orange")+
+  coord_flip()+
+  theme_classic()
+
+ggsave(plot=grafico1, filename = "Graf1.png")
+
+## O R entende que "Graf1.png" seria um parâmentro do argumento "Device" da função ggsave. Não é o caso... Essa confusão se deu pela ordem como escrevemos os argumentos.
+
+## A solução adotada foi adicionar os nomes dos argumentos da função. Isso não é sempre necessário, especialmente quando usamos os argumentos na ordem original da função. Nesse caso específico, a ordem não está como de costume (seria "filename" depois "plot"), portanto, o R acabou considerando "Graf1.png" como pertencente ao argumento "device", gerando o erro.
+## Ao darmos os nomes aos argumentos (plot= e filename=), garantimos que o R está lendo as informações corretamente, independente da ordem que aparecem.
+
+## Como saber disso??? Você pode tentar interpretar a mensagem de erro, copiar o erro e colar no google ou ler a documentação do pacote/função que está usando. Para esta última alternativa, basta pesquisar "ggsave" na aba Help.
+
+```
+
+c) Salve o arquivo em outro formato que não .png
+
+```{r}
+ggsave(plot=grafico1, filename = "Graf1.jpeg")
+
+## Como o gráfico já foi criado e já é um objeto no Environment, podemos simplesmente repetir a função de salvar (ggsave) com a alteração do formato desejado.
+
+```
+
+c) Salve o arquivo numa pasta "acima" a que você se encontra. 
+
+```{r}
+ggsave(plot=grafico1, filename = "Graf2.jpeg", path = "../")
+
+## Para salvar uma pasta "acima" da pasta que o código está rodando, usamos o argumento "path", responsável por definir o local onde a imagem será salva. Como parâmetro desse argumento, usamos "../", como visto na Aula 7.
+
+```
+
+d) Salve o gráfico em uma largura maior. Dica procure a ajuda do ggsave para ver os parâmetros dessa função.
+
+```{r}
+?ggsave ## execute esse código para abrir a aba de ajuda dessa função
+
+ggsave(plot=grafico1, filename = "Graf_Maior.jpeg", width = 30)
+
+## Consultando o aba de ajuda para essa função, (com uma forcinha extra do Google Tradutor) podemos ver que o argumento "width" é responsável por ajustar a largura do gráfico. Adicionamos esse argumento com o parâmetro "30", deixando o gráfico bem mais largo. Você pode ajustar essa largura como achar mais adequado. 
+
+```
+
+# 5) Tabela
+
+a) Identifique a parte do código abaixo que está exportando a tabela para o disco e diga em qua formato ela está sendo exportada.
+
+```{r tabela1, echo=F, include=F}
+
+# Gerando e editando a tabela ----
+(Tab1<-who_trat %>% 
+  flextable() %>% 
+  width(width=2) %>% 
+  style(pr_t=fp_text(font.size=13,
+                     font.family='Calibri'), part="body")%>%
+  style(pr_t=fp_text(font.size=13,
+                     font.family='Calibri'), part="header")%>%
+  bold(part="header")%>%
+  bold(part="body", j=1)%>%
+  hline( border=fp_border(color="black", width = 0.5))%>%
+  align( align = "center", part = "all")%>%
+  bg(bg="orange", part="header") ) %>% 
+  save_as_docx(Tab1,path="Tab1.docx")    ##Aqui vemos a função "save_as_docx" salvando a tabela. O formato pode ser observado entre parenteses ".docx".
+ 
+```
+
+
+# 5) Importe uma base de sua escolha diferente das usadas até agora e exporte e um outro formato.
+
+```{r}
+Dados_Teste <- import("Total por UF.xlsx")
+export(Dados_Teste, "Total_por_UF_editado.csv")
+
+## Aqui optamos por importar uma base em xlsx e exportá-la em csv. Usamos as funções Import e Export do pacote Rio.
+
+```
+

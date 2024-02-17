@@ -1,0 +1,113 @@
+---
+title: "Exercicio aula 9"
+author: "Carolina Musso"
+date: "2023-03-07"
+output:
+  word_document:
+---
+
+```{r sets, echo=F, warning=FALSE, include=F}
+# COMENTÁRIOS INICIAIS ----
+
+
+# PRE-SETS ----
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, flextable, officer)
+
+# BANCOS ----
+who_bruto <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv", na.strings = "")
+
+# MANIPULAÇÕES NO BANCO -----------
+who_trat<-who_bruto %>% 
+  select(Date_reported,Country,New_cases,Cumulative_cases) %>%  # colunas q quero
+  group_by(Country) %>% # agrupando  (tabela dinamica)
+  summarise(Acumulado=max(Cumulative_cases, na.rm=T)) %>% # agrupando  (tabela dinamica)
+  filter (Acumulado > 10000000) # filtrando os que tem mais de 10 milhões
+
+
+# VALOR PARA BRASIL
+
+Valor_BRA<-(who_trat %>% 
+  filter(Country=="Brazil"))$Acumulado
+  
+```
+
+## 1) Exporte para um arquivo em Excel a dataframe who_trat criada acima. Não se esqueça da extensão!
+
+
+## 2) Exportando gráficos
+
+a) Abaixo, o código cria um gráfico e o salva como uma figura em .png. Como que ele sabe  que objeto salvar, se não criei um obejeto e nem dei o nome desse objeto?
+
+```{r figura1,  include=F}
+ ggplot(who_trat)+
+  geom_bar(aes(x=Country, y=Acumulado), stat="identity", color="black", fill="orange")+
+  coord_flip()+
+  theme_classic()
+
+ggsave("Graf1.png")
+
+```
+
+
+b) A função abaixo gera um erro. Tente descobrir o que aconteceu e como corrigir. 
+
+```{r figura1,  include=F}
+grafico1 <- ggplot(who_trat)+
+  geom_bar(aes(x=Country, y=Acumulado), stat="identity", color="black", fill="orange")+
+  coord_flip()+
+  theme_classic()
+
+ggsave(grafico1, "Graf1.png")
+
+```
+
+c) Salve o arquivo em outro formato que não .png
+
+```{r}
+
+```
+
+d) Salve o arquivo numa pasta "acima" a que você se encontra. 
+
+```{r}
+
+```
+
+e) Salve o gráfico em uma largura maior. Dica procure a ajuda do ggsave para ver os parâmetros dessa função.
+
+```{r}
+?ggsave ## execute esse código para abrir a aba de ajuda dessa função
+```
+
+# 5) Tabela
+
+a) Identifique a parte do código abaixo que está exportando a tabela para o disco e diga em qua formato ela está sendo exportada.
+
+```{r tabela1, echo=F, include=F}
+
+# Gerando e editando a tabela ----
+(Tab1<-who_trat %>% 
+  flextable() %>% 
+  width(width=2) %>% 
+  style(pr_t=fp_text(font.size=13,
+                     font.family='Calibri'), part="body")%>%
+  style(pr_t=fp_text(font.size=13,
+                     font.family='Calibri'), part="header")%>%
+  bold(part="header")%>%
+  bold(part="body", j=1)%>%
+  hline( border=fp_border(color="black", width = 0.5))%>%
+  align( align = "center", part = "all")%>%
+  bg(bg="orange", part="header") ) %>% 
+  save_as_docx(Tab1,path="Tab1.docx")
+ 
+```
+
+
+# 5) Importe uma base de sua escolha diferente das usadas até agora e exporte e um outro formato.
+
+
