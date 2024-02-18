@@ -1,0 +1,83 @@
+---
+title: "Aula 12 - Tarefa final do módulo"
+subtitle: "Módulo 1: Introdução ao R"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    incremental: true 
+    scrollable: true
+    preview-links: true
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Semana 4
+
+-   [Aula 10 - Correção exercícios]{style="color: gray;"}
+
+-   [Aula 11 - Introdução ao mundo dos gráficos]{style="color: gray;"}
+
+-   Aula 12 - Fim do módulo e apresentação da tarefa
+
+## Fim do Módulo 1
+
+-   **Semana 1:** O que é o R e motivações para este desafio.
+-   **Semana 2:** Introdução aos relatórios automatizados, pacotes e como contornar erros
+-   **Semana 3:** Importação e exportação de objetos
+-   **Semana 4:** Consolidação e introdução aos gráficos
+-   **Semana 5:** Entrega da tarefa
+
+## Leituras complementares
+
+-   [EpiRHandbook, Cap.40, Relatórios em R Markdown](https://epirhandbook.com/en/reports-with-r-markdown.html)
+
+-   Curso-R, [Livro, cap. 9](https://livro.curso-r.com/9-relatorios.html); [Curso Relatórios Automatizados](https://curso-r.github.io/202210-relatorios/)
+
+-   [DataCamp, O que é Rmarkdown](https://campus.datacamp.com/courses/communicating-with-data-in-the-tidyverse/introduction-to-rmarkdown?ex=1)
+
+-   [RMarkdown: Definitive Guide](https://bookdown.org/yihui/rmarkdown/)
+
+-   [RMarkdown CookBook](https://bookdown.org/yihui/rmarkdown-cookbook/)
+
+## Tafera
+
+-   **Rodando aquele código que alguém fez para mim (com alguns toques pessoais)**
+
+-   **Objetivo:** Conseguir reproduzir o código de RMarkdown disponibilizado na aula 4 desse módulo com pequenas modificações para compilar um relatório wm Word.
+
+    -   Modificar o nome do autor e o título do cabeçalho YAML.
+
+    -   Modificar alguns parâmetros estéticos do gráfico e tabela.
+
+    -   Modificar o valor de corte utilizado para o filtro.
+
+    -   Modificar o país filtrado para criação do objeto que será utilizado no "código inline".
+
+    -   Incluir textos de interpretação dos resultados.
+
+    -   Sintam-se à vontade para ousar mais!
+
+## Espera-se
+
+-   Espera-se que com o conhecimento adquirido nesse módulo, o aluno possa fazer pequenas modificações um código já escrito, mesclando o conteúdo ministrado e um pouco de intuição para compreender a lógica da linguagem de programação sendo utilizada.
+
+-   O aluno deve entregar o relatório em Word (.docx) juntamente com o código em RMarkdown, .Rmd)
+
+. . .
+
+### Prazo de entrega
+
+-   O prazo de entrega é de 8 dias corridos.
+-   Estaremos disponíveis para dúvidas!
+
+# Bom trabalho!
