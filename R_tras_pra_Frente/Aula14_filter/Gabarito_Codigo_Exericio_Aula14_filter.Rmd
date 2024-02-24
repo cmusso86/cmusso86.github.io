@@ -1,0 +1,155 @@
+---
+title: "Exercicio aula 14 - filter"
+author: "Carolina Musso"
+date: "2023-03-13"
+output:
+  word_document:
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, here)
+```
+
+# 1) Importando os bancos
+
+a) Vamos importar o banco para os dados agrupados de casos de Covid no Brasil do Painel COVID apenas do ano de 2022. 
+
+Inclua também aqui seu banco (linha 30), e remova o # para que o código rode. 
+
+```{r bancos, echo=F, message=F, warning=F }
+# BANCOS ----
+
+painel_bruto <- import("painel_covid_2022.csv")
+
+#seu banco
+#meu banco<-import("seu_banco_de_dados.xlsx")
+
+```
+
+b) Alguém teve algum problema de codificação? (símbolos estranhos apareceram ao importar os dados?) Caso sim, experimente modificar a codidifação para UTF-8 como abaixo.
+
+```{r}
+painel_bruto_encoding <-import("painel_covid_2022.csv", encoding="UTF-8")
+```
+
+# 2) Manipulações no banco
+
+## Filtros
+
+a) Essa base de dados tem linhas repetidas. Ele repete os totais dos munucípios e estados em novas linhas . As linhas que não tem a informação "codmun" são essas linhas repetidas. Ou seja, somente as linhas que possuem os dados de "codmun", que correspondem a um município do Brasil são as linhas de dados que realmente queremos analisar. Para que eu "jogue fora" as linhas sem essa informação, fiz o filtro abaixo. Sabendo que `!` é um operador de negação e que `is.na()` é uma função que diz se um valor é ou não é faltante, explique qual a lógica desse filtro realizado. 
+
+```{r}
+painel_trat <-  painel_bruto %>% 
+  filter(!is.na(codmun))
+```
+
+b) O que casa um dos filtros abaixo está selecionando?
+
+```{r}
+painel_df <- painel_trat %>% 
+  filter(estado=="DF") ##RESPOSTA: As linhas da base com "DF" na variável "Estado"
+
+painel_nao_DF <- painel_trat %>% 
+  filter(estado!="DF") ##RESPOSTA: As linhas da base com preenchimento DIFERENTE DE "DF" na variável "Estado"
+
+painel_semana1 <- painel_trat %>% 
+  filter(semanaEpi==1) ##RESPOSTA: As linhas da base com Semana Epidemiológica igual a 1
+
+painel_semana_menos1 <- painel_trat %>% 
+  filter(semanaEpi!=1) ##RESPOSTA: As linhas da base com Semana Epidemiológica DIFERENTE DE 1
+
+painel_semana5_10 <- painel_trat %>% 
+  filter(semanaEpi>=5) ##RESPOSTA: As linhas da base com Semana Epidemiológica igual a 5
+
+
+# DICA---
+
+# Se você não sabe como as ocorrências etão escritas e o banco é muito grande para ficar procurando, tente o código abaixo (tente entender a logica e adaptar para o seu caso no futuro, esse é um código do R base, não é o tidyverse)
+
+sort(unique(painel_trat$estado))  ## Ao rodar esse trecho, uma lista com os preenchimentos da variável "estado" será apresentada no console. Você pode usar o mesmo princípio em outras bases de dados, ou mudar a variável que deseja ver.
+```
+
+2) Faça um filtro para apenas os casos que ocorrerem no seu estado. 
+
+```{r}
+
+painel_acre <- painel_trat %>% 
+  filter(estado=="AC")
+  
+```
+
+3) Sabendo que esse banco mostra, em cada linha, um dia diferente, faça um filtro para dias em que o seu estado apresentou mais de 1000 casos. Isso é um filtro duplo.
+
+Tente fazer de maneiras diferentes: 1) salvando objetos intermediarios (filtre primeiro o estado, salve e um objeto e filtre esse novo objeto); 2) Fazendo uma linha de filter() para cada condição , endadeando-as com o pipe ; 3) colocando todas as condições dentro de uma mesma função filter(). 
+
+```{r}
+##Método 1 (vamos usar MG como exemplo. Repare que criamos dois objetos nesse modelo)
+painel_Minas <- painel_trat %>% 
+  filter(estado=="MG")
+painel_Minas_Mil <- painel_Minas %>%
+  filter(casosNovos>1000)
+
+##Método 2 (Aqui eliminamos a necessidade de um objeto intermediário)
+
+painel_Minas_Mil_Ex.2 <- painel_trat %>%
+  filter(estado=="MG") %>%
+  filter(casosNovos>1000)
+
+##Método 3 (Das 3 opções, essa é a mais eficiente, sem necessidade de objetos intermediários e repetições de funções)
+
+painel_Minas_Mil_Ex.3 <- painel_trat %>%
+  filter(estado=="MG" & casosNovos>1000)
+
+
+
+```
+
+
+4) Sabendo que esse banco mostra, em cada linha, um dia diferente, faça um filtro para dias em que o seu estado apresentou mais de 300 casos no dia e também apresentou óbitos. Isso é um filtro triplo.
+
+```{r}
+
+# filtros triplos
+## Como vimos no exercício anterior, existem diferentes formas pra se fazer isso. Vamos optar pela mais otimizada no sentido de organização do código.Aqui optamos por usar a uf SP
+
+painel_SP_Filtro_Triplo <- painel_trat %>%
+  filter(estado=="SP" & casosNovos>300 & obitosNovos>0)
+
+## Se está comdifiuldade de encontrar a variável que contém o dado de interesse para seu filtro, você pode usar a função "names()", colocando o nome da base de dados entre os parênteses. Essa é função do R base (não exige instalação de pacote) que retorna o nome das variáveis da base de dados, matriz, vetor e etc. Você pode usá-la diretamente no seu console, como uma consulta rápida.
+
+```
+
+
+5) Faça um filtro para conter apenas os estados da região sul (ou seja, pode ser do RS ou de SC ou de PR)
+
+```{r}
+## Método 1 -> Filtrando os estados individualmente usando o operador "|" (Ou)
+Base_Regiao_Sul <- painel_trat %>%
+  filter(estado=="PR"| estado=="RS"| estado=="SC")
+
+## Método 2 -> Filtrando direto a variável "regiao"
+Base_Regiao_Sul_2 <- painel_trat %>%
+  filter(regiao=="Sul")
+
+## Existem outras formas de chegar ao mesmo resultado. A seguir temos outro exemplo.
+## Usou outra estratégia que não mencionamos? Não deixe de compartilhar no Fórum.
+
+```
+
+
+```{r}
+# outra forma de fazer. 
+
+# Uma outra forma de fazer o exercício acima, que pode ser mais útil em conjuntos maiores (nesse nosso caso eram só 3), é usar o operador %in% como abaixo
+
+regiao_sul <- c("PR", "RS", "SC") #primeiro criamos um vetor com as opções
+
+painel_sul_2<-painel_trat %>%
+  filter(estado %in% regiao_sul ) # seleciono as linhas cuja variavel "estado" esta contida nesse conjunto
+```
+

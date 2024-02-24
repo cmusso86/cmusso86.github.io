@@ -1,0 +1,225 @@
+---
+title: "Aula 14 - filter()"
+subtitle: "Módulo 2: Trabalhando com dados "
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+### Aula 13 {style="color: gray;"}
+
+[- Manipulação das colunas]{style="color: gray;"}
+
+### Aula 14 - Manipulação das linhas
+
+Função filter()
+
+### Aula 15 - Tabela
+
+Introdução ao pacote `flextable`: confeccionar uma tabela simples apartir da seleção e filtros.
+
+## Leituras para aprofundamento
+
+-   As mesmas da aula passada
+
+-   [EpiHandbook, 8.Cleaning data and core functions](https://epirhandbook.com/en/cleaning-data-and-core-functions.html)
+
+-   [Curso-R, 7. Manipulação](https://livro.curso-r.com/7-manipulacao.html)
+
+-   [DataCamp, Introduction to the Tidyverse](https://app.datacamp.com/learn/courses/introduction-to-the-tidyverse)
+
+-   [R4DS, 5. Data transformation](https://r4ds.had.co.nz/transform.html)
+
+## Trabalhando com as linhas
+
+As vezes queremos selecionar apenas algumas linhas: algum grupo específico
+
+```{r echo=F}
+
+
+## este codigo nao aparece no slide
+# carregando os pacotes
+pacman::p_load(tidyverse, rio)
+
+# importando a base
+dados_covid <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv", na.strings = "")
+
+# só aparece esse output
+head(dados_covid)
+```
+
+## Função filter()
+
+-   Vamos dar preferência para essa função
+
+    -   que também é do pacote dplyr que faz parte do tidyverse
+
+        ![](../img/dplyr.png){width="171"}
+
+## Função filter()
+
+-   Raciocínio parecido com a função select()
+
+-   Vimos que as funções são instruções: muitas vezes tem cara de verbo
+
+-   A função select precisa de 2 argumentos: a base de dados e a *condição sobre alguma coluna* para fazer o filtro
+
+-   Por exemplo, para filtar a base "meus_dados" que tem os valores "aquela_coluna" sejam iguais a "um_valor_específico"
+
+. . .
+
+```{r eval=F}
+filter(meus_dados, aquela_coluna == "um_valor_específico") 
+
+# OU
+
+meus_dados %>% filter(aquela_coluna == "um_valor_específico")
+
+```
+
+## Exemplo
+
+```{r}
+dados_covid %>% 
+  filter(Country == "Brazil") 
+```
+
+## Trabalhando as linhas: observações
+
+<center><img src="../img/filter.png" height="200px&quot;"/></center>
+
+-   Mas preciso escolher uma **variável** (coluna), e escolher uma categoria ou valor/range de ocorrência dos dados nessa coluna.
+
+    -   escrever uma forma **exata** como ela aparece
+
+## Operadores lógicos
+
+::: columns
+::: {.column width="50%"}
+-   ==
+
+-   !=
+
+-   \< ou \<=
+
+-   \> ou \>=
+
+-   \|
+
+-   &
+
+-   %in%
+
+-   is.na; is.null; is.numeric ...
+:::
+
+::: {.column width="50%"}
+-   Igual (exatamente igual)
+
+-   Diferente
+
+-   Menor ; Menor ou igual
+
+-   Maior ; Maior ou igual
+
+-   Ou (União)
+
+-   E (Interseção)
+
+-   Está contido
+
+-   Funções que retornam valores de TRUE/FALSE
+:::
+:::
+
+## É igual a duas (ou mais) coisas ao mesmo tempo
+
+#### Interseção
+
+-   &
+-   ou apenas ","
+
+. . .
+
+```{r, eval=F}
+
+meus_dados %>% filter (variavel1=="abobrinha"&variavel2=="tralala")
+
+# OU
+
+meus_dados %>% filter (variavel1=="abobrinha",
+                       variavel2=="tralala")
+
+
+```
+
+-   **Mais restrito** : filtra mais os dados, terei menos linhas.
+
+## Exemplo no nosso banco
+
+```{r}
+dados_covid %>% 
+  select(Date_reported, Country,New_cases, New_deaths) %>% # olha o pipe aí de novo gente
+  filter(Country=="Brazil",
+         New_cases >15000,
+         New_deaths<30 )
+```
+
+## Pode ser uma coisa ou outra
+
+#### União
+
+```{r, eval=F}
+meus_dados %>% filter (var1=="lala"|var2=="lele")
+```
+
+-   **Mais amplo** : capto mais linhas
+
+## Exemplo no nosso banco
+
+```{r}
+dados_covid %>% 
+  select(Date_reported, Country,New_cases, New_deaths) %>% # olha o pipe aí de novo gente
+  filter(Country=="Brazil"|New_cases >10000|New_deaths<30 )
+```
+
+## Exemplo no nosso banco
+
+```{r}
+dados_covid %>% 
+  select(Date_reported, Country,New_cases, New_deaths) %>% # olha o pipe aí de novo gente
+  filter(Country=="Brazil"|Country=="Italy",
+         New_cases >15000,
+         New_deaths<30 )
+```
+
+## E e OU
+
+**CUIDADO!** Muitos confundem!
+
+<center><img src="../img/venn.png" height="200px&quot;"/></center>
+
+## Exercícios
+
+-   Vamos exercitar essa lógica boleana
+
+# Até a próxima aula!
+
+-   Vamos fazer uma tabelinha um pouco mais apresentável.
