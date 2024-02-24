@@ -1,0 +1,284 @@
+---
+title: "Aula 18 - Continuando sobre o pacote flextable"
+subtitle: "Módulo 2: Trabalhando com dados "
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format: 
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+### Aula 16 - Criando novas variáveis {style="color: gray;"}
+
+[Função mutate()]{style="color: gray;"}
+
+### Aula 17 - Agrupando dados {style="color: gray;"}
+
+[Tipo uma tabela dinâmica, com group_by + summarise()]{style="color: gray;"}
+
+### Aula 18 - Tabela
+
+Mais sobre o pacote `flextable`: cores e bordas
+
+## Leituras para aprofundamento
+
+-   [EpiHandbook, 29. Tables for presentation](https://ardata-fr.github.io/flextable-book/)
+
+-   [flextable book](https://ardata-fr.github.io/flextable-book/)
+
+-   [flextable overview](https://mran.revolutionanalytics.com/snapshot/2019-02-07/web/packages/flextable/vignettes/overview.html)
+
+-   [flextable gallery](https://ardata-fr.github.io/flextable-gallery/gallery/)
+
+-   [flextable RDocumentation](https://www.rdocumentation.org/packages/flextable/versions/0.7.0)
+
+```{r echo=F}
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, flextable, scales, officer)
+  
+knitr::opts_chunk$set("ft.shadow" = FALSE)
+
+# importando a base
+dados_covid <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv", na.strings = "")
+
+options(OutDec= ".")    
+```
+
+## Dados de Hoje
+
+-   Vamos inventar um indicador aqui...
+
+. . .
+
+```{r out.width="50%"}
+ letalidade_Brasil_Italia <- dados_covid %>% 
+  filter(Country=="Brazil"|Country=="Italy", 
+         New_cases>0) %>% 
+  mutate(letalidade_diaria = New_deaths/New_cases*100) %>% 
+  group_by(Country) %>% 
+  summarise(letalidade_media = mean(letalidade_diaria), 
+            desvio_padrao = sd(letalidade_diaria ),
+            Casos_maximo = max(New_cases),
+            Obitos_maximo = max(New_deaths))
+  
+
+ letalidade_Brasil_Italia
+```
+
+## flextable
+
+```{r eval=F}
+flextable(letalidade_Brasil_Italia)
+```
+
+```{r include=FALSE}
+flextable( letalidade_Brasil_Italia) %>% 
+  save_as_image("../img/tab1.png")
+```
+
+![](../img/tab1.png){fig-alt="Tab1" fig-align="center" width="150%"}
+
+## Mudando os decimais
+
+O mutate_if
+
+```{r}
+letalidade_Brasil_Italia_trat <- letalidade_Brasil_Italia %>% 
+  mutate_if(is.numeric, ~format(., big.mark=".", decimal.mark=",", digits=2))
+
+letalidade_Brasil_Italia_trat
+```
+
+## color : cor do texto
+
+```{r eval=F}
+flextable( letalidade_Brasil_Italia_trat) %>% 
+  color(color="red", i=2)
+```
+
+```{r include=FALSE }
+flextable( letalidade_Brasil_Italia_trat) %>% 
+  color(color="red", i=2) %>% 
+  save_as_image("../img/tab2.png")
+```
+
+![](../img/tab2.png){fig-alt="Tab2" fig-align="center" width="100%"}
+
+-   Lembrando: Se não especificar **j** ele faz para linha toda.
+
+. . .
+
+```{r eval=F}
+flextable(letalidade_Brasil_Italia_trat) %>% 
+   color(color="red", i=2, j=2) %>% 
+  color(color="green", i=1, j=3)  
+```
+
+```{r include=F}
+flextable(letalidade_Brasil_Italia_trat) %>% 
+  color(color="red", i=2, j=2) %>% 
+  color(color="green", i=1, j=3)   %>% 
+  save_as_image("../img/tab3.png")
+
+```
+
+![](../img/tab3.png){fig-alt="Tab3" fig-align="center" width="100%"}
+
+## Para uma cor muito especial
+
+![](../img/magenta.png){fig-align="center" width="135"}
+
+-   #BE3455
+
+. . .
+
+```{r eval=F}
+
+flextable(letalidade_Brasil_Italia_trat) %>% 
+  color(color="#BE3455", part="header") 
+ 
+  
+```
+
+```{r include=F}
+flextable(letalidade_Brasil_Italia_trat) %>% 
+  color(color="#BE3455", part="header")  %>% 
+  save_as_image("../img/tab4.png")
+```
+
+![](../img/tab4.png){fig-alt="Tab4" fig-align="center" width="100%"}
+
+## bg: cor do fundo (background)
+
+-   A mesma idéia do color
+
+. . .
+
+```{r eval=F}
+flextable(letalidade_Brasil_Italia_trat) %>% 
+  bg(bg="yellow", j=2)
+  
+```
+
+```{r include=F}
+flextable(letalidade_Brasil_Italia_trat) %>% 
+ bg(bg="yellow", j=2) %>% 
+  save_as_image("../img/tab5.png")
+```
+
+![](../img/tab5.png){fig-alt="Tab5" fig-align="center" width="100%"}
+
+## bordas
+
+### Bordas de dentro
+
+-   Criar um estilo
+
+-   pacote `officer`: como uma extensão do `flextable`
+
+. . .
+
+```{r eval=F}
+estilo1 = fp_border(color="blue", width=1,  style = "solid")
+
+flextable(letalidade_Brasil_Italia_trat) %>% 
+  border_inner( border=estilo1, part="body")
+```
+
+```{r include=F}
+estilo1 = fp_border(color="blue", width=1,  style = "solid")
+
+flextable(letalidade_Brasil_Italia_trat) %>% 
+  border_inner( border=estilo1, part="body") %>% 
+  save_as_image("../img/tab6.png")
+```
+
+![](../img/tab6.png){fig-alt="Tab6" fig-align="center" width="100%"} . . .
+
+```{r eval=F}
+estilo2 = fp_border(color="purple", width=3,  style = "dotted")
+
+flextable(letalidade_Brasil_Italia_trat) %>% 
+  border_inner( border=estilo2, part="body")
+```
+
+```{r include=F}
+estilo2 = fp_border(color="purple", width=3,  style = "dotted")
+
+flextable(letalidade_Brasil_Italia_trat) %>% 
+  border_inner( border=estilo2, part="body")%>% 
+  save_as_image("../img/tab7.png")
+```
+
+![](../img/tab7.png){fig-alt="Tab7" fig-align="center" width="100%"}
+
+## Outras funções para bordas
+
+-   border_outer()
+-   border_inner_v()
+-   border_inner_h()\
+-   ...
+
+## Bordas verticais diferentes das horizontais
+
+```{r eval=F}
+estilo1 = fp_border(color="black", width=1.5)
+estilo2 = fp_border(color="darkgrey", width=0.7)
+
+flextable(letalidade_Brasil_Italia_trat) %>%  
+  border_inner_v(border=estilo2, part="all")%>% 
+  border_inner_h( border=estilo1, part="body") 
+
+
+```
+
+```{r include=F}
+estilo1 = fp_border(color="black", width=1.5)
+estilo2 = fp_border(color="darkgrey", width=0.7)
+
+flextable(letalidade_Brasil_Italia_trat) %>%  
+  border_inner_v(border=estilo2, part="all")%>% 
+  border_inner_h( border=estilo1, part="body") %>% 
+  save_as_image("../img/tab8.png")
+```
+
+![](../img/tab8.png){fig-alt="Tab8" fig-align="center" width="100%"}
+
+## Linhas específicas
+
+-   **Vários**: hline_bottom(), hline_top(), hline(), vline_left(), vline_right(), vline()
+
+. . .
+
+```{r eval=F}
+
+flextable(letalidade_Brasil_Italia_trat) %>% 
+  vline(j = 3, border = estilo1) 
+
+```
+
+```{r include=F}
+
+flextable(letalidade_Brasil_Italia_trat) %>% 
+  vline(j = 3, border = estilo1) %>% 
+    save_as_image("../img/tab9.png")
+```
+
+![](../img/tab9.png){fig-alt="Tab9" fig-align="center" width="100%"}
+
+# Obrigada!

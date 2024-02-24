@@ -1,0 +1,95 @@
+---
+title: "Exercicio aula 18 - Tabelas2"
+author: "Carolina Musso"
+date: "2023-03-15"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, flextable, officer,  scales)
+
+
+# Bancos e manipulações----
+
+dados_covid <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+
+```
+
+# Continuando as manipulações e edições feitas na aula 15 (introdução ao flextable), faça como se pede. 
+
+
+```{r}
+obitos_Alemanha_Franca <- dados_covid %>% 
+  select(Country, New_deaths, Cumulative_deaths) %>% 
+  filter(Country=="Germany"|Country=="France")
+```
+
+## 1)
+
+Abaixo, foram feitas novas manipulações nos dados,. Explique o que cada linha está fazendo. 
+
+```{r}
+obitos_Alemanha_Franca_resumo <- obitos_Alemanha_Franca %>% 
+  group_by(Country) %>%        ## Aqui estamos agrupando os dados pela variável 'Country'
+  summarise(media_obitos_diarios = mean(New_deaths),    ## Aqui estamos "sumarizando" o dado com cálculo de uma nova variável chamada "media_obitos_diarios". Essa variável é a média dos novos óbitos.
+            maximo_obitos_acumulados = max(Cumulative_deaths)) %>% ## Dentro do mesmo summarise, criamos também a variável "maximo_obitos_acumulados", que calcula o valor máximo dentro da variável de óbitos acumulados
+  mutate_if(is.numeric, ~format(., big.mar=".", decimal.mark=",", digits=4)) ## aqui estamos formatando os valores numéricos para que tenham vírgula como marcador de decimal e ponto como marcador de milhar.
+  
+
+obitos_Alemanha_Franca_resumo
+```
+
+## 2) 
+
+Na tabela abaixo, explique o que cada linha de formatação está fazendo
+
+
+```{r}
+tab1 <- flextable (obitos_Alemanha_Franca_resumo) %>% 
+  autofit() %>%  # essa é uma função nova %>% 
+  align(align="left", j=1, part="all") %>%   ## Alinhamento à esquerda em toda a primeira coluna
+  align(align="right", j=c(2,3), part="all") %>% ## Alinhamento à direita em todas as linhas das colunas 2 e 3
+  bold(j=1, part="all") %>%  ## Negrito em toda a coluna 1
+  bold(part="header") ## Negrito no cabeçalho (repare que o 'cabeçalho' é diferente de 'linha 1')
+
+tab1
+  
+```
+
+## 3) 
+
+Note que no passo acima, salvei a tabela editada em um objeto chamado tab1. Agora posso continuar a edição usando esse objeto, ou seja, sem ter que escrever tudo novamente. O que mudou nessa tabela? 
+Agora, acrescente o parâmetro necessário dentro da função bg() já escrita abaixo de modo que a coloraçõa se extenda também para o cabeçalho (ou seja, não fique somente no corpo da tabela, mas em toda a coluna).
+
+```{r}
+tab2 <- tab1 %>% 
+  bg(bg="lightgrey", j=1, part = "all")
+
+## Nessa tabela foi adicionada coloração de fundo na primeira coluna. Adicionando "part = all", fizemos com que a a regra de "primeira coluna" (dita pelo j=1) também se extendesse ao título e não apenas ao conteúdo.
+
+tab2
+```
+
+## 4) 
+
+Acrescente uma linha vertical pontilhada ("dotted"), separando a coluna do nome dos países das demais. O Estilo da linha já foi criado para vocês. Sugestão: use a função vline().
+
+```{r}
+
+estilo <- fp_border(color="darkgrey", width = 0.8, style = "dotted")
+
+tab2 %>% 
+  vline(j=1, border = estilo)
+
+## Explore essa mesma lógica em outras linhas e colunas.
+
+```
+
+
+
