@@ -71,10 +71,10 @@ options(OutDec= ".")
          New_cases>0) %>% 
   mutate(letalidade_diaria = New_deaths/New_cases*100) %>% 
   group_by(Country) %>% 
-  summarise(letalidade_media = mean(letalidade_diaria), 
-            desvio_padrao = sd(letalidade_diaria ),
-            Casos_maximo = max(New_cases),
-            Obitos_maximo = max(New_deaths))
+  summarise(letalidade_media = mean(letalidade_diaria, na.rm=T), 
+            desvio_padrao = sd(letalidade_diaria, na.rm=T ),
+            Casos_maximo = max(New_cases, na.rm=T),
+            Obitos_maximo = max(New_deaths, na.rm=T))
   
 
  letalidade_Brasil_Italia
