@@ -1,0 +1,56 @@
+---
+title: "Exercicio aula 15 - Tabelas"
+author: "Carolina Musso"
+date: "2023-03-15"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, flextable, office, janitor, scales)
+
+
+# Bancos e manipulações----
+
+dados_covid <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+
+```
+
+# 1) Selecione as colunas de data de ocorrência, país e óbitos novos e óbitos acumulados dessa base de dados usando a função select
+
+```{r}
+
+```
+
+
+# 2) Complemente o código feito acima com uma função de filtro, para filtrar os casos que ocorreram na Alemanha ou na França e apresentaram mais de mil óbitos novos e salve essa nova data.frame em um objeto chamado `obitos_Alemanha_Franca`
+
+```{r}
+
+
+```
+
+# 3) Faça uma flextable simples, sem edições, no objeto `obitos_Alemanha_Franca`
+
+```{r}
+
+```
+
+# 4) Complete o código editando todas as colunas para terem largura 3 e alinhando todas as células à esquerda
+
+```{r}
+
+```
+
+## 5) Coloque em negrito a última linha apresentada pra cada um dos países. 
+```{r}
+
+```
+
+
+
