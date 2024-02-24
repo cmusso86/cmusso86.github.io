@@ -1,0 +1,233 @@
+---
+title: "Aula 17 - group_by(), summarise() e NAs"
+subtitle: "Módulo 2: Trabalhando com dados "
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+### Aula 16 - Criando novas variáveis {style="color: gray;"}
+
+[Função mutate()]{style="color: gray;"}
+
+### Aula 17 - Agrupando dados
+
+Tipo uma tabela dinâmica, com group_by + summarise()
+
+### Aula 18 - Tabela
+
+Mais sobre o pacote `flextable`: cores e bordas
+
+## Leituras para aprofundamento: as mesmas!
+
+-   [EpiHandbook, 8.Cleaning data and core functions](https://epirhandbook.com/en/cleaning-data-and-core-functions.html)
+
+-   [Curso-R, 7. Manipulação](https://livro.curso-r.com/7-manipulacao.html)
+
+-   [DataCamp, Introduction to the Tidyverse](https://app.datacamp.com/learn/courses/introduction-to-the-tidyverse)
+
+-   [R4DS, 5. Data transformation](https://r4ds.had.co.nz/transform.html)
+
+## Vimos que:
+
+-   O mutate() cria novas colunas (ou substitui uma existente se usar o mesmo nome de variável).
+-   Vimos que ele não reduz a base de dados.
+
+```{r echo=F}
+pacman::p_load(tidyverse, rio)
+ebola <- import("linelist_cleaned.rds") %>% as_tibble()
+```
+
+. . .
+
+<center><img src="../img/mutate.png" height="300px&quot;"/></center>
+
+## Veja esse exemplo
+
+-   Para calcular a média de idade
+
+. . .
+
+```{r}
+
+ebola %>% 
+  select(age) %>% 
+  mutate(idade_media=mean(age, na.rm=T)) 
+
+```
+
+## Mas agora queremos algo assim:
+
+<center><img src="../img/groupby.png" height="500px&quot;"/></center>
+
+## O group_by()
+
+### Agrupar
+
+```{r}
+ebola %>% 
+  select(gender, age) %>% 
+  group_by(gender) 
+
+```
+
+-   Uai... ele não fez nada?
+
+## E se eu acrescentar um mutate()?
+
+### Agrupar + alguma conta!
+
+```{r}
+
+ebola %>%
+  select(gender, age) %>% 
+  group_by(gender) %>% 
+  mutate(idade_media=mean(age, na.rm=T))
+
+```
+
+## O que perceberem?
+
+-   Melhorou um pouco...
+
+    -   Mas parece que ainda tenho muita coisa repetida de que não preciso, não é? **Preciso reduzir o banco**
+
+. . .
+
+<center><img src="../img/groupby.png" height="300px&quot;"/></center>
+
+## group_by() + summarise()
+
+```{r}
+
+ebola %>% 
+  select(gender, age) %>% 
+  group_by(gender) %>% 
+  summarise(idade_media=mean(age, na.rm=T)) # tambem aceita summarize
+
+```
+
+## Tudo junto misturado!
+
+```{r}
+
+ebola %>% 
+  select(gender, age, wt_kg, ht_cm) %>% 
+  mutate(ht_m=ht_cm/100,
+         IMC=wt_kg/ht_m^2) %>% 
+  group_by(gender) %>% 
+  summarise(idade_media=mean(age, na.rm=T),
+            IMC_medio=mean(IMC))
+
+```
+
+-   Note que
+
+. . .
+
+```{r}
+ebola %>% 
+  #select(gender, age, wt_kg, ht_cm) %>% 
+  mutate(ht_m=ht_cm/100,
+         IMC=wt_kg/ht_m^2) %>% 
+  group_by(gender) %>% 
+  summarise(idade_media=mean(age, na.rm=T),
+            IMC_medio=mean(IMC))
+```
+
+## E esses NAs?
+
+-   "Not Available" - um valor faltante (missing value). O que é bem diferente de um valor 0 (Zero), por exemplo.
+
+. . .
+
+### Para saber mais, veja os capítulos:
+
+-   Dados faltantes do [Epi-R-Handbook](https://epirhandbook.com/en/missing-data.html?q=missing)
+-   Valores especiais da [Curso-R](https://livro.curso-r.com/3-8-valoresEspeciais.html)
+
+## Exemplo:
+
+Com o mutate()
+
+```{r}
+ebola %>% 
+  select(gender, age) %>% 
+  mutate(idade_media=mean(age))
+```
+
+-   Tem pelo menos um NA em alguma dos valores de idade
+
+-   Afinal, você somar um número que você não sabe, vai resultar em algo que você não sabe.
+
+## Exemplo:
+
+Tentando o group_by + summarise()
+
+```{r}
+ebola %>% 
+  group_by(gender) %>% 
+  summarise(idade_media=mean(age))
+```
+
+-   Há `NA` em ambas essas variáveis
+
+## O que podemos fazer?
+
+Jogar fora os `NA`
+
+. . .
+
+```{r}
+ebola %>% 
+  filter(!is.na(gender)) %>% 
+  group_by(gender) %>% 
+  summarise(idade_media=mean(age))
+
+
+```
+
+-   Cuidado! Nem sempre é o que você quer
+
+## O que podemos fazer?
+
+Ignorar os `NA` apenas para as contas
+
+. . .
+
+```{r}
+ebola %>% 
+  group_by(gender) %>% 
+  summarise(idade_media=mean(age, na.rm=T))
+```
+
+## Isso é só a ponta do iceberg
+
+-   Há muitas funções auxiliares
+
+-   Veja os capítulos sugeridos para mais dicas sobre valores faltantes
+
+-   Há outras tecnicas mais avaçadas: imputar dados
+
+    -   Não vamos falar disso, é só para saberem que existe.
+
+# Até a próxima aula!
+
+-   Não se esqueça de fazer os exercícios de programação!

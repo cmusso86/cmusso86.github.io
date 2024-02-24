@@ -1,0 +1,70 @@
+---
+title: "Exercicio aula 17 - group_by summarise"
+author: "Carolina Musso"
+date: "2023-03-17"
+output:
+  html_document:
+    self-contained: true
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, here)
+
+# BANCOS ----
+
+surto_ebola <- import("linelist_cleaned.rds")
+
+```
+
+# 1) 
+Vamos agrupar por `outcome` (desfecho) e avaliar a média de idade em cada um desses grupos. O Código já esta pronto abaixo, mas parece que os valores não foram calculados adequadamente.  Todos ficaram com resultado NA. Então, antes fazer o cálculo da média, remova as observações do banco que são `NA` para a variável `age`. Para isso, use a função `filter()`, a função `is.na()` e o parâmetro de negação `!`
+
+```{r}
+  surto_ebola %>% 
+  group_by(outcome) %>% 
+  summarise(media_idade = mean(age))
+```
+
+# 2)
+Agora, em vez de fazer o filtro que fez acima, inclua no código abaixo o parâmetro `na.rm=T` para que ele consiga efetuar essa conta ignorando esses valores. 
+
+```{r}
+  surto_ebola %>% 
+  group_by(outcome) %>% 
+  summarise(media_idade = mean(age))
+```
+
+# 3) 
+Agora, no código acima, inclua mais um cálculo além da média: Calcule também o desvio padrão! Para tal, descubra qual a função que calcula o desvio padrão no R (uma busca rápida no Google resolve). Isso é uma prática muito comum em programação, não se preocupe. *Importante*: para acrescentar um novo cálculo, basta separar as novas variáveis criadas com uma vírgula dentro da propia função summarise já programada summarise(var1=..., var2= ...).
+
+```{r}
+
+```
+
+# 4) 
+
+Observando esses dados, você diria que há uma diferença significativa de idade entre os grupos que se recuperou e o que veio a óbito?
+
+# 5) 
+
+É possível também agrupar por mais de uma variável. Dentro de um mesmo group_by, escolha as variáveis `age_cat` (faixa-etária) e `outcome`, e depois utilize o `summarise()` para 
+
+```{r}
+
+```
+
+
+# 6) DESAFIO: 
+
+Observe o código abaixo. Após um agrupamento por sexo, foi realizado um cálculo sobre a variável `outcome`. Note que essaa Variável é qualitativa, ou seja apresenta as categorias `Death` e `Recover` (além dos `NA`, mas não vamos pensar nisso agora). Sendo assim, qual o sentido de se usar a função `mean()` nesse caso? Você consegue perceber o que ela está calculando? Se eu multiplicar esse valor por 100, o que teremos?
+
+```{r}
+surto_ebola %>% 
+  group_by(gender) %>% 
+  summarise(nova_variavel= mean(outcome=="Death", na.rm=T))
+```
