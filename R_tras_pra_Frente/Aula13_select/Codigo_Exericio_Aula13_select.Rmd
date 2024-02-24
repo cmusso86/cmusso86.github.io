@@ -1,0 +1,83 @@
+---
+title: "Exercicio aula 13"
+author: "Carolina Musso"
+date: "2022-03-10"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+```
+
+```{r pacotes, echo=F, message=F, warning=F }
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, here)
+```
+
+# 1) Importando os bancos
+
+a) Vamos importar o banco para os dados agrupados de casos de Covid no Brasil do Painel COVID apenas do ano de 2022. 
+
+Inclua também aqui seu banco (linha 32), e remova o # para que o código rode. Para garantir, salve o seu banco na sua pasta.
+
+```{r bancos, echo=F, message=F, warning=F }
+# BANCOS ----
+
+painel_bruto <- import("painel_covid_2022.csv")
+
+#seu banco
+
+#meu banco<-import("dado.xlsx")
+
+```
+
+# Manipulações no banco
+
+## 1) Selecionando colunas
+
+a) Selecione as colunas estado, data e casos acumulados
+
+```{r}
+
+painel_colunas1<-painel_bruto %>% 
+  select(estado, data, casosAcumulado)
+```
+
+b) Selecione de forma compacta, as colunas consecutivas de estado até casos novos.
+
+```{r}
+painel_colunas2<-painel_bruto %>% 
+  select(estado:casosNovos)
+```
+
+c) Remova apenas a coluna de semana epidemiologica
+
+```{r}
+painel_colunas3<-painel_bruto %>% 
+  dplyr::select(-semanaEpi)
+```
+
+d) Selecione , utilizando as funções auxiliares, as colunas que iniciam com a palavra "casos".
+
+```{r}
+painel_colunas4<-painel_bruto %>% 
+  dplyr::select(starts_with("casos"))
+```
+
+e) Selecione , utilizando as funções auxiliares, as colunas que terminam com a palavra "Acumulado".
+
+```{r}
+painel_colunas5<-painel_bruto %>% 
+  dplyr::select(ends_with("Acumulado"))
+```
+
+f) Selecione , utilizando as funções auxiliares, as colunas de variáveis do tipo caractere,
+
+```{r}
+painel_colunas6<-painel_bruto %>% 
+  dplyr::select(where(is.character))
+```
+
