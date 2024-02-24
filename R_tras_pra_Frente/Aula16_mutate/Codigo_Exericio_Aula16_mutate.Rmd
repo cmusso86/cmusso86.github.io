@@ -1,0 +1,48 @@
+---
+title: "Exercicio aula 16 - mutate"
+author: "Carolina Musso"
+date: "2023-03-15"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, here)
+
+# BANCOS ----
+
+surto_ebola <- import("linelist_cleaned.rds")
+
+```
+
+# 1) Vamos supor que nesse contexto, exista um indicador que seja calculado pelo produto da variável `ct_blood` e `temp`. utilizando a função mutate(), crie uma variavel chamada `indicador1` que corresponda ao produto dessas duas variáveis. No R o produto é calculado com o símbolo * (asterisco)
+
+```{r}
+ 
+  
+```
+
+
+# 2) Vamos supor que haja ainda outro indicador que corresponde a esse primeiro indicado calculado dividido por 60.  Complete o código acima calculando essa nova variável `indicador2`
+
+```{r}
+
+```
+
+# 3) Complete o código com a função select() para selecionar apenas as colunas de data de infecçao, e essas duas novas variáveis criadas.
+
+```{r}
+
+```
+
+# 4) Observe o código abaixo. Note que a Variável `gender` é qualitativa, ou seja apresenta as categorias `f` e `m` (além dos `NA`, mas não vamos pensar nisso agora). Sendo assim, qual o sentido de se usar a função `mean()` nesse caso. Você consegue perceber o que ela está calculando?
+
+```{r}
+
+```
+

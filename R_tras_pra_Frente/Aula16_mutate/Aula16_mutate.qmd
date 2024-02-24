@@ -1,0 +1,150 @@
+---
+title: "Aula 16 - mutate()"
+subtitle: "Módulo 2: Trabalhando com dados "
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+### Aula 16 - Criando novas variáveis
+
+Função mutate()
+
+### Aula 17 - Agrupando dados
+
+Tipo uma tabela dinâmica, com group_by + summarise()
+
+### Aula 18 - Tabela
+
+Mais sobre o pacote `flextable`: cores e bordas
+
+## Leituras para aprofundamento: as mesmas!
+
+-   [EpiHandbook, 8.Cleaning data and core functions](https://epirhandbook.com/en/cleaning-data-and-core-functions.html)
+
+-   [Curso-R, 7. Manipulação](https://livro.curso-r.com/7-manipulacao.html)
+
+-   [DataCamp, Introduction to the Tidyverse](https://app.datacamp.com/learn/courses/introduction-to-the-tidyverse)
+
+-   [R4DS, 5. Data transformation](https://r4ds.had.co.nz/transform.html)
+
+## **Função select() e filter()**
+
+-   trabalhando com colunas - seleciona, reordena...
+
+-   filtra linhas
+
+-   **Nada disso mudou a essência dos dados!!**
+
+    -   Só mudou de lugar ou exlcuiu alguma coisa ...
+
+## Hoje:
+
+-   As vezes quer calcular coisas novas!
+
+    -   Indicadores;
+
+    -   Estatísticas descritivas básicas;
+
+    -   Novas variáveis...
+
+## mutate ()
+
+Cria novas colunas ou substitui as existentes
+
+```{r echo=F}
+pacman::p_load(tidyverse, rio)
+ebola <- import("linelist_cleaned.rds") %>% as_tibble()
+```
+
+```{r, eval=F}
+meus_dados %>% 
+  mutate(nome_nova_coluna=funcao(nome_coluna_que_quero_usar)
+
+```
+
+<center><img src="../img/mutate.png" height="300px&quot;"/></center>
+
+## Exemplo 1
+
+-   A altura está em **cm**, eu quero a altura em **metros**.
+-   Ele vai calcular para cada um, o resultado correspondente.
+
+. . .
+
+```{r}
+
+ebola %>% 
+  select( ht_cm) %>% # só para simplificar a base
+  mutate(ht_m=ht_cm/100)
+
+```
+
+## Exemplo 2
+
+-   Eu queria a altura em metros para calcular o IMC, posso continuar o cálculo com a nova variável.
+
+. . .
+
+```{r}
+
+ebola %>% 
+  select(wt_kg, ht_cm) %>% 
+  mutate(ht_m=ht_cm/100,
+         imc=wt_kg/ht_m^2)
+
+```
+
+## Exemplo 3
+
+-   Fazer o cálculo com os valores de uma coluna só.
+
+-   O que acontece?
+
+. . .
+
+```{r}
+
+ebola %>% 
+  filter(!is.na(age)) %>% 
+  select(age) %>% 
+  mutate(idade_media=mean(age)) # ou na.rm=T 
+
+```
+
+## CUIDADO!!
+
+-   Ele faz a conta para a **coluna**!
+
+-   Fazer a conta para uma linha é meio chato!
+
+    -   Não é simples como no excel.
+
+    -   Mas, se precisar! Pesquise as funções:
+
+        -   **rowwise()**
+
+        -   **c_across()**
+
+## As aulas estão mais curtas né?
+
+-   Aproveitem para revisar!
+
+# Até a próxima aula!
