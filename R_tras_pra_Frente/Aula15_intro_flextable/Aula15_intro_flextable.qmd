@@ -1,0 +1,279 @@
+---
+title: "Aula 15 - Introdução ao pacote flextable"
+subtitle: "Módulo 2: Trabalhando com dados "
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format: 
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+### Aula 13 - Manipulação das colunas {style="color: gray;"}
+
+[Função select()]{style="color: gray;"}
+
+### Aula 14 - Manipulação das linhas {style="color: gray;"}
+
+[Função filter()]{style="color: gray;"}
+
+### Aula 15 - Tabela
+
+Introdução ao pacote `flextable`: confeccionar uma tabela simples apartir da seleção e filtros.
+
+## Leituras para aprofundamento
+
+-   [EpiHandbook, 29. Tables for presentation](https://ardata-fr.github.io/flextable-book/)
+
+-   [flextable book](https://ardata-fr.github.io/flextable-book/)
+
+-   [flextable overview](https://mran.revolutionanalytics.com/snapshot/2019-02-07/web/packages/flextable/vignettes/overview.html)
+
+-   [flextable gallery](https://ardata-fr.github.io/flextable-gallery/gallery/)
+
+-   [flextable RDocumentation](https://www.rdocumentation.org/packages/flextable/versions/0.7.0)
+
+## flextable
+
+-   Gosto muito para arquivos em:
+
+    -   word (.doc), mas também funciona em .html e .pdf
+
+. . .
+
+#### Mas há outros pacotes para tabelas famosos:
+
+-   DT (iterativos em html)
+
+-   kable, kableExtra (mais "LateX friendly")
+
+-   formttable, gt, stargazer...
+
+## Dados de hoje
+
+```{r echo=F}
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, flextable)
+  
+knitr::opts_chunk$set("ft.shadow" = FALSE)
+
+# importando a base
+dados_covid <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv", na.strings = "")
+
+    
+```
+
+```{r out.width="50%"}
+ brasil_italia <- dados_covid %>% 
+  select(Date_reported, Country,New_cases, New_deaths) %>% # 
+  filter(Country=="Brazil"|Country=="Italy",
+         New_cases >15000,
+         New_deaths<30 )
+
+ brasil_italia
+```
+
+## flextable
+
+```{r eval=F}
+flextable( brasil_italia)
+
+# ou
+
+dados_covid %>% 
+  select(Date_reported, Country,New_cases, New_deaths) %>% # 
+  filter(Country=="Brazil"|Country=="Italy",
+         New_cases >15000,
+         New_deaths<30 ) %>% 
+  flextable()
+
+```
+
+```{r include=FALSE}
+flextable(brasil_italia) %>% 
+  save_as_image("../img/tab1.png")
+```
+
+![](../img/tab1.png){fig-alt="Tab1" fig-align="center" width="150%"}
+
+## Lógica...
+
+Gosto de pensar que também funciona como **"camadas"**.
+
+-   alinhamento
+-   fonte
+-   largura
+-   cores...
+
+. . .
+
+```{r eval=F}
+funcao_edicao_flextable(objeto,
+                        parâmetro="opcao", 
+                        i=numero_da_linha,
+                        j=numero_da_coluna, 
+                        part="header"/"body"/"all" )`
+```
+
+## width : Largura
+
+-   só funciona para as colunas (afinal as colunas que têm largura)
+
+. . .
+
+```{r eval=F}
+flextable( brasil_italia) %>% 
+  width(width=3)
+```
+
+```{r include=FALSE }
+flextable( brasil_italia) %>% 
+  width(width=3)%>% 
+  save_as_image("../img/tab2.png")
+```
+
+![](../img/tab2.png){fig-alt="Tab2" fig-align="center" width="100%"}
+
+-   Se não especificar **j** ele faz para todas!
+
+. . .
+
+```{r eval=F}
+flextable(brasil_italia) %>% 
+  width(width=3) %>% 
+  width (j=1, width=2) 
+```
+
+```{r include=F}
+flextable(brasil_italia) %>% 
+  width(width=3) %>% 
+  width (j=1, width=2) %>% 
+  save_as_image("../img/tab3.png")
+
+```
+
+![](../img/tab3.png){fig-alt="Tab3" fig-align="center" width="100%"}
+
+. . .
+
+```{r eval=F}
+
+flextable(brasil_italia) %>% 
+  width(width=4) %>% 
+   width (j=1, width=1) %>% 
+   width (j=4, width=1) 
+
+# OU - MELHOR
+
+flextable(brasil_italia) %>% 
+  width(width=4) %>% 
+   width (j=c(1,4), width=1) 
+  
+```
+
+```{r include=F}
+flextable(brasil_italia) %>% 
+  width(width=4) %>% 
+   width (j=c(1,4), width=1) %>% 
+  save_as_image("../img/tab4.png")
+```
+
+![](../img/tab4.png){fig-alt="Tab4" fig-align="center" width="100%"}
+
+## bold: Negrito
+
+-   podemos usar a mesma lógica para as colunas
+
+-   Mas com o negrito, e outras formatações internas podemos também trabalhar nas **linhas**.
+
+-   **j** eram as colunas ...
+
+-   **i** são as linhas
+
+## Destacar Linhas
+
+```{r eval=F}
+flextable(brasil_italia) %>% 
+  width(width=3) %>% 
+  width (j=1, width=2) %>% 
+  bold (i=5)
+  
+```
+
+```{r include=F}
+flextable(brasil_italia) %>% 
+  width(width=3) %>% 
+  width (j=1, width=2) %>% 
+  bold (i=5) %>% 
+  save_as_image("../img/tab5.png")
+```
+
+![](../img/tab5.png){fig-alt="Tab5" fig-align="center" width="100%"}
+
+. . .
+
+```{r eval=F}
+flextable(brasil_italia) %>% 
+  width(width=3) %>% 
+  width (j=1, width=2) %>% 
+  bold (i=5) %>% 
+   bold (part = "header")
+  
+```
+
+```{r include=F}
+flextable(brasil_italia) %>% 
+  width(width=3) %>% 
+  width (j=1, width=2) %>% 
+  bold (i=5) %>% 
+   bold (part = "header") %>% 
+  save_as_image("../img/tab6.png")
+```
+
+![](../img/tab6.png){fig-alt="Tab6" fig-align="center" width="100%"}
+
+## alinhamento
+
+```{r eval=F}
+flextable(brasil_italia) %>% 
+  width(width=3) %>% 
+  width (j=1, width=2) %>% 
+  bold (i=5) %>% 
+  bold (part = "header") %>% 
+  align(align="center", part="all")
+  
+```
+
+```{r include=F}
+flextable(brasil_italia) %>% 
+  width(width=3) %>% 
+  width (j=1, width=2) %>% 
+  bold (i=5) %>% 
+  bold (part = "header") %>% 
+  align(align="center", part="all")%>% 
+  save_as_image("../img/tab7.png")
+```
+
+![](../img/tab7.png){fig-alt="Tab7" fig-align="center" width="100%"}
+
+## Ainda não tá muito bonito...
+
+-   Calma!
+-   Aprenderemos mais edições em outras aulas!
+-   Próxima aula, função para criar novas variáveis! A `mutate()`
+
+# Até lá!

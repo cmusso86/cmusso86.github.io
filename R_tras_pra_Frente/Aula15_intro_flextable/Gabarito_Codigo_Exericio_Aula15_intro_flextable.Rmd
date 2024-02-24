@@ -1,0 +1,76 @@
+---
+title: "Exercicio aula 15 - Tabelas"
+author: "Carolina Musso"
+date: "2023-03-15"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, flextable, office, janitor, scales)
+
+
+# Bancos e manipulações----
+
+dados_covid <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+
+```
+
+# 1) Selecione as colunas de data de ocorrência, país e óbitos novos e óbitos acumulados dessa base de dados usando a função select
+
+```{r}
+dados_covid_selecionado <- dados_covid %>% 
+  select("Date_reported", "Country", "New_deaths", "Cumulative_cases")
+
+```
+
+
+# 2) Complemente o código feito acima com uma função de filtro, para filtrar os casos que ocorreram na Alemanha ou na França e apresentaram mais de mil óbitos novos e salve essa nova data.frame em um objeto chamado `obitos_Alemanha_Franca`
+
+```{r}
+obitos_Alemanha_Franca <- dados_covid_selecionado %>% 
+  filter(New_deaths>1000 & (Country=="Germany" | Country=="France")) 
+## Ao colocar os filtros de país entre parênteses, garantimos que o código cumpra os critérios corretamente. Sem os parênteses, teríamos a regra de "novos óbitos > 1000" aplicada somente a "país = Alemanha".
+
+    
+```
+
+# 3) Faça uma flextable simples, sem edições, no objeto `obitos_Alemanha_Franca`
+
+```{r}
+
+flextable(obitos_Alemanha_Franca)
+
+```
+
+# 4) Complete o código editando todas as colunas para terem largura 3 e alinhando todas as células à esquerda
+
+```{r}
+flextable(obitos_Alemanha_Franca) %>% 
+  width( width = 3) %>% 
+  align(align="left")
+
+## Usamos as funções de edição em "camadas" com a ajuda dos Pipes.
+
+```
+
+## 5) Coloque em negrito a última linha apresentada pra cada um dos países. 
+```{r}
+
+flextable(obitos_Alemanha_Franca) %>% 
+  width( width = 3) %>% 
+  align(align="left") %>% 
+  bold (i=20) %>% 
+  bold (i=9)
+
+## Essa é uma solução mais manual. Podoríamos, por exemplo, criar uma função que conta a quantidade de ocorrências de cada país e estabelecer que o negrito fosse aplicado nessa última linha. Se quiser, você pode experimentar outras alternativas e compatilhar seus resultados no Fórum de discussão.
+
+```
+
+
+
