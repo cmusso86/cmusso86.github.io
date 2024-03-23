@@ -1,0 +1,322 @@
+---
+title: "Aula 20 - caracteres e *strings* "
+subtitle: "Módulo 2: Trabalhando com dados "
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format: 
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+### Aula 19 - Unindo bases de dados {style="color: gray;"}
+
+[Funções join()]{style="color: gray;"}
+
+### Aula 20 - Trabalhando com texto (strings)
+
+O pacote stringR
+
+### Aula 21 - Tabela
+
+Mais sobre o pacote `flextable`: título, cabeçalho e fonte
+
+## Leituras para aprofundamento
+
+-   [EpiR-Handbook, 10. Characteres e Strings](https://epirhandbook.com/en/characters-and-strings.html)
+
+-   [Curso - R, 7.4 O pacote stringr](https://livro.curso-r.com/7-4-o-pacote-stringr.html)
+
+-   [R4DS, 14. Strings](https://r4ds.had.co.nz/strings.html)
+
+-   [Documentação stringR](https://stringr.tidyverse.org)
+
+-   [Introdução à Análise Textual aplicada à Sociologia](https://soaresalisson.github.io/analisetextual/)
+
+-   [DataCamp, Intermediate Regular Expressions in R](https://app.datacamp.com/learn/courses/intermediate-regular-expressions-in-r)
+
+-   [DataCamp, String Manipulation with stringR in R](https://app.datacamp.com/learn/courses/string-manipulation-with-stringr-in-r)
+
+## Variavel: Caracteres <chr>
+
+-   Nada mais do que um texto
+
+    -   Variáveis de texto são comuns
+
+-   Costumam não estar padronizadas
+
+-   E por isso costumam dar trabalho!!
+
+-   "Riacho Fundo", "riacho fundo I", "riacho fundo 1" ...
+
+## pacote strigR e tidyR
+
+-   str_c
+
+-   str_trim()
+
+-   str_sub ()
+
+-   str_detect
+
+-   separate()
+
+-   unite()
+
+## str_c
+
+```{r echo=F}
+library(tidyverse)
+```
+
+```{r}
+str_c("A", "aula", "de", "R")
+```
+
+```{r}
+str_c("A", "aula", "de", "R", sep=" ")
+```
+
+```{r}
+nome <- c("Jose", "João", "Maria")
+sobrenome <- c("Silva", "Faria", "Souza")
+str_c(nome, sobrenome, sep=" ", collapse=", ")
+```
+
+. . .
+
+**R base**
+
+. . .
+
+```{r}
+paste("A", "aula", "de", "R")
+```
+
+```{r}
+paste(nome, sobrenome, collapse = ", ")
+```
+
+## Já vimos 2 funções aula passada
+
+-   str_to_upper()
+-   str_to_lower()
+-   Também tem a:
+-   str_to_title()
+-   str_to_sentence()
+
+## str_trim()
+
+-   Retira espaços no começo e no final
+
+. . .
+
+```{r}
+IDs <- c("Brasília  ", 
+         "  Brasília",   
+         "Brasília 
+         ")  
+
+str_trim(IDs, "both")
+
+```
+
+-   Parece útil?
+
+## str_sub()
+
+-   extrair uma parte de interesse
+
+. . .
+
+```{r}
+str_sub("pneumonia", 1, 2)
+```
+
+```{r}
+str_sub("pneumonia", 6, -1)
+```
+
+-   Conseguem pensar em exemplos onde isso pode ser útil?
+    -   Não falamos disso ainda, mas as vezes uso para trabalhar com datas!
+
+## str_detect ()
+
+-   Detectar padrões
+
+. . .
+
+```{r}
+string <- "A professora é legal"
+str_detect(string,pattern = "é")
+```
+
+-   Vou mostrar uma coisa, e quero que pensem para que pode ser útil ...
+
+. . .
+
+```{r}
+sum(str_detect(string,pattern = "é"))
+```
+
+## str_replace
+
+```{r}
+str_replace(string, pattern="legal", replacement="muito legal!")
+```
+
+-   Se colocarmos na ordem, não precisamos explicitar o nome dos argumentos, lembram?
+
+. . .
+
+```{r}
+str_replace(string, "legal", "extremamente legal!")
+```
+
+## separate() {tidyR}
+
+-   Separar valores de células que contém mais de uma informação
+
+. . .
+
+```{r echo=F}
+library(tidyverse)
+
+df <- data.frame(
+  case_ID = c(1:6),
+  sintomas = c("icterícia, febre, calafrio",    
+                "calafrio, dores, dores fortes",        
+                "febre",                       
+                "vômito, diarréia",         
+                "sangramento da gengiva, febre",  
+                "pulso rapido, dor de cabeça"),      
+  desfecho = c("Recuperado", "Óbito", "Óbito", "Recuperado", "Recuperado", "Recuperado"))
+df
+```
+
+. . .
+
+```{r}
+df_split <- df %>% 
+  separate( col=sintomas,
+           into = c("sym_1", "sym_2", "sym_3"), 
+           extra = "merge",
+           sep=",")
+df_split 
+```
+
+-   repare que essa função já age no data frame todo sem a necessidade do mutate()
+
+## unite ()
+
+```{r}
+df_split %>% 
+  unite(
+    col = "todos os sintomas", c("sym_1", "sym_2", "sym_3"), 
+    sep = ", ", remove = TRUE, na.rm = TRUE                  
+  )
+```
+
+## E isso é só o começo ...
+
+-   Existe toda a área de PLN - Processamento de Linguagem Natural
+    -   mineração de texto
+    -   [Introdução à Análise Textual aplicada à Sociologia](https://soaresalisson.github.io/analisetextual/)
+
+## Exemplos
+
+### Vigilância em saúde baseada em eventos e rumores
+
+![](../img/Piaui-GoogleCovid.jpg){fig-align="center"}
+
+[Piauí](https://piaui.folha.uol.com.br/no-carnaval-buscas-por-sintomas-covid-voltaram-subir-sete-dias-depois-numero-de-novos-casos-bateu-recorde/)
+
+## Expressões Regulares
+
+-   RegEx parea os íntimos
+
+-   Vamos falar rapidamente sobre isso
+
+. . .
+
+![](../img/regex.webp){fig-align="center"}
+
+## Parâmetros das Regex
+
+### Âncoras
+
+![](../img/ancora.png){fig-align="center"}
+
+## Parâmetros das Regex
+
+### Operadores
+
+![](../img/operador.png){fig-align="center"}
+
+## Exemplo no R
+
+```{r, warning=F}
+banana_vec <- c("banana", "bananas", "bananal", "abanar", "bananeira", "bandolim")
+
+str_detect(banana_vec, "^ban")
+```
+
+. . .
+
+```{r, warning=F}
+
+str_detect(banana_vec, "a$")
+```
+
+. . .
+
+```{r}
+str_extract_all(banana_vec, "^ban.*") %>%
+  unlist() #transformar a lista em um vetor
+```
+
+. . .
+
+```{r}
+str_replace(banana_vec, "^ban", "BAN") %>% unlist()
+```
+
+## Prática
+
+```{r}
+datasus <- rio::import("https://d26692udehoye.cloudfront.net/SRAG/2019/INFLUD19.csv")
+
+datasus %>% 
+  select(OUT_ANTIV) %>% 
+  filter(OUT_ANTIV!="") %>% 
+  head(50)
+```
+
+## Prática
+
+```{r}
+datasus %>% 
+  mutate(OUT_ANTIV=str_to_lower(OUT_ANTIV)) %>% 
+  filter(str_detect(OUT_ANTIV, "flu"))%>% 
+  select(OUT_ANTIV) %>% 
+  head(50)
+           
+```
+
+# Agora faça você mesmo!
+
+Até a próxima aula!
