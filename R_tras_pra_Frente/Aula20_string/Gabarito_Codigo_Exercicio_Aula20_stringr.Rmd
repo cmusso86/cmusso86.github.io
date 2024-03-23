@@ -1,0 +1,57 @@
+---
+title: "Exercicio aula 20 - strings"
+author: "Carolina Musso"
+date: "2022-03-29"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, here, lubridate)
+
+# Bancos ----
+painel_bruto <- import("covid_br_2022.csv")
+```
+
+# 1)  o pacote stringr tem uma função equivalente que àquelas aprendemos na aula passada toupper() e tolower() que são do R base. Descubra quais são (dica, veja o capítulo do livro) e use-a para colocar todos os nomes de município em caixa alta. 
+
+```{r}
+painel_trat<-painel_bruto %>% 
+  filter(municipio!="") %>% 
+  mutate(municipio=str_to_upper(municipio))
+```
+
+# 2) Junte as colunas municipio - Estado usando o unite(). Sugiro remover os as linhas sem nomes de municípios para facilitar a vizualização.
+
+```{r}
+painel_trat_unido<-painel_trat %>% 
+  unite("munestado",c("municipio", "estado"), sep=" - ", remove = F)
+```
+
+# 3) Separe a coluna da data em 3 colunas, uma para dia, uma para mês e uma para ano, utilizando a separate().
+
+```{r}
+painel_trat_unido_separado<-painel_trat_unido %>% 
+  separate(col=data, into=c("ano", "mes", "dia"), sep="-", remove=F)
+```
+
+# 4) Selecione apenas os dois últimos dígitos da coluna ano. 
+
+```{r}
+painel_trat_unido_separado_sub<-painel_trat_unido_separado %>% 
+  mutate(ano_2dig=str_sub(ano,3))
+```
+
+# 5) Filtre os municípios que contém o padrão "Santo" no nome. 
+
+```{r}
+painel_trat_unido_separado_sub_Santo<-painel_trat_unido_separado_sub %>% 
+  filter(str_detect(municipio, "SANTO"))
+
+```
+
