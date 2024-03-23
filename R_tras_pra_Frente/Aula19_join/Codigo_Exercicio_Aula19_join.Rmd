@@ -1,0 +1,79 @@
+---
+title: "Exercicio aula 19 - joins"
+author: "Carolina Musso"
+date: "2023-03-24"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES  ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, here, lubridate)
+
+# Bancos ----
+
+painel_bruto <- import("covid_br_2022.csv" )
+populacao <- import("populacao_municipio.xlsx")
+
+```
+
+# 1) Vamos usar uma base mais atualizada para a população.
+
+
+a) Adicione em um mesmo pipe, salvando em um novo objeto.
+
+- Filtre o banco do painel para conter apenas os as linhas referente a municípios. 
+- Selecione apenas as colunas de data, estado, codmun, municipio e casosNovos.
+- Filtre apenas a data mais recente do banco
+- agrupe por estado, município e codmun (todos ao mesmo tempo)
+- resuma a base, calculando o valor máximo de casos novos reportados 
+
+```{r}
+
+quinze_dias<-Sys.Date()-15
+
+painel_trat<-painel_bruto %>% 
+  filter(municipio!="") %>% 
+  select(data, estado, codmun, municipio, casosNovos) %>% 
+  filter(data == max(data) ) %>% 
+  group_by(estado, municipio, codmun) %>% 
+  summarise(Maximo=max(casosNovos))
+  
+```
+
+b) Tente fazer um left_join desse objeto criado acima com o objeto de população. O que acontece?
+
+```{r}
+
+```
+
+c) Escolha a forma que mais te apetece para renomear os nomes da coluna chave em uma das bases. Isso será suficiente para prosseguir com o join? 
+
+```{r}
+painel_trat<-painel_trat %>% 
+  rename(codigo=codmun)
+```
+
+d) Modifiquee a variável de um dos bancos para que ambas sejam do tipo numérica. (Não se preocupe se aparecer a mensagem "NAs introduzidos por coerção")
+
+```{r}
+populacao<-populacao %>% 
+  mutate(codigo=as.numeric(codigo)) 
+```
+
+e) Faça o  left_join() e observe como o data frame ficou. Quantas colunas temos?
+
+```{r}
+painel_com_pop<-left_join(painel_trat, populacao)
+```
+
+f)  Faça o tratamento que fez para o "codmun" também para a coluna do nome do município e a sigla do estado, para que o join seja realizado também nessas colunas. 
+
+```{r}
+
+```
+

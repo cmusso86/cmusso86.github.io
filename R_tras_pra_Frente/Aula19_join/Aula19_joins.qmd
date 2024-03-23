@@ -1,0 +1,334 @@
+---
+title: "Aula 19 - joins "
+subtitle: "Módulo 2: Trabalhando com dados "
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format: 
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+### Aula 19 - Unindo bases de dados
+
+Funções join()
+
+### Aula 20 - Trabalhando com texto (strings)
+
+O pacote stringR
+
+### Aula 21 - Tabela
+
+Mais sobre o pacote `flextable`: título, cabeçalho e fonte
+
+## Leituras para aprofundamento
+
+-   [EpiHandbook, 14. Joining Data](https://epirhandbook.com/en/joining-data.html)
+
+-   [DataCamp, Joining data with dplyR](https://app.datacamp.com/learn/courses/joining-data-with-dplyr)
+
+-   [R4DS, 13. Relational data](https://r4ds.had.co.nz/relational-data.html)
+
+## O que vimos até agora nesse módulo
+
+-   filter()
+-   select()
+-   %\>%
+-   mutate()
+-   group_by()
+-   summarise()
+-   **Hoje:** left_join(), right_join(), ...
+
+## Porque Unir bases
+
+-   Base 1
+
+. . .
+
+```{r echo=F}
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, here, lubridate)
+
+  
+# dados ebola
+ebola_mini  <-  import("linelist_cleaned.rds")%>%                 
+  select(date_onset, hospital) %>%   # select columns
+    filter(hospital!="Other",
+           hospital!="Missing",
+           hospital!="St. Mark's Maternity Hospital (SMMH)") %>% 
+  as_tibble() %>% 
+  head(10)
+
+# dados hospital
+hosp_info  <-  data.frame(
+  Hospital= factor(c("central hospital", "military hospital", "military hospital", "port hospital", "central hospital", "ignace", "sisters")),
+  N_residentes = c(1950280, 40500, 10000, 50280, 12000, 5000, 4200),
+  level         = c("Tertiary", "Secondary", "Primary", "Secondary", "Secondary", "Primary", "Primary")) %>% 
+  head(10) %>% 
+  as_tibble()
+
+head(ebola_mini, 5)
+```
+
+-   Base 2
+
+. . .
+
+```{r echo=F}
+head(hosp_info, 5)
+```
+
+## Que problemas podem aparecer?
+
+**Joins cássicos (não probabilísticos)**
+
+-   Preciso de pelo menos de uma coluna "chave" para união.
+
+    -   correspondência **exata**
+
+. . .
+
+**Preciso Garantir**
+
+-   mesmo nome de coluna (é melhor)
+
+-   mesma classe de coluna
+
+-   nomes da chave que correspondam com exatidão
+
+## Voltando às bases
+
+```{r echo=F}
+head(ebola_mini, 5)
+```
+
+```{r echo=F}
+head(hosp_info, 5)
+```
+
+## Primeiro problema
+
+-   Mudar os nomes das colunas - **Duas formas de fazer isso**
+
+. . .
+
+**pacote dplyr**
+
+-   `rename()`
+
+-   Dá para encadear com o pipe %\>%
+
+. . .
+
+**R base**
+
+-   `names()`
+
+-   deve ter aspas e também **todos** os nomes
+
+## Como fazer
+
+-   Com o dplyr
+
+. . .
+
+```{r}
+ebola_mini <- ebola_mini %>% 
+  rename(Inicio_sint=date_onset,
+        Hospital=hospital)
+```
+
+-   Com o R base
+
+. . .
+
+```{r}
+names(ebola_mini) <- c("Inicio_sint", 
+                     "Hospital")
+```
+
+## Como ficou
+
+```{r echo=F}
+head(ebola_mini, 5)
+```
+
+```{r echo=F}
+head(hosp_info, 5)
+```
+
+## Segundo problema
+
+-   As colunas "chave" devem ser do mesmo tipo.
+
+-   Vemos que nesse caso, uma é fator e a outra um caractere.
+
+    -   Devemos transformar uma delas
+
+. . .
+
+#### começamos com um mutate()
+
+-   função as.?
+
+    -   as.numeric
+    -   as.character
+    -   ...
+
+. . .
+
+```{r}
+hosp_info <- hosp_info %>% 
+  mutate(Hospital=as.character(Hospital))
+```
+
+## Como ficou
+
+```{r echo=F}
+head(ebola_mini, 5)
+```
+
+```{r echo=F}
+head(hosp_info, 5)
+```
+
+## Terceiro problema
+
+-   Os nomes não estão escritos da mesma forma
+
+-   Funções úteis
+
+    -   toupper() ou str_to_upper()
+    -   tolower() ou str_to_lower()
+    -   veremos outras possibilidades na próxima aula
+
+. . .
+
+```{r}
+ebola_mini <- ebola_mini %>% 
+  mutate(Hospital=str_to_lower(Hospital))
+```
+
+-   Uma boa prática é sempre padronizar os textos de todas as bases que for trabalhar antes de começar os joins.
+
+## Como ficou
+
+```{r echo=F}
+head(ebola_mini, 5)
+```
+
+```{r echo=F}
+head(hosp_info, 5)
+```
+
+## Agora sim!
+
+**Podemos seguir com o join!**
+
+-   Repare no nome da função usada.
+
+. . .
+
+```{r }
+
+ebola_hosp_info  <-  left_join(ebola_mini, hosp_info)
+```
+
+```{r echo=F}
+head(ebola_hosp_info ,4)
+```
+
+## Existem vários joins!
+
+-   left_join()
+
+-   right_join()
+
+-   inner_join()
+
+-   full_join()
+
+-   semi_join()
+
+-   anti_join()
+
+. . .
+
+-   **E agora, qual usar?**
+
+# left_join()
+
+-   Mantém **todas** as linhas do data frame da **esquerda**, exclui as que não batem do data frame da direita.
+
+```{r, eval=F}
+base_unida <- left_join(a,b)
+```
+
+<center><img src="../img/left-join.gif" height="320px&quot;"/></center>
+
+# right_join()
+
+-   Mantém **todas** as linhas do data frame da **direita**, exclui as que não batem do data frame da esquerda.
+
+```{r, eval=F}
+base_unida <- right_join(a,b)
+```
+
+<center><img src="../img/right-join.gif" height="320px&quot;"/></center>
+
+# full_join()
+
+-   Mantém **todas** as linhas de ambas as bases -\> completa com NA
+
+```{r, eval=F}
+base_unida <- full_join(a,b)
+```
+
+<center><img src="../img/full-join.gif" height="320px&quot;"/></center>
+
+# inner_join()
+
+-   Mantém **somente** as linhas que há em **ambas**
+
+```{r, eval=F}
+base_unida <- inner_join(a,b)
+```
+
+<center><img src="../img/inner-join.gif" height="320px&quot;"/></center>
+
+# semi_join()
+
+-   **Não faz join!** -\> filtra a base da esquerda de acordo com o que **também tem** na da direita
+
+```{r, eval=F}
+base_unida <- semi_join(a,b)
+```
+
+<center><img src="../img/semi-join.gif" height="320px&quot;"/></center>
+
+# anti_join()
+
+-   **Não é exatamente um join!** -\> na verdade filtra a base da esquerda de acordo com o que **não tem** na da direita
+
+```{r, eval=F}
+base_unida <- anti_join(a,b)
+```
+
+<center><img src="../img/anti-join.gif" height="320px&quot;"/></center>
+
+# Até a próxima aula!
