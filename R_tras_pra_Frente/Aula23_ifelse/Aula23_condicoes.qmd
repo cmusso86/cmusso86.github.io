@@ -1,0 +1,227 @@
+---
+title: "Aula 23 - Condicionamento"
+subtitle: "Módulo 2: Trabalhando com dados "
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format: 
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+### Aula 22 - Trabalhando com datas {style="color: gray;"}
+
+[O pacote lubridate]{style="color: gray;"}
+
+### Aula 23 - condicionamento
+
+As funções if(), if_else() e case_when()
+
+### Aula 24 - Tabela
+
+Finalizando noções sobre o pacote flextable()
+
+## Leituras para aprofundamento
+
+-   [EpiR-Handbook, 8 Cleaning and Core functions](https://epirhandbook.com/en/cleaning-data-and-core-functions.html)
+
+-   [Curso-R, 3.12.1 Condicionamento](https://livro.curso-r.com/3-12-controle-de-fluxo.html#condicionamento-if-e-else)
+
+-   [R4DS, 19.4. Conditional Execution](https://r4ds.had.co.nz/functions.html?q=else#conditional-execution)
+
+## if else
+
+As estruturas if e else servem para executarmos um código apenas se uma condição (teste lógico) for satisfeita.
+
+A estrutura geral de um `if statement` é como a seguir:
+
+```{r eval=F}
+if (condition) {
+  # código a executar se a condição for verdadeira (retornar TRUE)
+} else {
+  # código a executar se a condição for falsa (retornar FALSE)
+}
+```
+
+## Exemplo
+
+-   Vamos tentar entender a lógica geral
+
+. . .
+
+```{r}
+x <- 2
+
+if (x == 1) {         
+  Sys.time()
+}
+```
+
+-   Nada acontece
+
+. . .
+
+```{r}
+if (x == 2) {         
+  Sys.time()
+}
+
+```
+
+## if else
+
+```{r}
+x <- 2
+
+if (x == 1) {         
+  Sys.time()
+} else {
+  "x não é 1"
+}
+
+```
+
+## É muito útil mas...
+
+-   Acho que ainda um pouco avançado para esse momento.
+-   Muito útil para escrever as próprias funções
+
+. . .
+
+```{r}
+
+
+minha_funcao <- function(x) {
+  if (x == 1) {         
+  Sys.time()
+} else {
+  "x não é 1"
+}
+} 
+  
+minha_funcao(2)
+```
+
+. . .
+
+```{r}
+minha_funcao(1)
+```
+
+-   Nós vamos focar em formas mais "enxuta": ifelse() e case_when()
+
+## Criando novas variáveis
+
+-   Com o mutate(), lembram?
+-   Agora juntamente com um ifelse() ou case_when()
+
+. . .
+
+```{r eval=F}
+dados %>% 
+  mutate(nova_var = ifelse(condição, "Caso afirmativo", "Caso negativo") )
+```
+
+## Um exemplo
+
+```{r echo=F}
+pacman::p_load(tidyverse, rio)
+dados_debola <- import("linelist_cleaned.rds") %>% as_tibble()
+```
+
+```{r}
+dados_debola %>% 
+  mutate(Port_Hospital = ifelse(hospital == "Port Hospital", "Sim", "Não")) %>% 
+  select(hospital, Port_Hospital) %>% 
+  head(10)
+```
+
+## Outro exemplo
+
+```{r}
+dados_debola %>% 
+  mutate(Fase = ifelse(age_years < 18, "Criança", 
+                       ifelse(age_years > 60, "Idoso", "Adulto"))) %>% 
+  select(age_years, Fase ) %>% 
+  head(10)
+  
+```
+
+-   mas
+
+. . .
+
+![](../img/ifelse.png)
+
+## Recomendação nesse caso
+
+-   A função cut()
+-   Ótima para discretizar variáveis quantitativas
+
+. . .
+
+```{r}
+dados_debola %>% 
+  mutate(Faixa = cut(age_years, breaks=c(0, 20, 40, 60, 80, 100),
+                    right=F) )%>% 
+  select(age_years, Faixa ) %>% 
+  head(10)
+  
+```
+
+-   Posso mudar os labels
+
+. . .
+
+```{r}
+dados_debola %>% 
+  mutate(Faixa = cut(age_years, breaks=c(0, 20,  40,  60,  80, 100),
+                    labels= c("< 20 anos", "21-40 anos", "31-60 anos", 
+                              "61-80 anos", "> 80 anos"), 
+                    right=F) )%>% 
+  select(age_years, Faixa ) %>% 
+  head(10)
+  
+```
+
+## Ou case_when()
+
+```{r}
+dados_debola %>% 
+  mutate(idade_anos = case_when(
+       age_unit == "years"  ~ age,       
+       age_unit == "months" ~ age/12) ) %>% 
+  select(age_unit, age, idade_anos) %>% 
+  group_by(age_unit) %>% 
+  sample_n(3)
+
+```
+
+. . .
+
+```{r}
+dados_debola %>% 
+  mutate(Desfecho = case_when(
+       outcome == "Death"  ~ "Óbito",       
+       outcome == "Recover" ~ "Recuperado",
+      .default  = "Investigar")) %>% 
+  select(outcome, Desfecho) %>% 
+  group_by(outcome) %>% 
+  sample_n(3)
+```
+
+# Até a próxima aula!

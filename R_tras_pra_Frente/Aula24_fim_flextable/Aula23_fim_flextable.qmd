@@ -1,0 +1,297 @@
+---
+title: "Aula 24 - Finalizando (o mais importante) sobre o pacote flextable"
+subtitle: "Módulo 2: Trabalhando com dados "
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format: 
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+### Aula 22 - Trabalhando com datas {style="color: gray;"}
+
+[O pacote lubridate]{style="color: gray;"}
+
+### Aula 23 - condicionamento {style="color: gray;"}
+
+[As funções if(), if_else() e case_when()]{style="color: gray;"}
+
+### Aula 24 - Tabela
+
+Mais sobre o pacote `flextable`: título e fontes
+
+## Leituras para aprofundamento
+
+-   [EpiR-Handbook, 29. Tables for presentation](https://ardata-fr.github.io/flextable-book/)
+
+-   [flextable book](https://ardata-fr.github.io/flextable-book/)
+
+-   [flextable overview](https://mran.revolutionanalytics.com/snapshot/2019-02-07/web/packages/flextable/vignettes/overview.html)
+
+-   [flextable gallery](https://ardata-fr.github.io/flextable-gallery/gallery/)
+
+-   [flextable RDocumentation](https://www.rdocumentation.org/packages/flextable/versions/0.7.0)
+
+```{r echo=F}
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, flextable, scales, officer)
+  
+knitr::opts_chunk$set("ft.shadow" = FALSE)
+
+# importando a base
+dados_covid <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv", na.strings = "")
+
+options(OutDec= ".")    
+```
+
+## Dados de Hoje
+
+-   Incrementando nosso código
+
+. . .
+
+```{r out.width="50%"}
+
+paises <- c("Brazil", "Italy", "France", "Argentina")
+
+ letalidade_Brasil_Italia <- dados_covid %>% 
+  filter(Country %in% paises, 
+         New_cases>0,
+         !is.na(New_cases)) %>% 
+  separate(Date_reported, c("Ano", "Mês", "Dia")) %>% 
+  mutate(Country=case_when(
+    Country=="Brazil" ~ "Brasil",
+    Country=="Italy" ~ "Itália",
+    Country=="France" ~ "França")) %>% 
+  mutate(letalidade_diaria = New_deaths/New_cases*100)%>% 
+   mutate(Continente = ifelse(Country=="Brazil"|Country=="Argentina",
+                              "América do Sul", "Europa")) %>% 
+  group_by(Continente, Ano, Country) %>% 
+  summarise(letalidade_media = mean(letalidade_diaria,
+                                    na.rm=T), 
+            desvio_padrao = sd(letalidade_diaria,
+                                    na.rm=T ),
+            Casos_maximo = max(New_cases,
+                                    na.rm=T),
+            Obitos_maximo = max(New_deaths,
+                                    na.rm=T)) %>% 
+  ungroup() %>% 
+  mutate_if(is.numeric, ~format(., big.mark=".", decimal.mark=",", digits=2)) 
+  
+
+ letalidade_Brasil_Italia
+```
+
+## flextable
+
+```{r eval=F}
+flextable(letalidade_Brasil_Italia)
+```
+
+```{r include=FALSE}
+flextable( letalidade_Brasil_Italia) %>% 
+  save_as_image("../img/tab1.png")
+```
+
+![](../img/tab1.png){fig-alt="Tab1" fig-align="center" width="150%"}
+
+## Editando com o que já sabemos
+
+. . .
+
+```{r eval=F}
+
+tab1 <- flextable( letalidade_Brasil_Italia) %>% 
+  autofit() %>% 
+  align(align="r", part="all") %>% 
+  align(align="c", j=c(1,2),  part="all") %>% 
+  bold(part="header") %>% 
+  bold(j=c(1,2)) %>% 
+  bg(bg="lightgrey", j=c(1,2), part="all") %>% 
+  hline(i=c(2,4,6)) %>% 
+  vline(j=2)
+  
+tab1
+```
+
+```{r include=FALSE }
+tab1 <- flextable( letalidade_Brasil_Italia) %>% 
+  autofit() %>% 
+  align(align="r", part="all") %>% 
+  align(align="c", j=c(1,2),  part="all") %>% 
+  bold(part="header") %>% 
+  bold(j=c(1,2)) %>% 
+  bg(bg="lightgrey", j=c(1,2), part="all") %>% 
+  hline(i=c(2,4,6)) %>% 
+  vline(j=2)
+  
+  
+tab1 %>% save_as_image("../img/tab2.png")
+```
+
+![](../img/tab2.png){fig-alt="Tab2" fig-align="center" width="100%"}
+
+## Título e cabeçalho
+
+-   set_header_labels()
+
+. . .
+
+```{r eval=F}
+
+tab1 %>% 
+  set_header_labels( 
+  Country="País", 
+  letalidade_media="Letalidade Média Diária",
+  desvio_padrao="Desvio Padrão",
+  Casos_maximo="Máximo de casos em 24h", 
+  Obitos_maximo="Máximo de óbitos em 24h")
+ 
+  
+```
+
+```{r include=F}
+tab1 %>% 
+  set_header_labels( 
+  Country="País", 
+  letalidade_media="Letalidade Média Diária",
+  desvio_padrao="Desvio Padrão",
+  Casos_maximo="Máximo de casos em 24h", 
+  Obitos_maximo="Máximo de óbitos em 24h") %>% 
+  save_as_image("../img/tab4.png")
+```
+
+![](../img/tab4.png){fig-alt="Tab4" fig-align="center" width="100%"}
+
+-   Quebrar a linha onde eu desejar: "\\n"
+
+. . .
+
+```{r eval=F}
+
+tab2 <- tab1 %>% 
+  set_header_labels( 
+  Country="País", 
+  letalidade_media="Letalidade Média Diária",
+  desvio_padrao="Desvio\n Padrão",
+  Casos_maximo="Máximo de casos em 24h", 
+  Obitos_maximo="Máximo de óbitos em 24h")
+ 
+tab2
+```
+
+```{r include=F}
+tab2 <- tab1 %>% 
+  set_header_labels( 
+  Country="País", 
+  letalidade_media="Letalidade Média Diária",
+  desvio_padrao="Desvio\n Padrão",
+  Casos_maximo="Máximo de casos em 24h", 
+  Obitos_maximo="Máximo de óbitos em 24h") 
+
+  tab2 %>% save_as_image("../img/tab5.png")
+
+
+```
+
+![](../img/tab5.png){fig-alt="Tab4" fig-align="center" width="100%"}
+
+## Cabeçalho Extra
+
+-   add_header_row()
+
+. . .
+
+```{r eval=F}
+tab3 <- tab2 %>% 
+  add_header_row(values = c("Tempo/Lugar", "Indicadores"),
+                 colwidths = c(2,5))
+
+tab3
+```
+
+```{r include=F}
+tab3 <- tab2 %>% 
+  add_header_row(values = c("Tempo/Lugar", "Indicadores"),
+                 colwidths = c(2,5)) %>% 
+  align(align="c", part="header")
+
+  tab3 %>% save_as_image("../img/tab6.png")
+
+
+```
+
+![](../img/tab6.png){fig-alt="Tab4" fig-align="center" width="100%"}
+
+## Título
+
+-   set_caption
+-   Cabeçalho YAML
+    -   output: officedown::rdocx_document
+
+. . .
+
+```{r}
+
+run_num <- run_autonum(seq_id = "tab", pre_label = "Tabela", 
+                       post_label=". ", bkm = "anytable")
+
+tab3 %>% 
+set_caption("Título da tabela",
+            autonum=run_num ) 
+```
+
+## Fonte
+
+-   A fonte deve estar instalada no seu computador!
+
+. . .
+
+```{r eval=F}
+tab3 %>% font(part = "all", fontname = "Verdana")
+```
+
+```{r include=F}
+tab4 <- tab3  %>% 
+  font(part = "all", fontname = "Verdana")
+
+  tab4 %>% save_as_image("../img/tab7.png")
+
+```
+
+![](../img/tab7.png){fig-alt="Tab4" fig-align="center" width="100%"}
+
+-   Com uma fonte nova
+
+. . .
+
+```{r eval=F}
+tab3 %>% font(part = "all", fontname = "Poppins")
+```
+
+```{r include=F}
+tab5 <- tab3  %>% 
+  font(part = "all", fontname = "Poppins")
+
+  tab5 %>% save_as_image("../img/tab8.png")
+
+```
+
+![](../img/tab8.png){fig-alt="Tab4" fig-align="center" width="100%"}
+
+# Até mais, pessoal!
