@@ -1,0 +1,91 @@
+---
+title: "Exercicio aula 21 - Flextable"
+author: "Carolina Musso"
+date: "2023-04-19"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, flextable, officer,  scales)
+
+
+# Bancos e manipulações----
+
+dados_covid <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+
+```
+
+# Continuando as manipulações e edições feitas na aula 15 (introdução ao flextable), faça como se pede. 
+
+
+```{r}
+obitos_Alemanha_Franca <- dados_covid %>% 
+  select(Country, New_deaths, Cumulative_deaths) %>% 
+  filter(Country=="Germany"|Country=="France")
+
+obitos_Alemanha_Franca_resumo <- obitos_Alemanha_Franca %>% 
+  group_by(Country) %>% 
+  summarise(media_obitos_diarios = mean(New_deaths),
+            maximo_obitos_acumulados = max(Cumulative_deaths)) %>% 
+  mutate_if(is.numeric, ~format(., big.mar=".", decimal.mark=",", digits=4)) # o parametro digits se refere aos valores com decimais
+  
+
+```
+
+
+# 1) Revisão
+
+a) Identifique com um comentário (# na frente de cada linha) o que cada uma das funções está fazendo na tabela. Tente ser o mais detalhado possível.
+
+```{r}
+
+tab1 <- flextable (obitos_Alemanha_Franca_resumo) %>% 
+  autofit() %>%  # essa é uma função nova %>% 
+  align(align="left", j=1, part="all") %>% 
+  align(align="right", j=c(2,3), part="all") %>% 
+  bold(j=1, part="all") %>% 
+  bold(part="header") %>% 
+  set_header_labels( 
+    media_obitos_diarios="Média óbitos \n Diários",
+    maximo_obitos_acumulados= "Óbitos acumulados") %>% 
+  add_header_row(values = c("","Indicadores"), colwidth=c(1,2)) %>% 
+  align(align="c", part="all") %>% 
+  save_as_docx(path="tabela1.docx")
+
+tab1
+
+```
+
+
+
+# 2)
+
+Modifique o tipo de fonte apenas cabeçalho apenas para Times
+
+```{r}
+
+
+```
+
+
+# 3)
+
+Acrecente um título à tabela que contenha a data de hoje. 
+
+```{r}
+# DICA
+hoje <- format(Sys.Date(), "%d de %B, %Y")
+# Para juntar texto com outras coisas: paste("bla bla", objeto)
+titulo <- str_c("Casos e óbitos de 24h e Incidência e Mortalidade acumulada dos últimos 7 dias dos estados do Centro Oeste,",hoje )
+# set_caption(caption=)
+
+
+
+```
+
