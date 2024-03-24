@@ -1,0 +1,138 @@
+---
+title: "Exercicio aula 24 - flextable"
+author: "Carolina Musso"
+date: "2023-04-10"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, flextable, officer,  scales)
+
+
+# Bancos e manipulações----
+
+dados_covid <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+
+```
+
+# 1) 
+
+Abaixo, foi criada uma base de dados que você deve transformar em uma tabela. 
+
+```{r}
+paises <- c("Brazil", "Italy", "France", "Uruguay")
+
+letalidade <- dados_covid %>% 
+  filter(Country %in% paises, 
+         New_cases>0) %>% 
+  separate(Date_reported, c("Ano", "Mês", "Dia")) %>% 
+  filter(Ano=="2023"|Ano=="2022") %>% 
+  mutate(Country=case_when(
+    Country=="Brazil" ~ "Brasil",
+    Country=="Italy" ~ "Itália",
+    Country=="France" ~ "França",
+    Country=="Uruguay" ~ "Uruguai")) %>% 
+  mutate(letalidade_diaria = New_deaths/New_cases*100)%>% 
+   mutate(Continente = ifelse(Country=="Brasil"|Country=="Uruguai",
+                              "América do Sul", "Europa")) %>% 
+  group_by( Ano, Continente, Country) %>% 
+  summarise(letalidade_media = mean(letalidade_diaria), 
+            desvio_padrao = sd(letalidade_diaria ),
+            Casos_maximo = max(New_cases),
+            Obitos_maximo = max(New_deaths)) 
+```
+
+# 2) 
+
+Faça uma tabela contendo alguma formatação com o align() e com a função bold(). 
+
+```{r}
+
+flextable(letalidade) %>% 
+  align(align="c", part="all") %>% 
+  bold(part="header")
+
+```
+
+# 3) 
+
+Crie uma coloração verde, *SEM usar coloração condidional*, para os valores máximo de letalidade. Ou seja, indique exatamente a posição da célula com o i= e j=
+
+```{r}
+flextable(letalidade) %>% 
+  align(align="c", part="all") %>%  #ociional manter as formatcões da questão anterior
+  bold(part="header") %>% 
+  color("green", i=7, j=4)
+```
+
+
+# 4) 
+
+Agora, use o mesmo código acima para fazer a tabela nna dataframe (letalidade2) abaixo e explique o que aconteceu. 
+
+```{r}
+letalidade2 <- letalidade %>% 
+  arrange(-letalidade_media)
+
+flextable(letalidade2 ) %>% 
+  align(align="c", part="all") %>%  #ociional manter as formatcões da questão anterior
+  bold(part="header") %>% 
+  color("green", i=7, j=4)
+```
+
+
+Resposta: Note que quando eu digo arbritariamente a posição (ou seja, olhei na tabela e calculei na minha cabeça o máximo), se por acaso a ordem da slinhas mudar (que foi o que anteceu quando usei a função arrange()), a célula que ele coloriu não corresponde mais ao máximo que eu quero destacar. O ideal é realmente condicionar aos próprios dados, para que seja reprodutível. 
+
+# 5) 
+
+Se a nossa intenção destacar a situação em que a letalidad emédia foi máxima devemos usar a noção de condicionamento.
+
+a) Explique o que o código abaixo está fazendo.
+
+```{r}
+flextable(letalidade2) %>% 
+  color(color="green", 
+        ~letalidade_media==max(letalidade_media), #está "achando" o máximo daquela coluna
+        j=c(3,4)) # colorindo apenas as colunas 3 e 4, note que as colunas não mudam de posição, então posso passar seus valores. 
+```
+
+b) Em seguida faça um semelhante, em que pinte de vermelho o *maior*  número de casos no dia e de verde o *menor* número de óbitos. 
+
+```{r}
+flextable(letalidade2) %>% 
+  color(color="red", 
+        ~ Casos_maximo==max(Casos_maximo), 
+        j=c(6)) %>% 
+  color(color="green", 
+        ~Obitos_maximo==min(Obitos_maximo), 
+        j=c(7)) 
+```
+
+
+
+# 6)
+
+Por fim, corrija a apresentação para que os números sejam apresentador com o separador do "." no milhar e "," no decimal. 
+
+```{r}
+flextable(letalidade2) %>% 
+   align(align="c", part="all") %>%  #opcional manter as formatcões da questão anterior
+  bold(part="header") %>% 
+  color(color="red", 
+        ~ Casos_maximo==max(Casos_maximo), 
+        j=c(6)) %>% 
+  color(color="green", 
+        ~Obitos_maximo==min(Obitos_maximo), 
+        j=c(7)) %>% 
+  colformat_double(decimal.mark = ",", digits = 2) %>% 
+  colformat_int(big.mark = ".")
+
+# não se preocupe com o aviso, caso apareça um
+```
+
