@@ -97,10 +97,10 @@ flextable(letalidade_Brasil_Italia)
 
 ```{r include=FALSE}
 flextable( letalidade_Brasil_Italia) %>% 
-  save_as_image("../img/tab1.png")
+  save_as_image("../../img/tab1.png")
 ```
 
-![](../img/tab1.png){fig-alt="Tab1" fig-align="center" width="150%"}
+![](../../img/tab1.png){fig-alt="Tab1" fig-align="center" width="150%"}
 
 ## Editando com o que já sabemos
 
@@ -133,10 +133,10 @@ tab1 <- flextable( letalidade_Brasil_Italia) %>%
   vline(j=2)
   
   
-tab1 %>% save_as_image("../img/tab2.png")
+tab1 %>% save_as_image("../../img/tab2.png")
 ```
 
-![](../img/tab2.png){fig-alt="Tab2" fig-align="center" width="100%"}
+![](../../img/tab2.png){fig-alt="Tab2" fig-align="center" width="100%"}
 
 ## Título e cabeçalho
 
@@ -165,10 +165,10 @@ tab1 %>%
   desvio_padrao="Desvio Padrão",
   Casos_maximo="Máximo de casos em 24h", 
   Obitos_maximo="Máximo de óbitos em 24h") %>% 
-  save_as_image("../img/tab4.png")
+  save_as_image("../../img/tab4.png")
 ```
 
-![](../img/tab4.png){fig-alt="Tab4" fig-align="center" width="100%"}
+![](../../img/tab4.png){fig-alt="Tab4" fig-align="center" width="100%"}
 
 -   Quebrar a linha onde eu desejar: "\\n"
 
@@ -196,12 +196,12 @@ tab2 <- tab1 %>%
   Casos_maximo="Máximo de casos em 24h", 
   Obitos_maximo="Máximo de óbitos em 24h") 
 
-  tab2 %>% save_as_image("../img/tab5.png")
+  tab2 %>% save_as_image("../../img/tab5.png")
 
 
 ```
 
-![](../img/tab5.png){fig-alt="Tab4" fig-align="center" width="100%"}
+![](../../img/tab5.png){fig-alt="Tab4" fig-align="center" width="100%"}
 
 ## Cabeçalho Extra
 
@@ -223,12 +223,12 @@ tab3 <- tab2 %>%
                  colwidths = c(2,4)) %>% 
   align(align="c", part="header")
 
-  tab3 %>% save_as_image("../img/tab6.png")
+  tab3 %>% save_as_image("../../img/tab6.png")
 
 
 ```
 
-![](../img/tab6.png){fig-alt="Tab4" fig-align="center" width="100%"}
+![](../../img/tab6.png){fig-alt="Tab4" fig-align="center" width="100%"}
 
 ## Título
 
@@ -262,11 +262,11 @@ tab3 %>% font(part = "all", fontname = "Verdana")
 tab4 <- tab3  %>% 
   font(part = "all", fontname = "Verdana")
 
-  tab4 %>% save_as_image("../img/tab7.png")
+  tab4 %>% save_as_image("../../img/tab7.png")
 
 ```
 
-![](../img/tab7.png){fig-alt="Tab4" fig-align="center" width="100%"}
+![](../../img/tab7.png){fig-alt="Tab4" fig-align="center" width="100%"}
 
 -   Com uma fonte nova
 
@@ -280,10 +280,10 @@ tab3 %>% font(part = "all", fontname = "Poppins")
 tab5 <- tab3  %>% 
   font(part = "all", fontname = "Poppins")
 
-  tab5 %>% save_as_image("../img/tab8.png")
+  tab5 %>% save_as_image("../../img/tab8.png")
 
 ```
 
-![](../img/tab8.png){fig-alt="Tab4" fig-align="center" width="100%"}
+![](../../img/tab8.png){fig-alt="Tab4" fig-align="center" width="100%"}
 
 # Até mais, pessoal!

@@ -1,0 +1,95 @@
+---
+title: "Exercicio aula 22 - datas"
+author: "Carolina Musso"
+date: "2023-03-17"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, here, lubridate)
+```
+
+# 1) Transforme os valores abaixo para datas que o R reconheça utilizando tanto funções do pacote lubridate quando do R base, quando possível.
+
+a) 
+```{r}
+data1_caracter<-"22-10-1986"
+
+data1_lubridate<-dmy(data1_caracter) # pacote lubridate
+
+data1_base<-as.Date(data1_caracter,"%d-%m-%Y") # R base
+
+# as duas funções fazem a mesma coisa, tranformam um objeto do tipo caracter, para um ubjecvto que o R reconhece como data.
+```
+
+b)
+```{r}
+data2<-"19041009" # ano 1904 de outubro no dia 09
+data2<-ymd(data2)
+data2<-as.Date(data2,"%Y%m%d")
+```
+
+c)
+```{r}
+data3<-"06.22.1959"# junho  , dia 22 do ano de 1959
+data3<-mdy(data3)
+data3<-as.Date(data3,"%m.%d.%Y")
+
+```
+
+d) 
+```{r}
+data4<-"27 de abril de 88"
+data4<-dmy(data4)
+data4<-as.Date(data4,"%d de %B de %y")
+
+```
+
+
+# 2) Agora vamos trabalhar com um banco
+
+```{r bancos, echo=F, message=F, warning=F }
+ebola<- import("linelist_cleaned.rds")
+```
+
+a) Calcule a diferença, em uma nova coluna, utilizando a função mutate(), aprendida na aula passada, entre a data de hospitalização e a data de infecçao. 
+
+```{r}
+ebola_novo<-ebola %>% 
+  mutate(diferenca=date_hospitalisation-date_infection)
+```
+
+b) Transforme essa nova variável em uma variável numérica. 
+
+```{r}
+ebola_novo<-ebola %>% 
+  mutate(diferenca=date_hospitalisation-date_infection,
+         diferenca_numerico=as.numeric(diferenca))
+
+# acrescentem filtros para NA, select para colunas...
+```
+
+c) Calcule o tempo médio desse tempo calculado acima, por faixa etária. Cuidado com os valores faltantes!
+```{r}
+ebola_novo<-ebola %>% 
+  mutate(diferenca=date_hospitalisation-date_infection,
+         diferenca_numerico=as.numeric(diferenca)) %>% 
+  group_by(age_cat) %>% 
+  summarise(Media=mean(diferenca_numerico, na.rm=T))
+```
+
+c) Faça um gráfico de barras com os valores calculados, comparando o tempo medio até a hospitalizaçao entre as faixas etarias. 
+```{r}
+ebola_novo %>% 
+  ggplot(aes(x=age_cat, y=Media))+
+  geom_col() # subtitui o geom_bar, nao necessitando do stat="identity"
+
+  
+```
+

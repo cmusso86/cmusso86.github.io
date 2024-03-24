@@ -1,0 +1,74 @@
+---
+title: "Exercicio aula 22 - datas"
+author: "Carolina Musso"
+date: "2023-03-17"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, here, lubridate)
+```
+
+# 1) Transforme os valores abaixo para datas que o R reconheça utilizando tanto funções do pacote lubridate quando do R base, quando possível.
+
+a) 
+```{r}
+data1_caracter<-"22-10-1986"
+
+
+```
+
+b)
+```{r}
+data2<-"19041009" # ano 1904 de outubro no dia 09
+
+```
+
+c)
+```{r}
+data3<-"06.22.1959"# junho  , dia 22 do ano de 1959
+
+
+```
+
+d) 
+```{r}
+data4<-"27 de abril de 88"
+
+```
+
+
+# 2) Agora vamos trabalhar com um banco
+
+```{r bancos, echo=F, message=F, warning=F }
+ebola <- import("linelist_cleaned.rds")
+```
+
+a) Calcule a diferença, em uma nova coluna, utilizando a função mutate(), aprendida na aula passada, entre a data de hospitalização e a data de infecçao. 
+
+```{r}
+
+```
+
+b) Transforme essa nova variável em uma variável numérica. 
+
+```{r}
+
+```
+
+c) Calcule o tempo médio desse tempo calculado acima, por faixa etária. Cuidado com os valores faltantes!
+```{r}
+
+```
+
+c) Faça um gráfico de barras com os valores calculados, comparando o tempo medio até a hospitalizaçao entre as faixas etarias. 
+```{r}
+
+```
+

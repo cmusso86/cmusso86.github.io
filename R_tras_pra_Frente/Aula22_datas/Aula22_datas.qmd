@@ -1,0 +1,309 @@
+---
+title: "Aula 22 - Trabalhando com datas"
+subtitle: "Módulo 2: Trabalhando com dados "
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format: 
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+### Aula 22 - Trabalhando com datas
+
+O pacote lubridate
+
+### Aula 23 - condicionamento
+
+As funções if(), if_else() e case_when()
+
+### Aula 24 - Tabela
+
+Finalizando noções sobre o pacote flextable()
+
+## Leituras para aprofundamento
+
+-   [EpiR-Handbook, 9.Working with dates](https://www.epirhandbook.com/en/working-with-dates.html)
+
+-   [Curso-R, 7.5 O pacote lubridate](https://livro.curso-r.com/7-5-o-pacote-lubridate.html)
+
+-   [Documentação Oficial](https://lubridate.tidyverse.org)
+
+-   [R4DS, 16. Dates and Times](https://r4ds.had.co.nz/dates-and-times.html)
+
+-   [Lubridate CheatSheet](https://rawgit.com/rstudio/cheatsheets/main/lubridate.pdf)
+
+-   [DataCamp, Working with Dates and Times with R](https://app.datacamp.com/learn/courses/working-with-dates-and-times-in-r)
+
+## Hoje:
+
+-   Trabalhando com datas
+
+    -   Geralmente é muito chato!
+
+-   Incompatibilidade de formatos: d/m/a ; a-m-d
+
+-   É caracter ou numérico?
+
+    -   Nenhum dos dois: é do tipo Date
+
+```{r echo=F}
+pacman::p_load(tidyverse)
+```
+
+## Como o R reconhece a data?
+
+```{r}
+Sys.Date()
+```
+
+```{r}
+Sys.time()
+```
+
+. . .
+
+**VOCÊ SÓ CONSEGUE FAZER CONTAS DE INTERVALO DE TEMPO NESSE FORMATO**
+
+-   Ou seja, se não estiver, você tem que transformar **para** esse formato.
+
+-   Ao apresentar em um gráfico ou tabela: pode formatar, mas a partir daí não é mais uma data *para o R*
+
+## Pacote lubridate
+
+-   Está agora no tidyverse!
+
+-   A intenção é sempre pegar uma data que está no "nosso formato".
+
+-   Ver o formato que ela está.
+
+-   "Avisar" pro R o formato que ela está.
+
+-   Para ele conseguir colocar no formato que ele consiga entender como uma data
+
+. . .
+
+```{r }
+library(tidyverse)
+hoje <- "17/03/2022"
+lubridate::dmy(hoje)
+```
+
+## Ele é muito bom em adivinhar coisas!
+
+-   Consegue saber as datas a partir de diferentes escritas!
+
+. . .
+
+```{r}
+hoje <- "17032022"
+dmy(hoje)
+
+```
+
+. . .
+
+```{r}
+hoje <- "17-03-2022"
+dmy(hoje)
+```
+
+. . .
+
+```{r}
+hoje <- "1703     22"
+dmy(hoje)
+```
+
+## Com o R base
+
+. . .
+
+```{r}
+hoje <- "17/02/2022"
+class(hoje)
+
+```
+
+-   Para transformar, avise o formato em que ele estava!
+
+. . .
+
+```{r}
+hoje <- as.Date(hoje, format="%d/%m/%Y") 
+
+class(hoje)
+```
+
+```{r}
+hoje
+```
+
+. . .
+
+%d = dia
+
+%m= mês número ; %B= mês nome ; %b= nome abreviado
+
+%y = ano com 2 dígitod (ex. 89 ; %Y = ano com 4 dígitos (ex. 1989)
+
+%A = Dia da semana (Segunda, Terça, etc.)
+
+%U = Semana (01-53)
+
+## As vezes é mais difícil
+
+-   Há vários outros problemas que podem acontecer...
+
+-   Mas o importante é: tem que ter
+
+. . .
+
+```{r}
+hoje <- Sys.Date()
+class(hoje)
+```
+
+-   Assim contigo fazer contas!
+
+## Contas com datas
+
+```{r}
+
+hoje <- Sys.Date()
+
+hoje
+```
+
+-   Somar dias
+
+. . .
+
+```{r}
+hoje + days(3)
+```
+
+Ou simplesmente:
+
+```{r}
+hoje + 3
+```
+
+-   Somar meses e anos
+
+. . .
+
+```{r}
+hoje + months(1)
+```
+
+```{r}
+hoje - years(20)
+```
+
+## Intervalo de tempo
+
+-   Algumas formas
+
+. . .
+
+```{r}
+diferenca <- hoje - ymd("2020-02-20")
+diferenca
+```
+
+-   Depois posso transofrmar para numérico
+
+. . .
+
+```{r}
+diferenca <- as.numeric(diferenca)
+diferenca
+```
+
+-   Função difftime()
+
+. . .
+
+```{r}
+passado <- hoje -  14
+passado
+
+diferenca <- difftime(hoje,passado, units = "weeks")
+
+diferenca
+```
+
+## Mas a data assim fica feio!
+
+-   Não estamos costumados a mostrar a data nesse formato de YYY-mm-dd
+
+-   **DEPOIS** de fazer as contas, ordenações que eu quiser, eu posso escolher apresentar nas tabelas, gráficos, texto, de outra forma... para isso, existe a funçao `format`.
+
+-   É a idéia do as.Date, ao contrário...
+
+. . .
+
+```{r}
+data_bonita <- format(Sys.Date(), format = "%d %B %Y")
+data_bonita
+```
+
+```{r}
+class(data_bonita)
+```
+
+## Semanas epidemiológicas
+
+-   Tem uma função que calcula as semanas epidemiológicas `epiweek()`.
+
+-   Ela é bem "esperta"
+
+-   consegue extrair de um objeto de data
+
+. . .
+
+```{r}
+epiweek(Sys.Date())
+```
+
+-   Mas também reconhecer datas em diferentes formatos
+
+. . .
+
+```{r}
+semana <- epiweek("22/03/23")
+semana
+
+```
+
+```{r}
+class(semana)
+```
+
+## ggplot e datas
+
+[Exemplos em: Datanovia](https://www.datanovia.com/en/blog/ggplot-date-axis-customization/)
+
+```{r, eval=F}
++
+scale_x_date(date_labels = "%b/%d")
+```
+
+-   Veremos mais manipulações dos eixos no próximo módulo
+
+# Obrigada!
