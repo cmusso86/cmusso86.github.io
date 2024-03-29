@@ -1,0 +1,236 @@
+---
+title: "Aula 26 - Pivoteando dados"
+subtitle: "Módulo 3: Apresentando suas análises"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format: 
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+### Aula 25 - A gramática dos gráficos {style="color: gray;"}
+
+[Reintrodução ao ggplot e tipos de gráficos]{style="color: gray;"}
+
+### Aula 26 - Pivoteamento de dados
+
+pivot_wider(), pivot_longer(), qual é melhor para o ggplot
+
+### Aula 27 - Formatações para ggplot
+
+Paleta de cores, temas, e outras firulas
+
+## Leituras para aprofundamento
+
+-   [EpiR-Handbook, 12.Pivoting Data](https://epirhandbook.com/en/pivoting-data.html)
+
+-   [Curso-R, 7.3 O pacote tidyr](https://livro.curso-r.com/7-3-tidyr.html)
+
+-   [DataCamp, Reshaping data with tidyR](https://app.datacamp.com/learn/courses/reshaping-data-with-tidyr)
+
+-   [R4DS, 12. Tidy data](https://r4ds.had.co.nz/tidy-data.html)
+
+-   [tidyr CheatSheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/tidyr.pdf)
+
+## Messy data
+
+**“Tidy datasets are all alike, but every messy dataset is messy in its own way.”** –– Hadley Wickham
+
+"Base de dados arrumadas são todas iguais, mas bases desorganizadas, são desorganizadas em sua própria maneira"
+
+<center><img src="../img/cn.gif" height="200px&quot;"/></center>
+
+. . .
+
+#### Pacote tidy
+
+-   Deixar o data frame no formato ideal.
+
+## Leituras de aprofundamento
+
+-   [EpiR-Handbook, 12.Pivoting Data](https://epirhandbook.com/en/pivoting-data.html)
+
+-   [Curso-R, 7.3 O pacote tidyr](https://livro.curso-r.com/7-3-tidyr.html)
+
+-   [DataCamp, Reshaping data with tidyR](https://app.datacamp.com/learn/courses/reshaping-data-with-tidyr)
+
+-   [R4DS, 12. Tidy data](https://r4ds.had.co.nz/tidy-data.html)
+
+-   [tidyr CheatSheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/tidyr.pdf)
+
+## Formato largo (wide)
+
+-   É bom pra tabelas, mas não é bom pra para o ggplot...
+
+    -   vamos transformar para **longo**
+
+. . .
+
+<center><img src="../img/pivot_longer_new.png" height="350px&quot;"/></center>
+
+## Formato longo (long)
+
+-   É bom para o ggplot, mas não para apresentar em tabela!
+
+    -   vamos transformar para wide
+
+. . .
+
+<center><img src="../img/pivot_wider_new.png" height="350px&quot;"/></center>
+
+## Wide X Long: aplicações
+
+-   Tomemos esse gráfico
+
+```{r echo=F}
+# Bancos ----
+pacman::p_load(tidyverse, rio)
+dado_malaria <- import("malaria_facility_count_data.rds") %>% 
+  rename(Total=malaria_tot, 
+         `faixa_0_04`=`malaria_rdt_0-4`,
+          `faixa_5_14`=`malaria_rdt_5-14`,
+          `faixa_15_mais`=`malaria_rdt_15`) %>% 
+  filter(location_name=="Facility 1") %>% 
+  select(-c("submitted_date","Province", "District","newid" ))
+
+dado_ebola <-import("linelist_cleaned.rds") %>% 
+  count(age_cat, gender) 
+```
+
+. . .
+
+```{r}
+ggplot(dado_malaria ) +
+  geom_col(aes(x = data_date, y = Total), width = 1)
+
+```
+
+. . .
+
+Vamos supor que eu queria colorir segundo a faixa-etária.
+
+```{r}
+
+head(dado_malaria)
+```
+
+-   Qual o problema?
+
+## Necessário primeiro transformar para formato longo
+
+::: panel-tabset
+## Opção 1
+
+```{r}
+dado_malaria_longo <- dado_malaria  %>% 
+  pivot_longer(
+    cols = c(`faixa_0_04`, `faixa_5_14`, `faixa_15_mais`)
+  )
+```
+
+## Opção 2
+
+```{r}
+# Usar a função auxiliar starts_with
+dado_malaria_longo <-dado_malaria %>% 
+  pivot_longer(
+    cols = starts_with("faixa_")
+  )
+```
+:::
+
+## O que mudou
+
+-   Quais novas colunas apareceram no banco? E quais sumiram?
+
+. . .
+
+```{r}
+head(dado_malaria_longo)
+```
+
+-   As colunas originais desapareceram, e foram comprimidas em duas colunas chamadas "names" e "values".
+
+## Ainda outra opção
+
+-   Podemos ainda especificar o nome das novas colunas que surgião no banco
+
+. . .
+
+```{r}
+dado_malaria_longo <- 
+  dado_malaria %>% 
+  pivot_longer(
+    cols = starts_with("faixa_"),
+    names_to = "Faixa-etária",
+    values_to = "Contagens"
+  )
+
+```
+
+## Agora ao gráfico!
+
+-   Agora podemos fazer o gráfico como queríamos, colorindo as barras segundo a faixa-etária
+
+. . .
+
+```{r}
+ggplot(data = dado_malaria_longo) +
+  geom_col(
+    mapping = aes(x = data_date, y = Contagens, fill = `Faixa-etária`)
+  )
+```
+
+## O caso oposto
+
+-   Outra base
+
+-   Faixa-etária x Sexo
+
+. . .
+
+```{r}
+ggplot(dado_ebola) +
+  geom_col(aes(x = age_cat, y = n, fill = gender))
+```
+
+```{r}
+head(dado_ebola)
+```
+
+-   Agora está bom para um gráfico mas está muito comprida para fazer uma tabela, não é mesmo?
+
+## Transformando o longo em largo
+
+```{r}
+dado_ebola_largo <- 
+  dado_ebola %>% 
+  pivot_wider(
+    id_cols = age_cat,
+    names_from = gender,
+    values_from = n
+  )
+```
+
+. . .
+
+```{r}
+head(dado_ebola_largo )
+```
+
+# Obrigada!

@@ -1,0 +1,118 @@
+---
+title: "Exercicio aula 26 - Pivoteamento"
+author: "Carolina Musso"
+date: "2023-06-08"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+```
+
+```{r pacotes, echo=F, message=F, warning=F }
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio)
+```
+
+# 1) Transformando o largo em longo
+
+```{r}
+# Bancos ----
+
+dado_malaria <- import("malaria_facility_count_data.rds") %>% 
+  select(-malaria_tot) # remover essa coluna q não vamos usar
+
+dado_ebola <-import("linelist_cleaned.rds") %>% 
+  count(age_cat, gender) 
+```
+
+a) Usando os dados do da malária, plote o gráfico abaixo para as contagens totais de malária (malaria_tot), ao longo dos dias. 
+
+```{r}
+ggplot(dado_malaria ) +
+  geom_bar(aes(x = data_date, y = malaria_tot),stat="identity", width = 1)
+
+```
+
+b) Lembra que existe um parâmetro do ggplot para colorir as barras de acordo com uma variável? Vamos supor que eu queria colorir segundo a faixa-etária. Qual problema encontraria?
+
+
+c) Vemos que 
+```{r}
+
+# Necessário primeiro transformar para formato longo
+
+dado_malaria_longo <- dado_malaria  %>% 
+  pivot_longer(
+    cols = c(`malaria_rdt_0-4`, `malaria_rdt_5-14`, `malaria_rdt_15`)
+  )
+```
+
+c) Quais novas colunas apareceram no banco?
+
+As colunas originais desapareceram, e foram comprimidas em duas colunas chamadas "names" e "values". 
+
+d) Podemos fazer o mesmo usando a função auxiliar starts_with
+
+```{r}
+# Usar a função auxiliar starts_with
+dado_malaria_longo <-dado_malaria %>% 
+  pivot_longer(
+    cols = starts_with("malaria_")
+  )
+```
+
+e) Podemos ainda especificar o nome das novas colunas que surgião no banco
+
+```{r}
+dado_malaria_longo <- 
+  dado_malaria %>% 
+  pivot_longer(
+    cols = starts_with("malaria_"),
+    names_to = "Faixa-etária",
+    values_to = "Contagens"
+  )
+
+```
+
+f) Agora podemos fazer o gráfico como queríamos, colorindo as barras segundo a faixa-etária.
+
+```{r}
+ggplot(data = dado_malaria_longo) +
+  geom_col(
+    mapping = aes(x = data_date, y = Contagens, fill = `Faixa-etária`),
+    width = 1
+  )
+```
+
+
+# 2) Transformando o longo em largo
+
+a) Já esse caso, a base está prontinha para fazer um gráfico. 
+```{r}
+ggplot(dado_ebola) +
+  geom_col(aes(x = age_cat, y = n, fill = gender))
+```
+
+Mas está muito comprida para fazer uma tabela, não é mesmo?
+
+b) Veja como transformar essa data frame em uma um formato melhor para uma tabela. 
+```{r}
+dado_ebola_largo <- 
+  dado_ebola %>% 
+  pivot_wider(
+    id_cols = age_cat,
+    names_from = gender,
+    values_from = n
+  )
+```
+
+c) Melhore essa apresentação da tabela, com as funções que você já conhece , para que não apareçam valores NA. Você pode fazer o tratamento desses dados antes do pivoteamento, se preferir. 
+
+```{r}
+
+```
+
