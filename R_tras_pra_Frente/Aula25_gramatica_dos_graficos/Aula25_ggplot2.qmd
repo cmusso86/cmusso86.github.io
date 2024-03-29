@@ -1,0 +1,406 @@
+---
+title: "Aula 25 - A gramática dos gráficos"
+subtitle: "Módulo 3: Apresentando suas análises"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format: 
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+### Aula 25 - A gramática dos gráficos
+
+Reintrodução ao ggplot e tipos de gráficos
+
+### Aula 26 - Pivoteamento de dados
+
+pivot_wider(), pivot_longer(), qual é melhor para o ggplot
+
+### Aula 27 - Formatações para ggplot
+
+Paleta de cores, temas, e outras firulas
+
+## Leituras para aprofundamento
+
+-   [EpiRHandbook, Cap.30](https://epirhandbook.com/en/ggplot-basics.html)
+
+-   [ggplot2 Documentation](https://ggplot2.tidyverse.org/index.html)
+
+-   Curso-R, [Livro, cap. 13.8](https://livro.curso-r.com/13-8-o-pacote-ggplot2-1.html); [Curso Visualização](https://curso-r.github.io/202207-visualizacao)
+
+-   [DataCamp, Introdução a visualização com ggplot](https://app.datacamp.com/learn/courses/introduction-to-data-visualization-with-ggplot2)
+
+-   [R4DS](https://r4ds.had.co.nz) *O livro começa com gráficos!*
+
+-   [GGPLOT BOOK](https://ggplot2-book.org/mastery.html)
+
+-   [Medium, 5 dicas do ggplot](https://mail.google.com/mail/u/0/#search/medium/FMfcgzGsmDkVdtXfnsGPvrfbRQWNfhhL)
+
+-   [Data-to-Viz](https://www.data-to-viz.com)
+
+-   [R Gallery](https://r-graph-gallery.com)
+
+-   [Bruno Mioto](https://brunomioto.com/charts.html)
+
+## Importância
+
+**1) Muito importante já na parte de exploração dos dados**
+
+-   Ajudam ao cérebro a dar sentido em todas aquelas informações
+
+-   Ajuda a levantar hipóteses
+
+-   Deve ser rápido de fazer
+
+. . .
+
+**2) Importante na apresentação final dos resultados**
+
+-   Deve ser bonito, comunicar bem e muitas vezes impressionar!
+
+-   Requer um tempo maior de customização.
+
+## Recapitulando
+
+-   Usaremos o pacote ggplot2
+-   Gráficos feitos em camadas (adicionadas com um +), contemplando:
+    -   dados, geometrias e outros atributos visuais.
+-   Cuidado com o conceito aesthetics, aes(): onde vou mapear os dados!
+
+```{r include=F}
+pacman::p_load(tidyverse)
+```
+
+. . .
+
+::: panel-tabset
+## Opção 1
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+## Opção 2
+
+```{r}
+ggplot(mpg) + 
+  geom_point(aes(x = displ, y = hwy))
+```
+
+## Opção 3
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy)) + 
+  geom_point( )
+```
+
+## Opção 4
+
+```{r}
+ggplot(mpg) + 
+  aes(x = displ, y = hwy) +
+  geom_point()
+```
+
+## Opção 5
+
+```{r}
+mpg %>% # atenção que aqui ainda é o pipe!
+ggplot() + 
+  aes(x = displ, y = hwy) +
+  geom_point()
+```
+:::
+
+## Atributos estáticos Vs. mapeados
+
+::: panel-tabset
+## Opção 1 - erro
+
+```{r eval=F}
+ggplot(mpg) + 
+  geom_point(aes(x = displ, y = hwy), color=class)
+```
+
+![](../img/errogg.png)
+
+-   O que aconteceu aqui?
+
+## Opção 2 - correta
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy, color=class)) + 
+  geom_point( )
+```
+
+## Opção 3
+
+```{r}
+ggplot(mpg) + 
+  aes(x = displ, y = hwy) +
+  geom_point(aes(color=class))
+```
+
+## Opção 4
+
+```{r}
+ggplot(mpg) + 
+  aes(x = displ, y = hwy) +
+  geom_point(color="blue")
+```
+:::
+
+## Tipos de gráficos
+
+-   Camada geom\_
+-   Nem todos os geom\_() tem os mesmos parâmetros!
+-   Deve-se conhecer as variáveis (são numéricas ou categóricas?)
+
+## Alguns tipos de gráfico
+
+-   Histogramas - ***geom_histogram()***
+
+-   Gráficos de barras ou colunas - ***geom_bar()*** ou ***geom_col()***
+
+-   Box-plots (diagrama de caixas) - ***geom_boxplot()***
+
+-   Pontos (dispersão / scatterplots) - ***geom_point()***
+
+-   Linhas - geom_line() , ***geom_path()***
+
+-   Linhas de tendência, Trendlines - ***geom_smooth()***
+
+-   ...
+
+## Antes de ir para os gráficos
+
+-   Primeiro, vamos fazer algumas manipulações
+
+. . .
+
+```{r }
+if (!require(pacman)) install.packages("pacman") 
+
+pacman::p_load( tidyverse,rio) 
+
+linelist <- import("linelist_cleaned.rds") %>% 
+  filter_all(all_vars(!is.na(.)))%>% # função nova!
+  filter(wt_kg>0,
+         age_years>=0) 
+```
+
+## Histrograma
+
+-   Precisa de uma variável só: **Entender a sua distribuição**
+
+. . .
+
+```{r}
+ggplot(data = linelist, mapping = aes(x = age))+
+  geom_histogram()
+```
+
+## Duas variáveis quantitativas
+
+-   Pontos, dispersão, scatterplot
+
+. . .
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point()
+```
+
+## Uma quantitativa e uma categórica
+
+::: panel-tabset
+## Boxplot
+
+```{r}
+ggplot(data = linelist, mapping = aes(age_cat, y=wt_kg))+
+  geom_boxplot()
+```
+
+## Colunas
+
+```{r include=F}
+linelist_resumo <- linelist %>% 
+  group_by(age_cat, gender) %>% 
+  summarize(media=mean(wt_kg)) 
+```
+
+```{r}
+linelist_resumo %>% 
+  ggplot(aes(x=age_cat, y=media))+
+  geom_col()
+```
+:::
+
+## aes()
+
+**parâmetros que respondem as valores do meu banco**
+
+-   x e y ....
+
+. . .
+
+**mas além deles ...**
+
+-   **fill**, **color** ..
+-   **shape** (forma), **size** (tamanho) , **alpha** (transparência)
+-   **binwidth**: largura das colunas do histograma
+-   **width**: largura da coluna do gráfico de barras
+-   **linetype**: tipo de linha (ex: solida, pontilhada)
+
+**podem ser usado em aes() mas também podem ser fixados caso deseje algum específico**
+
+## Alguns exemplos de parâmetros
+
+-   Histograma
+
+. . .
+
+::: panel-tabset
+## binwidth 1
+
+```{r}
+ggplot(data = linelist, mapping = aes(x = age, fill=gender))+
+  geom_histogram( binwidth=1)
+```
+
+## binwidth 10
+
+```{r}
+ggplot(data = linelist, mapping = aes(x = age))+
+  geom_histogram( binwidth=10, aes(fill=gender))
+```
+
+## boundary=0
+
+```{r}
+ggplot(data = linelist, mapping = aes(x = age, fill=gender))+
+  geom_histogram( binwidth=1, boundary=0)
+```
+:::
+
+## Colunas e Boxplot
+
+-   Uma variável categórica e uma quantitativa
+
+. . .
+
+::: panel-tabset
+## Boxplot
+
+Muitas informações!
+
+```{r}
+ggplot(data = linelist, mapping = aes(age_cat, y=wt_kg))+
+  geom_boxplot()
+```
+
+## Colunas
+
+Devo ter um único valor por grupo!
+
+```{r}
+linelist %>% 
+  group_by(age_cat, gender) %>% 
+  summarize(media=mean(wt_kg)) %>% 
+  ggplot(aes(x=age_cat, y=media, fill=gender))+
+  geom_col(color="black")
+```
+
+. . .
+
+-   Obs: geom_bar() aceita apenas o x, e faz automaticamente uma contagem (frequência absoluta). Use o stat="identity" para ser equivalente ao geom_col()
+
+## Lado a lado
+
+-   parâmetro "position"
+
+. . .
+
+```{r}
+linelist %>% 
+  group_by(age_cat, gender) %>% 
+  summarize(media=mean(wt_kg)) %>% 
+  ggplot(aes(x=age_cat, y=media, fill=gender))+
+  geom_col(color="black",
+           position="dodge")
+```
+:::
+
+## Gráfico de Dispersão "Pontos"
+
+::: panel-tabset
+## Cor
+
+```{r}
+linelist %>% 
+ggplot( aes(age, wt_kg))+
+  geom_point( color="blue")
+```
+
+## Transparência e Tamanho
+
+```{r}
+linelist %>% 
+ggplot(aes(age,ht_cm, color=wt_kg))+
+  geom_point( alpha=0.5, size=2)
+```
+
+## Forma (shape)
+
+```{r}
+linelist %>% 
+ggplot(aes(age, ht_cm, color=wt_kg, shape=gender))+
+  geom_point( alpha=0.5, size=2)
+```
+:::
+
+## Uma linha de tendência
+
+-   **Um pouco mais de estatística**
+
+. . .
+
+::: panel-tabset
+## lm()
+
+Regressão linear.
+
+```{r}
+ggplot(linelist,aes(x = age, y = wt_kg)) + 
+  geom_point() +  
+  geom_smooth(method="lm")                   
+```
+
+## LOESS
+
+"locally estimated scatterplot smoothing"
+
+```{r}
+ggplot(linelist,aes(x = age, y = wt_kg)) + 
+  geom_point() +  
+  geom_smooth()                   
+```
+:::
+
+# Ufa! Até a próxima aula!
