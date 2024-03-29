@@ -1,0 +1,323 @@
+---
+title: "Aula 28 - Fatores"
+subtitle: "Módulo 3: Apresentando suas análises"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format: 
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+**Aula 28 - Fatores**
+
+Variáveis categóricas ordinais com o pacote forcats
+
+. . .
+
+**Aula 29 - Facetamento**
+
+Como apresentar vários gráficos relacionados juntos com `facet_wrap` e `facet_grid`
+
+. . .
+
+**Aula 30 - Gráficos avançados**
+
+Extensões do ggplot , inclusão de texto e imagens, gráficos de Violino, Jitter, Rosca ...
+
+## Leituras para aprofundamento
+
+-   [EpiRHandbook, 11. Factor](https://epirhandbook.com/en/factors.html)
+
+-   [Curso - R, 7.4 O pacote forcats](https://livro.curso-r.com/7-6-forcats.html)
+
+-   [DataCamp, Categorical Data in tidyverse](https://app.datacamp.com/learn/courses/categorical-data-in-the-tidyverse)
+
+-   [R4DS, 15. Factors](https://r4ds.had.co.nz/factors.html)
+
+-   [forcats, Cheatsheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/factors.pdf)
+
+## Fatores
+
+-   Variáveis do tipo caractere mas...
+
+    -   Que têm uma ordem inata
+
+-   Variável qualitativa/categórica ordinal
+
+-   Possui níveis (não necessariamente alfabético).
+
+. . .
+
+<center><img src="../img/forcats.png" height="320px&quot;"/></center>
+
+## Ordem do R
+
+::: panel-tabset
+## Importando
+
+```{r }
+rm(list=ls()) # só para limpar o ambiente
+pacman::p_load(tidyverse, rio, janitor)
+
+linelist <- import("linelist_cleaned.rds")
+```
+
+## Preparando
+
+```{r }
+linelist <- linelist %>% 
+  mutate(delay_cat = case_when(
+    # criteria                                   # new value if TRUE
+    days_onset_hosp < 2                        ~ "< 2 dias",
+    days_onset_hosp >= 2 & days_onset_hosp < 5 ~ "2-5 dias",
+    days_onset_hosp >= 5                       ~ "> 5 dias")) %>% 
+  filter(!is.na(delay_cat)) %>% 
+  select(hospital, date_onset, days_onset_hosp, delay_cat, ct_blood)
+```
+
+## Os dados
+
+```{r}
+str(linelist)
+```
+
+## Gráfico
+
+```{r }
+ggplot(data = linelist)+
+  geom_bar(  #semelhante ao geom_hist mas para categóricas
+    mapping = aes(x = delay_cat))+
+  theme_classic(base_size = 16)
+```
+:::
+
+## Mudar a ordem
+
+Para ver as categorias que tenho:
+
+```{r}
+#unique(dados$nome_coluna) estrutura
+unique(linelist$delay_cat)
+```
+
+```{r, echo=F}
+linelist_fator <- linelist %>%
+  mutate(delay_cat = fct_relevel(delay_cat))
+```
+
+-   Caso ela já fosse um fator:
+
+. . .
+
+```{r}
+unique(linelist_fator$delay_cat)
+```
+
+. . .
+
+```{r}
+str(linelist_fator)
+```
+
+-   Pronto, agora que sei o que tem, posso reordenar.
+
+## Reordenando
+
+::: panel-tabset
+## Pacote forcats
+
+```{r}
+linelist_fator <- linelist %>%
+  mutate(delay_cat = fct_relevel(delay_cat, 
+                                 "< 2 dias", 
+                                 "2-5 dias","> 5 dias"))
+
+unique(linelist_fator$delay_cat)
+```
+
+-   As funções começam com "fct\_"...
+
+-   A variável não precisa ser fator de antemão, mas automaticamente virará.
+
+## R base
+
+```{r}
+linelist_fator <- linelist %>%
+  mutate(delay_cat = factor(delay_cat, 
+                            levels=c("< 2 dias", 
+                                 "2-5 dias","> 5 dias")))
+```
+:::
+
+# Como ficou
+
+```{r fig.align='center'}
+ggplot(linelist_fator )+
+  geom_bar(mapping = aes(x = delay_cat))+
+  theme_classic(base_size = 16)
+```
+
+## Diretamente no gráfico
+
+```{r eval=F}
+ggplot(data = linelist)+
+  geom_bar(mapping = aes(x = fct_relevel(delay_cat, 
+                    c("< 2 dias", 
+                                 "2-5 dias","> 5 dias"))))+
+  theme_classic(base_size = 16)
+```
+
+. . .
+
+```{r echo=F, fig.align='center'}
+ggplot(data = linelist)+
+  geom_bar(mapping = aes(x = fct_relevel(delay_cat, 
+                    c("< 2 dias", 
+                                 "2-5 dias","> 5 dias"))))+
+  theme_classic(base_size = 16)
+```
+
+-   Vocês já sabem mudar os eixos!
+
+# Outras formas
+
+-   Mudar apenas uma posição.
+
+. . .
+
+```{r}
+
+linelist %>% 
+  mutate(delay_cat = fct_relevel(delay_cat, "< 2 dias", after = 1)) %>% 
+  tabyl(delay_cat)
+```
+
+-   *Novidade pra vocês:* função `tabyl()` pacote `janitor`.
+
+## Pela frequência:
+
+::: panel-tabset
+## Decrescente
+
+```{r}
+linelist %>% 
+ggplot(aes(x = fct_infreq(delay_cat)))+
+  geom_bar()+
+  labs(x = "Oportunidade sintomas-internação (dias)",
+       title = "Ordenado por frequência decrescente")+
+  theme_classic(base_size = 16)
+```
+
+## Crescente
+
+```{r}
+linelist %>% 
+ggplot(data = , aes(x = fct_rev(fct_infreq(delay_cat))))+
+  geom_bar()+
+  labs(x = "Oportunidade sintomas-internação (dias)",
+       title = "Ordenado por frequência crescente")+
+  theme_classic(base_size = 16)
+```
+:::
+
+## Pela frequência
+
+::: panel-tabset
+## Original
+
+```{r}
+linelist %>% 
+ggplot( )+
+  geom_boxplot(aes(x = delay_cat,y = ct_blood))+
+  theme_classic(base_size = 16)
+```
+
+## Pela mediana
+
+```{r}
+linelist %>% 
+ggplot( )+
+  geom_boxplot(
+    aes(x = fct_reorder(delay_cat, ct_blood, "median"),
+        y = ct_blood))+
+  theme_classic(base_size = 16)
+```
+:::
+
+## Número de níveis
+
+::: panel-tabset
+## Adicionar
+
+```{r}
+
+linelist %>% 
+  mutate(delay_cat = fct_expand(delay_cat,
+                                "Não adimitido", 
+                                "Transferido")) %>%
+tabyl(delay_cat) #pacote janitor
+```
+
+## Remover
+
+```{r}
+linelist %>% 
+  mutate(delay_cat = fct_drop(delay_cat)) %>% 
+  tabyl(delay_cat)
+```
+:::
+
+## Agrupar em "outros"
+
+::: panel-tabset
+## Escolha previamente
+
+```{r}
+linelist %>% 
+ mutate(hospital = fct_other(                      
+    hospital,
+    keep = c("Port Hospital", "Central Hospital"),  
+    other_level = "Outros")) %>% 
+  tabyl(hospital)    
+```
+
+## Escolha os mais frequêntes
+
+```{r}
+linelist %>% 
+mutate(hospital = fct_lump(                     
+    hospital,
+    n = 2,                                           
+    other_level = "Outros")) %>%           
+  tabyl(hospital)  
+```
+
+## Mudando os nomes
+
+```{r}
+ linelist %>% 
+  mutate(hospital = fct_lump(hospital,
+    n = 2, other_level = "Outros")) %>%     
+  mutate(hospital = fct_recode(
+    hospital,
+    "Faltante" = "Missing")) %>% 
+  tabyl(hospital)
+```
+:::
+
+# Obrigada!
