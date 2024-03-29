@@ -1,0 +1,397 @@
+---
+title: "Aula 27 - Customizando gráficos"
+subtitle: "Módulo 3: Apresentando suas análises"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format: 
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+### Aula 25 - A gramática dos gráficos {style="color: gray;"}
+
+[Reintrodução ao ggplot e tipos de gráficos]{style="color: gray;"}
+
+### Aula 26 - Pivoteamento de dados {style="color: gray;"}
+
+[pivot_wider(), pivot_longer(), qual é melhor para o ggplot]{style="color: gray;"}
+
+### Aula 27 - Formatações para ggplot
+
+Paleta de cores, temas, e outras firulas
+
+## Leituras para aprofundamento
+
+## Leituras para aprofundamento
+
+-   [EpiHandbook, Cap.30](https://epirhandbook.com/en/ggplot-basics.html)
+
+-   [ggplot2 Documentation](https://ggplot2.tidyverse.org/index.html)
+
+-   Curso-R, [Livro, cap. 13.8](https://livro.curso-r.com/13-8-o-pacote-ggplot2-1.html); [Curso Visualização](https://curso-r.github.io/202207-visualizacao)
+
+-   [DataCamp, Introdução a visualização com ggplot](https://app.datacamp.com/learn/courses/introduction-to-data-visualization-with-ggplot2)
+
+-   [R4DS](https://r4ds.had.co.nz) *O livro começa com gráficos!*
+
+-   [GGPLOT BOOK](https://ggplot2-book.org/mastery.html)
+
+-   [Medium, 5 dicas do ggplot](https://mail.google.com/mail/u/0/#search/medium/FMfcgzGsmDkVdtXfnsGPvrfbRQWNfhhL)
+
+-   [Data-to-Viz](https://www.data-to-viz.com)
+
+-   [R Gallery](https://r-graph-gallery.com)
+
+-   [Bruno Mioto](https://brunomioto.com/charts.html)
+
+## Já vimos: Labs
+
+```{r echo=F}
+if (!require(pacman)) install.packages("pacman") 
+
+pacman::p_load( tidyverse,rio) 
+
+linelist <- import("linelist_cleaned.rds") %>% 
+  filter_all(all_vars(!is.na(.)))%>% # função nova!
+  filter(wt_kg>0,
+         age_years>=0) 
+```
+
+```{r eval=F}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+  labs(
+    title = "Relação de peso e idade",
+    subtitle = "Em pacientes com Ebola",
+    caption = paste(
+      "Fonte: Dados Simulados",
+      "EpiR_handbook"),
+    x = "Idade (anos)", y = "Peso (kg)"
+  )
+```
+
+. . .
+
+```{r echo=F}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+ labs(
+    title = "Relação de peso e idade",
+    subtitle = "Em pacientes com Ebola",
+    caption = paste(
+      "Fonte: Dados Simulados",
+      "EpiR_handbook"),
+    x = "Idade (anos)", y = "Peso (kg)"
+  )
+```
+
+## Temas
+
+::: panel-tabset
+## Padrão
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point()
+```
+
+## Minimal
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+  theme_minimal()
+```
+
+## Black & White
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+  theme_bw(base_size=20)
+```
+
+## Classic
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+  theme_classic(base_family="Times New Roman")
+```
+
+## Void
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+  theme_void()
+```
+:::
+
+## ggthemes
+
+-   ggplot [extensions](https://exts.ggplot2.tidyverse.org/ggthemes.html)
+
+. . .
+
+::: panel-tabset
+## economist
+
+```{r}
+pacman::p_load(ggthemes)
+
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+  theme_economist()
+```
+
+## solarized
+
+```{r}
+pacman::p_load(ggthemes)
+
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+  theme_solarized()
+```
+
+## Excel
+
+```{r}
+pacman::p_load(ggthemes)
+
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point( )+
+  theme_excel()
+```
+:::
+
+## Fazer o próprio tema
+
+```{r eval=F}
+ggplot(linelist, aes(x = age, y = wt_kg, color=gender))+
+  geom_point() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5),
+    axis.title = element_text(color = "purple"),
+    panel.background = element_rect(fill = "black"),
+    panel.grid = element_blank()
+  )
+```
+
+. . .
+
+```{r echo=F}
+ggplot(linelist, aes(x = age, y = wt_kg, color=gender))+
+  geom_point() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5),
+    axis.title = element_text(color = "purple"),
+    panel.background = element_rect(fill = "black"),
+    panel.grid = element_blank()
+  )
+```
+
+-   faça `?theme` e veja quantos parâmetros essa função tem!
+
+## Cores
+
+-   scale_color\_?()
+
+-   scale_fill\_?()
+
+. . .
+
+-   scale_color_brewer()
+
+-   scale_color_continuous()
+
+-   scale_color_discrete()
+
+-   scale_color_manual()
+
+## Editar algumas coisas
+
+::: panel-tabset
+## Editar a paleta existente
+
+```{r}
+
+
+ggplot(linelist, aes(x = age, y = wt_kg, color=gender))+
+  geom_point() +
+  scale_color_discrete(name="Sexo",
+                       labels = c('Feminino', 'Masculino'))
+```
+
+## Tudo manual
+
+```{r}
+
+
+ggplot(linelist, aes(x = age, y = wt_kg, color=gender))+
+  geom_point() +
+  scale_color_manual(name="Sexo",
+                       labels = c('Feminino', 'Masculino'),
+                     values=c("orange", "purple"))
+```
+:::
+
+## Paleta manual
+
+::: panel-tabset
+## Nomes: color
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg, color=gender))+
+  geom_point() +
+  scale_color_manual(values=c("aquamarine", "deeppink1"))
+```
+
+## Nomes: fill
+
+```{r}
+ggplot(linelist, aes(x = age_cat, y = wt_kg, fill=gender))+
+  geom_boxplot() +
+  scale_fill_manual(values=c("aquamarine", "deeppink1"))
+```
+
+-   [Nomes cores](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf)
+
+## Hexadecimal
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg, color=gender))+
+  geom_point() +
+  scale_color_manual(values=c("#81968F", "#E9D6EC"))
+```
+
+```{r eval=F}
+colorspace::hcl_color_picker()
+```
+
+-   [Fazer paletas](https://coolors.co/96bdc6-81968f-cfb9a5-e8ccbf-e9d6ec)
+
+-   [Adobe](https://color.adobe.com/pt/create/color-wheel)
+:::
+
+## scale\_\*\_brewer()
+
+::: panel-tabset
+## seq
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg, color=hospital))+
+  geom_point() +
+  scale_color_brewer(type="seq")
+```
+
+## div
+
+```{r}
+
+ggplot(linelist, aes(x = age, y = wt_kg, color=hospital))+
+  geom_point() +
+  scale_color_brewer(type="div")
+```
+
+## qual
+
+```{r}
+
+ggplot(linelist, aes(x = age, y = wt_kg, color=hospital))+
+  geom_point() +
+  scale_color_brewer(type="qual")
+```
+:::
+
+## Paletas
+
+-   **Escalas qualitativas:** utilizado para variáveis nominais (sexo, cor/raça)
+
+-   **Escalas divergentes:** utilizado para variáveis que têm um centro neutro (favorável/neutro/desfavorável, correlação)
+
+-   **Escalas sequenciais:** utilizado para variáveis ordinais (faixa etária, renda)
+
+-   [Color Brewer](https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3)
+
+-   Busque ?scale_color_brewer()
+
+    -   veja todas as opções
+
+. . .
+
+::: panel-tabset
+## scale\_\*\_brewer()
+
+-   Número da paleta
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg, color=hospital))+
+  geom_point() +
+  scale_color_brewer(type="div",palette = 1 )
+```
+
+## scale\_\*\_distiller()
+
+-   Nome da paleta
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg, color=ht_cm))+
+  geom_point() +
+  scale_color_distiller(type="seq", palette = "Greens")
+```
+:::
+
+## Brewer, Distiler ... {build="F"}
+
+-   scale\_\*\_brewer(): utilizada para variáveis discretas. Possui três tipos: divergente, qualitativa e sequencial.
+
+-   scale\_\*\_distiller(): utilizada para variáveis contínuas. Interpola as cores do brewer para lidar com todos os valores.
+
+-   scale\_\*\_fermenter(): utilizada para variáveis contínuas, que são transformadas em discretas (binned).
+
+-   scale\_\**viridis*\[cdb\]: Escala viridis para variáveis contínuas, discretas ou binned.
+
+-   scale\_\*\_manual(): inclui um conjunto de cores manualmente.
+
+-   {ggthemr} tem um monte de paletas, mas está um pouco desatualizado.
+
+-   {hrbrthemes} contém uma lista de temas escolhidos pelo Bob Rudis.
+
+-   {ghibli} tem paletas de cores relacionadas ao Studio Ghibli
+
+-   {paletteer} tem uma coleção de cores de vários outros pacotes de paletas.
+
+## Extra: Label
+
+```{r }
+linelist %>% 
+  group_by(age_cat) %>% 
+  count() %>% 
+ggplot(aes(x=age_cat))+
+  geom_col(aes( y=n), color="black")+
+  geom_label(aes(y=n/2, label = n)) +
+  coord_flip()
+```
+
+. . .
+
+# Obrigada!
