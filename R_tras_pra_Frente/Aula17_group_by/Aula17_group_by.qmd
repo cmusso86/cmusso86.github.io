@@ -103,7 +103,7 @@ ebola %>%
 
 ```
 
-## O que perceberem?
+## O que perceberam?
 
 -   Melhorou um pouco...
 
@@ -224,7 +224,7 @@ ebola %>%
 
 -   Veja os capítulos sugeridos para mais dicas sobre valores faltantes
 
--   Há outras tecnicas mais avaçadas: imputar dados
+-   Há outras técnicas mais avaçadas: imputar dados
 
     -   Não vamos falar disso, é só para saberem que existe.
 
