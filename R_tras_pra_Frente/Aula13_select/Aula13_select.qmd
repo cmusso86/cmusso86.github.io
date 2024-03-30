@@ -14,6 +14,7 @@ format:
     code-overflow: wrap
     transition: fade
     self-contained: true
+    embed-resources: true
 knitr:
   opts_chunk:
     echo: true

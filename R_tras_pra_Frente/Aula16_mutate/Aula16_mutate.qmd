@@ -53,7 +53,7 @@ Mais sobre o pacote `flextable`: cores e bordas
 
 -   **Nada disso mudou a essência dos dados!!**
 
-    -   Só mudou de lugar ou exlcuiu alguma coisa ...
+    -   Só mudou de lugar ou excluiu alguma coisa ...
 
 ## Hoje:
 
