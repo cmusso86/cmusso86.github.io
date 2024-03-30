@@ -83,7 +83,7 @@ who_trat<-who_bruto %>%
 
 . . .
 
--   Por que estamos baixando de uma página na interent. O "caminho" é o endereço da [web](https://covid19.who.int/data).
+-   Por que estamos baixando de uma página na internet. O "caminho" é o endereço da [web](https://covid19.who.int/data).
 
 ## Aula 7 - Importações
 
@@ -135,7 +135,7 @@ getwd()
 dados <- import("Curso de R/vacinas.xlsx")
 ```
 
--   Inlcuir o nome da pasta e uma "/" antes do nome do arquivo
+-   Incluir o nome da pasta e uma "/" antes do nome do arquivo
 
 ## Aula 8 - vetores numéricos
 
@@ -148,7 +148,7 @@ meu_primeiro_vetor <- c(1 , 4, 9, 16, 25)
 
 ```
 
--   Crie crie outro vetor, com outro nome de sua preferência.
+-   Crie outro vetor, com outro nome de sua preferência.
 
 . . .
 
@@ -224,7 +224,7 @@ nomes_colegas <- c("Otto","Carol", "Julio")
 
 ## Aula 8 - objetos
 
-Use a funçao class() para verificar os tipos de vetores criados ate agora
+Use a funçao class() para verificar os tipos de vetores criados até agora
 
 . . .
 
@@ -339,7 +339,7 @@ summary(Casos_novos)
 
 ## Aula 9 - exportar
 
-Abaixo, o código cria um gráfico e o salva como uma figura em .png. Como que ele sabe que objeto salvar, se não criei um obejeto e nem dei o nome desse objeto?
+Abaixo, o código cria um gráfico e o salva como uma figura em .png. Como que ele sabe que objeto salvar, se não criei um objeto e nem dei o nome desse objeto?
 
 ```{r figura1}
  ggplot(who_trat)+
