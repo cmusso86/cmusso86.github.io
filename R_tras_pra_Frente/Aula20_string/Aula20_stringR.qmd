@@ -51,7 +51,7 @@ Mais sobre o pacote `flextable`: título, cabeçalho e fonte
 
 -   [DataCamp, String Manipulation with stringR in R](https://app.datacamp.com/learn/courses/string-manipulation-with-stringr-in-r)
 
-## Variavel: Caracteres <chr>
+## Variável: Caracteres <chr>
 
 -   Nada mais do que um texto
 
@@ -63,7 +63,7 @@ Mais sobre o pacote `flextable`: título, cabeçalho e fonte
 
 -   "Riacho Fundo", "riacho fundo I", "riacho fundo 1" ...
 
-## pacote strigR e tidyR
+## pacote stringR e tidyR
 
 -   str_c
 
@@ -247,7 +247,7 @@ df_split %>%
 
 ## Expressões Regulares
 
--   RegEx parea os íntimos
+-   RegEx para os íntimos
 
 -   Vamos falar rapidamente sobre isso
 
