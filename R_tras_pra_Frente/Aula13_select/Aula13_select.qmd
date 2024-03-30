@@ -71,7 +71,7 @@ head(dados_covid)
 
 ## Função select()
 
--   Vimos que as funções são intruções: muitas vezes tem cara de verbo
+-   Vimos que as funções são instruções: muitas vezes tem cara de verbo
 
 -   a função select precisa de 2 argumentos: a base de dados e as colunas que você quer selecionar
 
@@ -156,13 +156,13 @@ dados_covid %>% select( where(is.numeric))
 
 ## Calma lá ...
 
-### O tal PIPE que eu tanto falo
+### O que é o tal PIPE que eu tanto falo
 
 `%>% ou |>`
 
 -   Encadear uma sequência de funções de forma mais organizada.
 
--   Se quer saber a lógica computacional co pipe leia o capítulo do [r4ds](https://r4ds.had.co.nz/pipes.html?q=pipe#pipes).
+-   Se quer saber a lógica computacional com pipe leia o capítulo do [r4ds](https://r4ds.had.co.nz/pipes.html?q=pipe#pipes).
 
 ## Mas a idéia é:
 
