@@ -1,0 +1,212 @@
+---
+title: "Aula 29 - facet_grid & facet_wrap"
+subtitle: "Módulo 3: Apresentando suas análises"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format: 
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+### Aula 28 - Fatores {style="color: gray;"}
+
+[Variáveis categóricas ordinais com o pacote forcats]{style="color: gray;"}
+
+. . .
+
+### Aula 29 - "Facetamento"
+
+Como apresentar vários gráficos relacionados juntos com `facet_wrap` e `facet_grid`
+
+. . .
+
+### Aula 30 - Gráficos avançados
+
+Extensões do ggplot , inclusão de texto e imagens, gráficos de Violino, Jitter, Rosca ...
+
+## Leituras para aprofundamento
+
+-   [EpiRHabdbook - ggplot basics](https://epirhandbook.com/en/ggplot-basics.html?q=facet#ggplot-basics)
+
+-   [Pacote patckwork](https://patchwork.data-imaginist.com)
+
+## Vários gráficos
+
+Ao mesmo tempo
+
+```{r}
+if (!require(pacman)) install.packages("pacman") 
+
+pacman::p_load( tidyverse,rio, patchwork) 
+
+linelist <- import("linelist_cleaned.rds") %>% 
+  filter_all(all_vars(!is.na(.)))%>% # função nova!
+  filter(wt_kg>0,
+         age_years>=0) 
+```
+
+. . .
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+  labs(
+    x = "Idade (anos)", y = "Peso (kg)")
+```
+
+## facet_grid
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+  labs(
+    x = "Idade (anos)", y = "Peso (kg)")+
+  facet_grid(gender~fever)
+```
+
+. . .
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+  labs(
+    x = "Idade (anos)", y = "Peso (kg)")+
+  facet_grid(gender~fever,
+             labeller = labeller(fever = c(no="Sem Febre", yes="Com Febre"), 
+                    gender = c(f="Feminino", m="Masculino")))
+```
+
+## Só uma variável
+
+-   Só linhas
+
+. . .
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+  labs(
+    x = "Idade (anos)", y = "Peso (kg)")+
+  facet_grid(gender~.)
+```
+
+-   Só colunas
+
+. . .
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+  labs(
+    x = "Idade (anos)", y = "Peso (kg)")+
+  facet_grid(.~gender)
+```
+
+## facet_wrap
+
+-   Pode fazer o mesmo
+
+. . .
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+  labs(
+    x = "Idade (anos)", y = "Peso (kg)")+
+  facet_wrap(.~gender)
+```
+
+## facet_wrap
+
+-   Pode ter algumas vantagens.
+
+. . .
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+  labs(
+    x = "Idade (anos)", y = "Peso (kg)")+
+  facet_wrap(~age_cat)
+```
+
+-   Ajustar o número de linhas/colunas manualmente
+
+. . .
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+  labs(
+    x = "Idade (anos)", y = "Peso (kg)")+
+  facet_wrap(~age_cat, ncol = 4)
+```
+
+## Pacote patckwork
+
+```{r}
+p1 <- ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+  labs(
+    x = "Idade (anos)", y = "Peso (kg)")
+
+p2 <- ggplot(linelist, aes(x = age_cat, y = wt_kg))+
+  geom_boxplot() +
+  labs(
+    x = "Faixa-Etária", y = "Peso (kg)")
+```
+
+-   Um do lado do outro
+
+. . .
+
+```{r}
+p1 + p2
+```
+
+. . .
+
+-   Um sobre o outro
+
+```{r}
+
+p1 / p2
+```
+
+## Outros layouts
+
+```{r}
+p3<- ggplot(linelist, aes(x =fever))+
+  geom_bar() +
+  labs(
+    x = "Febre", y = "N pessoas")
+
+p1 + p2/p3
+```
+
+## Outros layouts
+
+```{r}
+p1 + inset_element(p2, 
+                   left = 0.45, 
+                   bottom = 0.1, 
+                   right = 0.95, 
+                   top = 0.5)
+```
+
+# Obrigada!

@@ -1,0 +1,65 @@
+---
+title: "Exercicio aula 28 - Fatores"
+author: "Carolina Musso"
+date: "2023-06-08"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+```
+
+```{r pacotes, echo=F, message=F, warning=F }
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, rio, here, lubridate)
+```
+
+```{r}
+# Bancos ----
+
+painel_bruto <- import("covid_br_2022.csv")
+
+```
+
+# 1)  Eu sei que você já sabe quais são as regiões do Brasil. Mas use um código visto em aula para descobrir como os nomes das regiões aparecem no banco.
+
+```{r}
+unique(painel_bruto$regiao)
+```
+
+# 2) Exclua as linhas que correspondem a região = Brasil
+
+ - Note que a linhas que correspondem a todo o Brasil, e para essa análise não queremos isso.
+
+```{r}
+painel_trat<-painel_bruto %>% 
+  filter(regiao!="Brasil")
+
+```
+
+# 3) Edite o código abaixo para mudar a ordem de apresentação das regiões
+
+```{r}
+painel_trat <- painel_bruto %>% 
+  filter(regiao!="Brasil") %>% 
+  mutate(regiao=fct_relevel(regiao, c("Nordeste","Sudeste","Sul", "Centro-Oeste", "Norte")))
+
+```
+
+
+# 4) Faça o equivalente ao feito acima.
+
+```{r}
+
+painel_bruto %>% 
+  filter(regiao!="Brasil") %>% 
+  ggplot()+
+  geom_bar(aes(x=regiao)) #modifique para fator
+```
+
+
+
+
