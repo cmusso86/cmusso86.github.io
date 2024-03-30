@@ -17,7 +17,7 @@ knitr:
   opts_chunk:
     echo: true
     warnings: false
-editor: visual
+editor: source
 ---
 
 ## Esta semana
@@ -26,13 +26,9 @@ editor: visual
 
 [Variáveis categóricas ordinais com o pacote forcats]{style="color: gray;"}
 
-
-
 ### Aula 29 - "Facetamento" {style="color: gray;"}
 
 [Como apresentar vários gráficos relacionados juntos com `facet_wrap` e `facet_grid`]{style="color: gray;"}
-
-
 
 ### Aula 30 - Gráficos avançados
 
@@ -50,7 +46,7 @@ Extensões do ggplot , inclusão de texto e imagens, gráficos de Violino, Pizza
 
 -   [ggplot2 extensions](https://exts.ggplot2.tidyverse.org/gallery/)
 
-- [Fernanda Peres](https://www.instagram.com/reel/Cu7DFLusBw6/?igshid=MTc4MmM1YmI2Ng==)
+-   [Fernanda Peres](https://www.instagram.com/reel/Cu7DFLusBw6/?igshid=MTc4MmM1YmI2Ng==)
 
 ## Gráfico de violino
 
@@ -63,7 +59,7 @@ pacman::p_load( tidyverse,rio, janitor, RColorBrewer,
                 ggridges, emojifont, fontawesome
                 ) 
 
-linelist <- import("Exercicios/linelist_cleaned.rds") %>% 
+linelist <- import("linelist_cleaned.rds") %>% 
   filter_all(all_vars(!is.na(.)))%>% # função nova!
   filter(wt_kg>0,
          age_years>=0) 
@@ -84,7 +80,7 @@ ggplot(linelist, aes(x = age_cat, y = wt_kg))+
 
 -   Muita gente gosta e usa!
 
-. . . 
+. . .
 
 ```{r eval=F}
 sumario <- linelist %>% 
@@ -101,7 +97,7 @@ ggplot(sumario, aes(x="", y=n, fill=hospital)) +
 
 ```
 
-. . . 
+. . .
 
 ```{r echo=F}
 sumario <- linelist %>% 
@@ -129,7 +125,7 @@ ggplot(sumario, aes(x="", y=n, fill=hospital)) +
             position = position_stack(vjust = 0.5))
 ```
 
-. . . 
+. . .
 
 ```{r echo=F}
 ggplot(sumario, aes(x="", y=n, fill=hospital)) +
@@ -141,8 +137,6 @@ ggplot(sumario, aes(x="", y=n, fill=hospital)) +
             color = "white", size=4, 
             position = position_stack(vjust = 0.5))
 ```
-
-
 
 ## ggridges
 
@@ -186,8 +180,8 @@ ggplot(aes(x = age, y = wt_kg, label=figura, color=figura))+
   theme_void()+
   theme(legend.position = "none")
 ```
-. . . 
 
+. . .
 
 ```{r echo=F}
 set.seed(42)
