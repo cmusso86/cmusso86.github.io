@@ -55,9 +55,9 @@ editor: source
 
 -   Você quer importá-lo opara dentro da sua sessão de R
 
-. . . 
+. . .
 
-![](../img/importxl.png){fig-align="center" width="369"}
+![](../img/importxl.png){fig-align="center" width="450"}
 
 ## Recapitulando alguns conceitos
 

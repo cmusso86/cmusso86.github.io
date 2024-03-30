@@ -1,0 +1,128 @@
+---
+title: "Aula 9 - Exportação de objetos"
+subtitle: "Módulo 1: Introdução ao R"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    incremental: true 
+    scrollable: true
+    preview-links: true
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Semana 3
+
+-   [Aula 7 - importação]{style="color: gray;"}
+
+-   [Aula 8 - Tipos de objetos no R]{style="color: gray;"}
+
+-   Aula 9 - Exportanto objetos
+
+## Leitura complementar
+
+-   [EpiHandbook, 7.Import/Export](https://epirhandbook.com/en/import-and-export.html)
+
+-   [Curso-R, 5. Importação](https://livro.curso-r.com/5-importacao.html)
+
+-   [DataCamp, Introdução a importação de dados em R](https://app.datacamp.com/learn/courses/introduction-to-importing-data-in-r)
+
+-   [R4DS, 11. Data import](https://r4ds.had.co.nz/data-import.html)
+
+## Exportar dados
+
+**E quando eu faço alguma coisa no R, como salvar no disco?**
+
+![](../img/file.png){fig-align="center"}
+
+## Exportar dados
+
+-   Vamos também dar preferência a função export() do pacote rio para o formato Excel (e derivados)
+
+. . .
+
+<center><img src="../img/rio.png" height="200px&quot;"/></center>
+
+-   mas também tem:
+
+-   write.csv() {R base}
+
+-   fwrite() {data.tabe}
+
+-   WriteXLS {WriteXLS}
+
+-   ...
+
+## Exportar dados
+
+Bancos e outras coisas em excel...
+
+```{r eval=F}
+export(valor,  "nome.xlsx")
+export(objeto,  "nome.csv")
+```
+
+-   Vejamos ao vivo
+
+## Salvando em uma subpasta
+
+Bancos e outras coisas em excel...
+
+```{r eval=F}
+export(valor,  "Dados_exportados/nome.xlsx")
+export(objeto,  "Dados_exportados/nome.csv")
+```
+
+-   *Desafio:* Como criar uma pasta (ou garantir que ela já tenha sido criada). Dica: Veja as primeiras linhas de código de exercício da aula 4.
+
+## Exportar Imagens
+
+-   Função do pacote ggplot2
+
+```{r eval=F}
+ggsave (objeto, filename="nome.png")
+ggsave (objeto, filename="nome.jpg")
+ggsave (objeto, filename="nome.pdf")
+```
+
+-   Note que nesse caso usei o termo "filename" porque ele é na verdade o primeiro parâmetro dessa função.
+
+-   Se eu não colocar o nome do objeto, ele salva o último gráfico gerado.
+
+. . .
+
+```{r eval=F}
+ggplot(who_trat)+
+  geom_bar(aes(x=Country, y=Acumulado), stat="identity", color="black", fill="orange")+
+  coord_flip()+
+  theme_classic()
+
+ggsave("meu_segundo_grafico.png")
+```
+
+## Exportar tabelas flextable
+
+-   Função do pacote flextable
+
+. . .
+
+```{r eval=F}
+
+save_as_image(tabela, "nome.png")
+save_as_docx(tabela, "nome.docx")
+
+```
+
+# Obrigada!
+
+Até a próxima semana!
