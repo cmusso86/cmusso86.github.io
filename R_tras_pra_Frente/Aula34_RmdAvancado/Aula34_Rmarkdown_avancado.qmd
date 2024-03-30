@@ -20,7 +20,7 @@ knitr:
     warnings: false
 filters:
   - roughnotation
-editor: visual
+editor: source
 ---
 
 ## Esta semana
@@ -66,7 +66,7 @@ pacman::p_load(tidyverse, gt, kableExtra, htmltools,
 
 . . .
 
-<center><img src="img/ciclo.png" width="760px"/></center>
+<center><img src="../img/ciclo.png" width="760px"/></center>
 
 -   Muito tempo + softwares + profissionais
 
@@ -80,7 +80,7 @@ pacman::p_load(tidyverse, gt, kableExtra, htmltools,
 
 . . .
 
-![](img/repro.jpeg){fig-align="center" width="528"}
+![](../img/repro.jpeg){fig-align="center" width="528"}
 
 ## Bons costumes: projetos
 
@@ -94,7 +94,7 @@ pacman::p_load(tidyverse, gt, kableExtra, htmltools,
 
 . . .
 
-![](images/proj-01.png){fig-align="center"}
+![](../img/proj-01.png){fig-align="center"}
 
 ## Revisando: Estrutura do RMarkdown
 
@@ -110,13 +110,13 @@ pacman::p_load(tidyverse, gt, kableExtra, htmltools,
 :::
 
 ::: {.column width="80%"}
-![](img/tela_markdown.png){fig-align="center" width="700"}
+![](../img/tela_markdown.png){fig-align="center" width="700"}
 :::
 :::
 
 . . .
 
-![](images/proj.png){fig-align="center" width="477"}
+![](../img/proj.png){fig-align="center" width="477"}
 
 ## Opções no
 
@@ -146,7 +146,7 @@ knitr::opts_chunk$set(echo = FALSE,
                       warning= FALSE)
 ```
 
-Mais coisas no site do [YiHui](https://yihui.org/knitr/options/) 
+Mais coisas no site do [YiHui](https://yihui.org/knitr/options/)
 
 ## Outros formatos...
 
@@ -527,7 +527,7 @@ $endif$
 \begin{center}
 \begin{figure}[h!]
 	\centering
-		\includegraphics[scale = 0.8]{img/unb.png}
+		\includegraphics[scale = 0.8]{../img/unb.png}
 	\label{fig:unb}
 \end{figure}
 {\bf Universidade de Brasília \\
