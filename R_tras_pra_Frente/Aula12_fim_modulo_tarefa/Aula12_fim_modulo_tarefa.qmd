@@ -49,11 +49,11 @@ editor: source
 
 -   [RMarkdown CookBook](https://bookdown.org/yihui/rmarkdown-cookbook/)
 
-## Tafera
+## Tarefa
 
 -   **Rodando aquele código que alguém fez para mim (com alguns toques pessoais)**
 
--   **Objetivo:** Conseguir reproduzir o código de RMarkdown disponibilizado na aula 4 desse módulo com pequenas modificações para compilar um relatório wm Word.
+-   **Objetivo:** Conseguir reproduzir o código de RMarkdown disponibilizado na aula 4 desse módulo com pequenas modificações para compilar um relatório em Word.
 
     -   Modificar o nome do autor e o título do cabeçalho YAML.
 
@@ -69,7 +69,7 @@ editor: source
 
 ## Espera-se
 
--   Espera-se que com o conhecimento adquirido nesse módulo, o aluno possa fazer pequenas modificações um código já escrito, mesclando o conteúdo ministrado e um pouco de intuição para compreender a lógica da linguagem de programação sendo utilizada.
+-   Espera-se que com o conhecimento adquirido nesse módulo, o aluno possa fazer pequenas modificações um código já escrito, mesclando o conteúdo ministrado e um pouco de intuição para compreender a lógica da linguagem de programação que está sendo utilizada.
 
 -   O aluno deve entregar o relatório em Word (.docx) juntamente com o código em RMarkdown, .Rmd)
 
