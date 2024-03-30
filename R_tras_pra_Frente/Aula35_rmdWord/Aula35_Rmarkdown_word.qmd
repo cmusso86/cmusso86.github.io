@@ -1,0 +1,191 @@
+---
+title: "Aula 35 - Documentos em Word"
+subtitle: "Módulo 3: Apresentando suas análises"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    scrollable: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+bibliography: ref.bib
+---
+
+## Programção
+
+### Aula 33 - Rmarkdown avançado {style="color: gray;"}
+
+-   [Compilando apresentações em power-point e pdf]{style="color: gray;"}
+
+### Aula 34 - Rmardown & Word
+
+-   Edições específicas para .docx
+
+### Aula 35 - Fim do curso! (uma semana depois)
+
+-   Apresentação final dos trabalhos!
+
+## Leituras para aprofundamento
+
+-   [Cap 40 Reports with Rmarkdown](https://epirhandbook.com/en/reports-with-r-markdown.html)
+
+-   [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/),
+
+-   [R Markdown Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/)
+
+-   [Livro Curso-R: Capítulo 9 Relatórios](https://livro.curso-r.com/9-relatorios.html)
+
+-   [DataCamp: Curso Reporting with RMarkdown](https://app.datacamp.com/learn/search?q=rmarkdown)
+
+-   [RMarkdown para cientistas](https://rmd4sci.njtierney.com/figures-tables-captions-.html)
+
+-   [Quarto](https://quarto.org)
+
+## Documentos reprodutíveis
+
+-   Economia de tempo
+
+-   Não ficam atreladas a uma pessoa
+
+    ![](../img/repro.jpeg){width="528"}
+
+## Documentos em Word
+
+-   Porque Word?
+
+-   Usamos flextable para usarmos o word!
+
+-   Também podem usar o [gtsummary](https://www.danieldsjoberg.com/gtsummary/).
+
+## Templates
+
+Criar um template e colocar:
+
+```{yaml}
+---
+output:
+  word_document:
+    reference_docx: "template.docx"
+---
+```
+
+-   Vamos ver?
+-   Vejam mais detalhes [aqui](https://bookdown.org/yihui/rmarkdown-cookbook/word-template.html)
+
+## Referencias
+
+-   [BibTex](https://www.bibtex.org).
+
+    -   Sistema de formatação de referências usado para organizar e citar automaticamente as fontes bibliográficas de um texto.
+
+    -   Gerenciar automaticamente, permitindo uma formatação consistente e de fácil atualização.
+
+. . .
+
+```{bib}
+@book{artigo1,
+  author = "Autor do Livro",
+  title = "Título do Livro",
+  year = 20XX,
+  publisher = "Editora",
+  isbn = "9781451144475"
+}
+
+
+```
+
+-   Usando Visual + Zotero
+
+## Referencias
+
+-   Para citar um artigo:
+
+-   \@zika1. Por exemplo, ai aparecer assim:
+
+-   @zika1
+
+-   \[\@zika1\]. Por exemplo, ai aparecer assim:
+
+-   [@zika1]
+
+. . .
+
+```{yaml}
+---
+output:
+  word_document:
+    reference_docx: "template.docx"
+bibliography: ref.bib
+---
+```
+
+## Referencias
+
+-   Repositorio [Zotero](https://www.zotero.org/styles)
+-   Baixar arquivo cls do formato que se deseja.
+
+. . .
+
+```{yaml}
+---
+output:
+  word_document:
+    reference_docx: "template.docx"
+bibliography: ref.bib
+csl: abnt.csl
+
+---
+```
+
+## Instruções para o trabalho final
+
+### Produto
+
+-   Relatório automatizado: word, pdf, html
+    -   reprodutível
+    -   todos os arquivos de interesse devem ser colocados na plataforma
+-   Base de seu interesse
+-   Introdução e interpretação dos resultados.
+-   Todos (ou quase) os valores, do texto devem ser automatizados com o código *inline*:
+    -   \` r objeto \`.
+-   Deve conter pelo menos **1** customização do cabeçalho YAML, podendo ser
+-   Deve-se prezar o máximo pela formatação do trabalho.
+
+## Instruções para o trabalho final
+
+### Desenvolvimento
+
+-   pacman::p_load(), rio::import()
+-   NO MÍNIMO:
+    -   filter(); mutate(); case_when() OU if_else();
+    -   manipulação de datas (pacote lubridate);
+    -   manipulação de fatores (pacote forcats)
+    -   alguma manipulação de strings (pacote stringr e/ou tidyr)
+-   Sempre que possível/relevante as funções devem ser encadeadas usando o pipe.
+
+## Instruções para o trabalho final
+
+### Visualizações
+
+-   GRÁFICOS: Pelo menos 2 gráficos de **tipos diferentes**, com ggplot com *pelo menos* 1 customização. Os gráficos precisam aparecer no documento final a ser renderizado. O uso de mapas é opcional.
+-   TABELAS: Ao menos 1 tabela feita com pacote flextable() ou gtsummary(). Deve conter pelo menos 3 funções de formatação, e uma deve ser formatação condicional.
+
+## Instruções para o trabalho final
+
+### Apresentação final:
+
+-   10 min MAX!
+-   NÃO são necessários slides!
+    -   Apresentar o código e rodá-lo.
+
+# Obrigada!

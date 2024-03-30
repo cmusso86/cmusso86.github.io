@@ -1,0 +1,44 @@
+---
+title: "Meu primeiro Dash"
+author: "Professora maravilhosa"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    self-contained: true
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(flextable)
+library(leaflet)
+library(htmlwidgets)
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Mapa
+
+```{r}
+leaflet() %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addMarkers(lng=174.768, lat=-36.852, popup="The birthplace of R")
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Mapa 1
+
+```{r}
+
+```
+
+### Mapa 2
+
+```{r}
+
+```
+
