@@ -159,7 +159,7 @@ hoje
 
 %m= mês número ; %B= mês nome ; %b= nome abreviado
 
-%y = ano com 2 dígitod (ex. 89 ; %Y = ano com 4 dígitos (ex. 1989)
+%y = ano com 2 dígitos (ex. 89 ; %Y = ano com 4 dígitos (ex. 1989)
 
 %A = Dia da semana (Segunda, Terça, etc.)
 
@@ -169,7 +169,7 @@ hoje
 
 -   Há vários outros problemas que podem acontecer...
 
--   Mas o importante é: tem que ter
+-   Mas o importante é: tem que ter a classe de "Data".
 
 . . .
 
@@ -178,7 +178,7 @@ hoje <- Sys.Date()
 class(hoje)
 ```
 
--   Assim contigo fazer contas!
+-   Assim consigo fazer contas!
 
 ## Contas com datas
 
@@ -226,7 +226,7 @@ diferenca <- hoje - ymd("2020-02-20")
 diferenca
 ```
 
--   Depois posso transofrmar para numérico
+-   Depois posso transformar para numérico
 
 . . .
 
@@ -250,7 +250,7 @@ diferenca
 
 ## Mas a data assim fica feio!
 
--   Não estamos costumados a mostrar a data nesse formato de YYY-mm-dd
+-   Não estamos acostumados a mostrar a data nesse formato de YYY-mm-dd
 
 -   **DEPOIS** de fazer as contas, ordenações que eu quiser, eu posso escolher apresentar nas tabelas, gráficos, texto, de outra forma... para isso, existe a funçao `format`.
 

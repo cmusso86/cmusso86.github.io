@@ -1263,13 +1263,13 @@ Carolina Musso
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">Sys.Date</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;2024-03-23&quot;</code></pre>
+<pre><code>[1] &quot;2024-03-30&quot;</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">Sys.time</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;2024-03-23 21:14:05 -03&quot;</code></pre>
+<pre><code>[1] &quot;2024-03-30 17:33:57 -03&quot;</code></pre>
 </div>
 </div>
 <div class="fragment">
@@ -1366,7 +1366,7 @@ Carolina Musso
 <div class="fragment">
 <p>%d = dia</p>
 <p>%m= mês número ; %B= mês nome ; %b= nome abreviado</p>
-<p>%y = ano com 2 dígitod (ex. 89 ; %Y = ano com 4 dígitos (ex. 1989)</p>
+<p>%y = ano com 2 dígitos (ex. 89 ; %Y = ano com 4 dígitos (ex. 1989)</p>
 <p>%A = Dia da semana (Segunda, Terça, etc.)</p>
 <p>%U = Semana (01-53)</p>
 </div>
@@ -1375,7 +1375,7 @@ Carolina Musso
 <h2>As vezes é mais difícil</h2>
 <ul>
 <li class="fragment"><p>Há vários outros problemas que podem acontecer…</p></li>
-<li class="fragment"><p>Mas o importante é: tem que ter</p></li>
+<li class="fragment"><p>Mas o importante é: tem que ter a classe de “Data”.</p></li>
 </ul>
 <div class="fragment">
 <div class="cell">
@@ -1386,7 +1386,7 @@ Carolina Musso
 </div>
 </div>
 <ul>
-<li class="fragment">Assim contigo fazer contas!</li>
+<li class="fragment">Assim consigo fazer contas!</li>
 </ul>
 </div>
 </section>
@@ -1397,7 +1397,7 @@ Carolina Musso
 <span id="cb21-2"><a href="#cb21-2"></a></span>
 <span id="cb21-3"><a href="#cb21-3"></a>hoje</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;2024-03-23&quot;</code></pre>
+<pre><code>[1] &quot;2024-03-30&quot;</code></pre>
 </div>
 </div>
 <ul>
@@ -1407,14 +1407,14 @@ Carolina Musso
 <div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>hoje <span class="sc">+</span> <span class="fu">days</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;2024-03-26&quot;</code></pre>
+<pre><code>[1] &quot;2024-04-02&quot;</code></pre>
 </div>
 </div>
 <p>Ou simplesmente:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>hoje <span class="sc">+</span> <span class="dv">3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;2024-03-26&quot;</code></pre>
+<pre><code>[1] &quot;2024-04-02&quot;</code></pre>
 </div>
 </div>
 <ul>
@@ -1425,13 +1425,13 @@ Carolina Musso
 <div class="cell">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>hoje <span class="sc">+</span> <span class="fu">months</span>(<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;2024-04-23&quot;</code></pre>
+<pre><code>[1] &quot;2024-04-30&quot;</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a>hoje <span class="sc">-</span> <span class="fu">years</span>(<span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;2004-03-23&quot;</code></pre>
+<pre><code>[1] &quot;2004-03-30&quot;</code></pre>
 </div>
 </div>
 </div>
@@ -1446,11 +1446,11 @@ Carolina Musso
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a>diferenca <span class="ot">&lt;-</span> hoje <span class="sc">-</span> <span class="fu">ymd</span>(<span class="st">&quot;2020-02-20&quot;</span>)</span>
 <span id="cb31-2"><a href="#cb31-2"></a>diferenca</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time difference of 1493 days</code></pre>
+<pre><code>Time difference of 1500 days</code></pre>
 </div>
 </div>
 <ul>
-<li class="fragment">Depois posso transofrmar para numérico</li>
+<li class="fragment">Depois posso transformar para numérico</li>
 </ul>
 </div>
 <div class="fragment">
@@ -1458,7 +1458,7 @@ Carolina Musso
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a>diferenca <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(diferenca)</span>
 <span id="cb33-2"><a href="#cb33-2"></a>diferenca</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 1493</code></pre>
+<pre><code>[1] 1500</code></pre>
 </div>
 </div>
 <ul>
@@ -1470,7 +1470,7 @@ Carolina Musso
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a>passado <span class="ot">&lt;-</span> hoje <span class="sc">-</span>  <span class="dv">14</span></span>
 <span id="cb35-2"><a href="#cb35-2"></a>passado</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;2024-03-09&quot;</code></pre>
+<pre><code>[1] &quot;2024-03-16&quot;</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a>diferenca <span class="ot">&lt;-</span> <span class="fu">difftime</span>(hoje,passado, <span class="at">units =</span> <span class="st">&quot;weeks&quot;</span>)</span>
 <span id="cb37-2"><a href="#cb37-2"></a></span>
@@ -1484,7 +1484,7 @@ Carolina Musso
 <section id="mas-a-data-assim-fica-feio" class="slide level2">
 <h2>Mas a data assim fica feio!</h2>
 <ul>
-<li class="fragment"><p>Não estamos costumados a mostrar a data nesse formato de YYY-mm-dd</p></li>
+<li class="fragment"><p>Não estamos acostumados a mostrar a data nesse formato de YYY-mm-dd</p></li>
 <li class="fragment"><p><strong>DEPOIS</strong> de fazer as contas, ordenações que eu quiser, eu posso escolher apresentar nas tabelas, gráficos, texto, de outra forma… para isso, existe a funçao <code>format</code>.</p></li>
 <li class="fragment"><p>É a idéia do as.Date, ao contrário…</p></li>
 </ul>
@@ -1493,7 +1493,7 @@ Carolina Musso
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1"></a>data_bonita <span class="ot">&lt;-</span> <span class="fu">format</span>(<span class="fu">Sys.Date</span>(), <span class="at">format =</span> <span class="st">&quot;%d %B %Y&quot;</span>)</span>
 <span id="cb39-2"><a href="#cb39-2"></a>data_bonita</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;23 March 2024&quot;</code></pre>
+<pre><code>[1] &quot;30 March 2024&quot;</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -1515,7 +1515,7 @@ Carolina Musso
 <div class="cell">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a><span class="fu">epiweek</span>(<span class="fu">Sys.Date</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 12</code></pre>
+<pre><code>[1] 13</code></pre>
 </div>
 </div>
 <ul>
