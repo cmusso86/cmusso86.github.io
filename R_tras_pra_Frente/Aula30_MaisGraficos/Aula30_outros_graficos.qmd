@@ -1,0 +1,206 @@
+---
+title: "Aula 30 - Outros gráficos"
+subtitle: "Módulo 3: Apresentando suas análises"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format: 
+  revealjs:
+    scrollable: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: visual
+---
+
+## Esta semana
+
+### Aula 28 - Fatores {style="color: gray;"}
+
+[Variáveis categóricas ordinais com o pacote forcats]{style="color: gray;"}
+
+
+
+### Aula 29 - "Facetamento" {style="color: gray;"}
+
+[Como apresentar vários gráficos relacionados juntos com `facet_wrap` e `facet_grid`]{style="color: gray;"}
+
+
+
+### Aula 30 - Gráficos avançados
+
+Extensões do ggplot , inclusão de texto e imagens, gráficos de Violino, Pizza... ...
+
+## Leituras para aprofundamento
+
+-   [Epi-R-Handbook - ggplot basics](https://epirhandbook.com/en/ggplot-basics.html?q=facet#ggplot-basics)
+
+-   [Data-to-Viz](https://www.data-to-viz.com)
+
+-   [R Gallery](https://r-graph-gallery.com)
+
+-   [Bruno Mioto](https://brunomioto.com/charts.html)
+
+-   [ggplot2 extensions](https://exts.ggplot2.tidyverse.org/gallery/)
+
+- [Fernanda Peres](https://www.instagram.com/reel/Cu7DFLusBw6/?igshid=MTc4MmM1YmI2Ng==)
+
+## Gráfico de violino
+
+Tipo um box-plot...
+
+```{r}
+if (!require(pacman)) install.packages("pacman") 
+
+pacman::p_load( tidyverse,rio, janitor, RColorBrewer,
+                ggridges, emojifont, fontawesome
+                ) 
+
+linelist <- import("Exercicios/linelist_cleaned.rds") %>% 
+  filter_all(all_vars(!is.na(.)))%>% # função nova!
+  filter(wt_kg>0,
+         age_years>=0) 
+```
+
+. . .
+
+```{r}
+ggplot(linelist, aes(x = age_cat, y = wt_kg))+
+  geom_violin() +
+  labs(
+    x = "Idade (anos)", y = "Peso (kg)")
+```
+
+## Grafico de "pizza"
+
+-   Controverso! Mas . . .
+
+-   Muita gente gosta e usa!
+
+. . . 
+
+```{r eval=F}
+sumario <- linelist %>% 
+  filter(hospital!="Missing",
+         hospital!="Other") %>% 
+  tabyl(hospital) 
+
+ggplot(sumario, aes(x="", y=n, fill=hospital)) +
+  geom_col( width=1, color="black") +
+  coord_polar("y", start=0)+
+  theme_void()+
+  scale_fill_brewer("", palette = "Set2")
+
+
+```
+
+. . . 
+
+```{r echo=F}
+sumario <- linelist %>% 
+  filter(hospital!="Missing",
+         hospital!="Other") %>% 
+  tabyl(hospital) 
+
+ggplot(sumario, aes(x="", y=n, fill=hospital)) +
+  geom_col( width=1, color="black") +
+  coord_polar("y", start=0)+
+  theme_void()+
+  scale_fill_brewer("", palette = "Set2")
+```
+
+## Adicionar texto
+
+```{r eval=F}
+ggplot(sumario, aes(x="", y=n, fill=hospital)) +
+  geom_col( width=1, color="black") +
+  coord_polar("y", start=0)+
+  theme_void()+
+  scale_fill_brewer("", palette = "Set2")+
+  geom_text(aes(x=1.1, label = paste0(round(percent*100,0), "%")), 
+            color = "white", size=4, 
+            position = position_stack(vjust = 0.5))
+```
+
+. . . 
+
+```{r echo=F}
+ggplot(sumario, aes(x="", y=n, fill=hospital)) +
+  geom_col( width=1, color="black") +
+  coord_polar("y", start=0)+
+  theme_void()+
+  scale_fill_brewer("", palette = "Set2")+
+  geom_text(aes(x=1.1, label = paste0(round(percent*100,0), "%")), 
+            color = "white", size=4, 
+            position = position_stack(vjust = 0.5))
+```
+
+
+
+## ggridges
+
+```{r}
+ggplot(linelist, aes(x = wt_kg, y=age_cat, fill=age_cat))+
+  geom_density_ridges()+
+  scale_fill_brewer("Faixa", palette = "Set3")
+```
+
+## geom_textpath
+
+```{r}
+pacman::p_load_gh("AllanCameron/geomtextpath")
+```
+
+. . .
+
+```{r}
+ggplot(linelist, aes(x = age, y = wt_kg))+
+  geom_point() +
+   geom_labelsmooth(aes(label = "Linha de tendencia"), 
+                    text_smoothing = 30, 
+                    fill = "lightblue",
+                    color= "indianred") +
+  theme_classic()
+  
+```
+
+## gg_img
+
+```{r eval=F}
+set.seed(42)
+linelist %>% 
+  sample_n(50) %>% 
+  filter(!is.na(gender)) %>% 
+  mutate(figura=ifelse(outcome=="Death", fontawesome("fa-twitter"),
+                       fontawesome("fa-coffee"))) %>% 
+ggplot(aes(x = age, y = wt_kg, label=figura, color=figura))+
+  scale_color_manual(values=c("#1DA1F2", "black"))+
+   geom_text(family='fontawesome-webfont', size=4)+
+  theme_void()+
+  theme(legend.position = "none")
+```
+. . . 
+
+
+```{r echo=F}
+set.seed(42)
+linelist %>% 
+  sample_n(50) %>% 
+  filter(!is.na(gender)) %>% 
+  mutate(figura=ifelse(outcome=="Death", fontawesome("fa-twitter"),
+                       fontawesome("fa-coffee"))) %>% 
+ggplot(aes(x = age, y = wt_kg, label=figura, color=figura))+
+  scale_color_manual(values=c("#1DA1F2", "black"))+
+   geom_text(family='fontawesome-webfont', size=4)+
+  theme_void()+
+  theme(legend.position = "none")
+```
+
+# Obrigada!

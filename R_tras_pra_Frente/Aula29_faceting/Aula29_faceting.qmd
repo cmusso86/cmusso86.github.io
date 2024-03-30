@@ -23,19 +23,19 @@ editor: source
 
 ## Esta semana
 
-### Aula 28 - Fatores {style="color: gray;"}
+**Aula 28 - Fatores {style="color: gray;"}**
 
 [Variáveis categóricas ordinais com o pacote forcats]{style="color: gray;"}
 
 . . .
 
-### Aula 29 - "Facetamento"
+**Aula 29 - "Facetamento"**
 
 Como apresentar vários gráficos relacionados juntos com `facet_wrap` e `facet_grid`
 
 . . .
 
-### Aula 30 - Gráficos avançados
+**Aula 30 - Gráficos avançados**
 
 Extensões do ggplot , inclusão de texto e imagens, gráficos de Violino, Jitter, Rosca ...
 
