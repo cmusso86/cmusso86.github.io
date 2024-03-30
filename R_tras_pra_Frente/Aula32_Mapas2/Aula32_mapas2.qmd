@@ -1,0 +1,193 @@
+---
+title: "Aula 32 - Mapas (segunda parte)"
+subtitle: "Módulo 3: Apresentando suas análises"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format: 
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+### Aula 31 - Mapas {style="color: gray;"}
+
+-   [O que é GIS, como usar ggplot para Mapas ...]{style="color: gray;"}
+
+### Aula 32 - Meu primeiro Mapa
+
+-   Mapa usando shapefiles salvos no computador e outras formas.
+
+### Aula 33 - Mapas Iterativos
+
+-   Um gostinho de mapas iterativos para dashboards
+
+## Leituras para aprofundamento
+
+-   [Cap 28 GIS Basics, The Epidemiologist R Handbook](https://epirhandbook.com/en/gis-basics.html)
+
+-   Tutoriais pacotes: [maps](https://rstudio-pubs-static.s3.amazonaws.com/176768_ec7fb4801e3a4772886d61e65885fbdd.html), [ggplot](https://r-spatial.org/r/2018/10/25/ggplot2-sf.html), [geobr1](https://ipeagit.github.io/geobr/articles/intro_to_geobr.html), [geobr2](https://adrianofigueiredo.netlify.app/post/mapas-em-r-com-geobr/), [intorducao ao geobr](https://cran.r-project.org/web/packages/geobr/vignettes/intro_to_geobr.html)
+
+-   DataCamp: [1](https://www.datacamp.com/courses/spatial-analysis-with-sf-and-raster-in-r), [2](https://app.datacamp.com/learn/courses/visualizing-geospatial-data-in-r)
+
+-   [Alguns Shapefiles](https://www.ibge.gov.br/geociencias/downloads-geociencias.html)
+
+## Preparação
+
+```{r}
+rm(list=ls())  #limpa  o ambient
+if (!require(pacman)) install.packages("pacman") #garante que tem o pacman
+pacman::p_load(tidyverse, rio, sf, rnaturalearth,  geobr,
+               lubridate, ggspatial, ggthemes, gsubfn, ggsn) 
+
+pacman::p_load_gh("yutannihilation/ggsflabel")
+
+
+```
+
+## Bases
+
+### Outra forma de ler shapefiles
+
+```{r}
+
+brasil_bruto <- import("covid_br_2022.csv")
+
+estados <- read_sf(dsn = "shapefiles/.",
+                  layer="UFBR")
+
+# tratando os dados
+brasil_acumulado_estado <- brasil_bruto %>% 
+  filter(municipio!="")%>% 
+  group_by(estado) %>% 
+  summarise(Acumulado=sum(casosNovos, na.rm=T))
+
+estados_trat <- estados %>% 
+  rename(estado=SIGLA) %>% 
+  st_zm() # as vezes  precisa, nem sempre
+
+covid_brasil_com_shape <- left_join(brasil_acumulado_estado, estados_trat)
+
+```
+
+## Brasil
+
+```{r}
+ggplot(estados_trat)+
+  geom_sf(aes(geometry=geometry)) 
+  # north(estados_trat) Não está mais funcionando
+  
+```
+
+. . .
+
+```{r}
+ggplot(covid_brasil_com_shape)+
+  geom_sf(aes(geometry=geometry, fill=Acumulado))+
+  theme_void()
+  #north(estados_trat) Não está mais funcionando
+```
+
+## Graficos de pontos
+
+-   Usando st_centroid()
+
+. . .
+
+```{r eval=F}
+
+covid_brasil_com_shape_ponto <- covid_brasil_com_shape %>% 
+  mutate(centro=st_centroid(geometry))
+
+ggplot(covid_brasil_com_shape_ponto)+
+  geom_sf(aes(geometry=geometry))+
+  geom_sf(aes(geometry=centro, size=Acumulado), color="red", alpha=0.5)+
+  theme_void()
+ 
+```
+
+. . .
+
+```{r echo=F}
+covid_brasil_com_shape_ponto <- covid_brasil_com_shape %>% 
+  mutate(centro=st_centroid(geometry))
+
+ggplot(covid_brasil_com_shape_ponto)+
+  geom_sf(aes(geometry=geometry))+
+  geom_sf(aes(geometry=centro, size=Acumulado), color="red", alpha=0.5)+
+  theme_void()
+```
+
+. . .
+
+-   Ou usar geom_point com x=lat e y=long
+
+# Outras formas ...
+
+## geoBr
+
+```{r}
+head(list_geobr())
+```
+
+. . .
+
+```{r}
+regiao_geobr <- read_region() %>% 
+  rename(regiao=`name_region`) %>% 
+  mutate(regiao=if_else(regiao=="Centro Oeste", "Centro-Oeste", regiao))
+
+brasil_regiao <- brasil_bruto %>% 
+  filter(codmun != "") %>% 
+  group_by(regiao) %>% 
+  summarise(Maximo_dia=max(casosNovos, na.rm=T)) %>% 
+  right_join(regiao_geobr)
+
+```
+
+. . .
+
+```{r}
+
+ggplot(brasil_regiao, aes(fill=Maximo_dia))+
+  geom_sf(aes(geometry=geom))+
+  scale_fill_distiller(direction=1)
+```
+
+## Arquivos .gpkg
+
+```{r}
+map <- st_read("map.gpkg")
+ st_crs(map) <- 4326
+
+ # Esse arquivo especificamente 
+map_transformed <- st_transform(map, crs = 4326)
+
+(ggmap <-  map_transformed  %>% 
+   ggplot()+
+   geom_sf(aes(geometry=geom, fill=hdi))+
+   scale_fill_distiller(direction=1)+
+   theme_map())
+
+```
+
+. . .
+
+```{r}
+plot(map["hdi"])
+```
+
+# Obrigada!
