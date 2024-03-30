@@ -11,12 +11,13 @@ format:
     code-block-bg: "#011627"
     code-overflow: wrap
     transition: fade
-    self-contained: true
+    embed-resources: true
 knitr:
   opts_chunk:
     echo: true
     warnings: false
 editor: source
+self-contained: true
 ---
 
 ## Esta semana
