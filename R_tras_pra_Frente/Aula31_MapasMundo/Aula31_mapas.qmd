@@ -132,8 +132,11 @@ who_trat <- who_bruto %>%
   dplyr::summarise(Acumulado=max(Cumulative_cases, na.rm=T)) 
 
 # Shape
-mundo_trat <- mundo %>% 
-  dplyr::rename(Country=admin) # PARA PODER FAZER O JOIN
+
+## Renomeando a coluna para o join. 
+## Renomeei usando o Rbase porque o dplyr não aceitou mais
+names(mundo)[10] <- "Country"
+mundo_trat <- mundo 
 ```
 
 . . .
@@ -198,8 +201,9 @@ ggplot(covid_mundo_com_shape,aes(geometry=geometry))+
 . . .
 
 ```{r warning=F, message=FALSE}
-mundo_iso <- mundo_trat %>% 
-  dplyr::rename(iso=iso_a2)
+
+names(mundo_trat)[45] <- "iso"
+mundo_iso <- mundo_trat 
 
 who_acumulado_iso <- who_bruto %>% 
   dplyr::group_by(Country_code) %>% #iso
@@ -223,8 +227,8 @@ ggplot(covid_mundo_com_shape_iso, aes(geometry=geometry))+
 ## Firulas
 
 ```{r eval=F}
-covid_mundo_com_shape_iso2<- covid_mundo_com_shape_iso %>% 
-  mutate(Acumulado_cat=cut(Acumulado,
+covid_mundo_com_shape_iso2 <- covid_mundo_com_shape_iso %>% 
+  mutate(Acumulado_cat = cut(Acumulado,
                            breaks=c(-1,17000,160000,1000000,
                                     max(covid_mundo_com_shape_iso$Acumulado, na.rm=T)+1),
                            labels=c("até 17 mil", "17 mil - 160 mil ", 
