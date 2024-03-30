@@ -1,0 +1,249 @@
+---
+title: "Aula 13 - select()"
+subtitle: "Módulo 2: Trabalhando com dados "
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+
+## Esta semana
+
+### Aula 13 - Manipulação das colunas
+
+Função select()
+
+### Aula 14 - Manipulação das linhas
+
+Função filter()
+
+### Aula 15 - Tabela
+
+Introdução ao pacote `flextable` - confeccionar uma tabela simples apartir da seleção e filtros.
+
+## Leituras para aprofundamento
+
+-   [EpiHandbook, 8.Cleaning data and core functions](https://epirhandbook.com/en/cleaning-data-and-core-functions.html)
+
+-   [Curso-R, 7. Manipulação](https://livro.curso-r.com/7-manipulacao.html)
+
+-   [DataCamp, Introduction to the Tidyverse](https://app.datacamp.com/learn/courses/introduction-to-the-tidyverse)
+
+-   [R4DS, 5. Data transformation](https://r4ds.had.co.nz/transform.html)
+
+## Trabalhando com as colunas
+
+As vezes queremos selecionar apenas algumas colunas (pode ser pesado e confuso manter todas as colunas sempre)
+
+
+```{r echo=F}
+
+
+## este codigo nao aparece no slide
+# carregando os pacotes
+pacman::p_load(tidyverse, rio)
+
+# importando a base
+dados_covid <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv", na.strings = "")
+
+# só aparece esse output
+head(dados_covid)
+```
+
+
+## Função select()
+
+-   Vamos dar preferência para essa função
+
+    -   do pacote dplyr que faz parte do tidyverse
+
+        ![](../img/dplyr.png){width="171"}
+
+## Função select()
+
+-   Vimos que as funções são instruções: muitas vezes tem cara de verbo
+
+-   a função select precisa de 2 argumentos: a base de dados e as colunas que você quer selecionar
+
+-   Por exemplo, para selecionar uma coluna chamada "aquela_coluna" na base "dados"
+
+. . .
+
+
+```{r eval=F}
+select(dados, aquela_coluna) 
+
+# OU
+
+dados %>% select (aquela_coluna)
+
+# OU AINDA
+
+select(aquela_coluna, .data=dados) # não se usa
+```
+
+
+## Selecionar colunas consecutivas ou remover
+
+-   **:**
+-   **-**
+
+. . .
+
+
+```{r, eval=F}
+meus_dados %>% select(nome_da_col1:nome_da_col33)
+meus_dados %>% select( -nome_da_col1)
+```
+
+
+-   Deve-se colocar o nome da coluna exatamente como aparece na base!
+
+## Exemplo no banco do covid
+
+
+```{r}
+dados_covid %>% 
+  select(Date_reported:Country)
+```
+
+
+## Selecionar reordenando
+
+
+```{r}
+dados_covid %>% 
+  select(Country, Date_reported)
+```
+
+
+## **Funções auxiliares**
+
+-   **starts_with()**, **ends_with()**, **contains()**
+
+. . .
+
+
+```{r, eval=F}
+meus_dados %>% select( starts_with("algum_padrao"))
+
+meus_dados %>% select( ends_with("algum_padrao"))
+
+meus_dados %>% select( contains("algum_padrao"))
+```
+
+
+## Exemplo
+
+
+```{r}
+dados_covid %>%  select( starts_with("New")) %>% 
+  tail(3)
+
+dados_covid %>%  select( ends_with("cases")) %>% 
+  tail(3)
+
+dados_covid %>% select( contains("w")) %>% 
+  tail(3)
+```
+
+
+## Funções auxiliares
+
+**where**
+
+
+```{r}
+dados_covid %>% select( where(is.numeric))
+```
+
+
+## Calma lá ...
+
+### O que é o tal PIPE que eu tanto falo
+
+`%>% ou |>`
+
+-   Encadear uma sequência de funções de forma mais organizada.
+
+-   Se quer saber a lógica computacional com pipe leia o capítulo do [r4ds](https://r4ds.had.co.nz/pipes.html?q=pipe#pipes).
+
+## Mas a idéia é:
+
+-   o resultado de uma função será usada em outra de forma mais organizada e fluida, "bonitinha"
+
+-   Sem ter que escrever uma dentro da outra
+
+-   nem ficar repetindo coisas nem salvando objetos intermediários.
+
+-   Você vai entender melhor a função dele na próxima aula, quando apresentarmos a função filter()!
+
+<!-- COLOCAR ESSAS INFORMAÇÕES NA PRÓXIMA AULA -->
+
+<!-- #### Com o pipe -->
+
+<!-- ```{r} -->
+
+<!-- ebola_trat<-ebola %>%  -->
+
+<!--   select(date_infection, gender, age) %>%  -->
+
+<!--   filter(!is.na(gender)) %>%  -->
+
+<!--   arrange(age) -->
+
+<!-- ``` -->
+
+<!-- --- -->
+
+<!-- ### Sem o pipe -->
+
+<!-- ```{r} -->
+
+<!-- ebola_trat<-select(ebola,date_infection, gender, age) -->
+
+<!-- ebola_trat<-filter(ebola_trat ,!is.na(gender)) -->
+
+<!-- ebola_trat<-arrange(ebola_trat, age) -->
+
+<!-- ``` -->
+
+<!-- OU -->
+
+<!-- ```{r} -->
+
+<!-- ebola_trat<-arrange(select(filter(ebola ,!is.na(gender)),date_infection, gender, age), age) -->
+
+<!-- ``` -->
+
+## Como seria no R base
+
+
+```{r}
+dados_covid$Country_code
+```
+
+```{r}
+dados_covid[,"Country_code"]
+```
+
+
+## Exercício
+
+Baixe o código .Rmd do exerício para resolver exemplos com a função select().
+
+# Mal posso esperar pela próxima aula!
+
