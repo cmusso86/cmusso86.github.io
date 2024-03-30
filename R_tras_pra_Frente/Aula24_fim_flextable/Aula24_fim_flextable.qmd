@@ -33,7 +33,7 @@ editor: source
 
 ### Aula 24 - Tabela
 
-Mais sobre o pacote `flextable`: título e fontes
+Mais sobre o pacote `flextable`: mesclar células e condicionamento
 
 ## Leituras para aprofundamento
 
@@ -56,7 +56,6 @@ knitr::opts_chunk$set("ft.shadow" = FALSE)
 # importando a base
 dados_covid <- import("https://covid19.who.int/WHO-COVID-19-global-data.csv", na.strings = "")
 
-options(OutDec= ".")    
 ```
 
 ## Dados de Hoje
@@ -67,45 +66,42 @@ options(OutDec= ".")
 
 ```{r out.width="50%"}
 
-paises <- c("Brazil", "Italy", "France", "Argentina")
+paises <- c("Brazil", "Italy", "France", "Uruguay")
 
- letalidade_Brasil_Italia <- dados_covid %>% 
+letalidade <- dados_covid %>% 
   filter(Country %in% paises, 
-         New_cases>0,
-         !is.na(New_cases)) %>% 
+         New_cases>0) %>% 
   separate(Date_reported, c("Ano", "Mês", "Dia")) %>% 
+  filter(Ano=="2023"|Ano=="2022") %>% 
   mutate(Country=case_when(
     Country=="Brazil" ~ "Brasil",
     Country=="Italy" ~ "Itália",
-    Country=="France" ~ "França")) %>% 
+    Country=="France" ~ "França",
+    Country=="Uruguay" ~ "Uruguai")) %>% 
   mutate(letalidade_diaria = New_deaths/New_cases*100)%>% 
-   mutate(Continente = ifelse(Country=="Brazil"|Country=="Argentina",
+   mutate(Continente = ifelse(Country=="Brasil"|Country=="Uruguai",
                               "América do Sul", "Europa")) %>% 
-  group_by(Continente, Ano, Country) %>% 
-  summarise(letalidade_media = mean(letalidade_diaria,
-                                    na.rm=T), 
-            desvio_padrao = sd(letalidade_diaria,
-                                    na.rm=T ),
-            Casos_maximo = max(New_cases,
-                                    na.rm=T),
-            Obitos_maximo = max(New_deaths,
-                                    na.rm=T)) %>% 
+  group_by( Ano, Continente, Country) %>% 
+  summarise(letalidade_media = mean(letalidade_diaria), 
+            desvio_padrao = sd(letalidade_diaria ),
+            Casos_maximo = max(New_cases),
+            Obitos_maximo = max(New_deaths)) %>% 
   ungroup() %>% 
   mutate_if(is.numeric, ~format(., big.mark=".", decimal.mark=",", digits=2)) 
   
 
- letalidade_Brasil_Italia
+ letalidade
 ```
 
 ## flextable
 
 ```{r eval=F}
-flextable(letalidade_Brasil_Italia)
+flextable(letalidade)
 ```
 
 ```{r include=FALSE}
-flextable( letalidade_Brasil_Italia) %>% 
-  save_as_image("../img/tab1.png")
+flextable( letalidade) %>% 
+  save_as_image("../../img/tab1.png")
 ```
 
 ![](../img/tab1.png){fig-alt="Tab1" fig-align="center" width="150%"}
@@ -116,29 +112,44 @@ flextable( letalidade_Brasil_Italia) %>%
 
 ```{r eval=F}
 
-tab1 <- flextable( letalidade_Brasil_Italia) %>% 
+tab1 <- flextable( letalidade) %>% 
   autofit() %>% 
   align(align="r", part="all") %>% 
   align(align="c", j=c(1,2),  part="all") %>% 
   bold(part="header") %>% 
   bold(j=c(1,2)) %>% 
-  bg(bg="lightgrey", j=c(1,2), part="all") %>% 
+  bg(bg="lightgrey", j=1, part="all") %>% 
+  bg(bg="grey", j=c(2,3), part="all") %>% 
   hline(i=c(2,4,6)) %>% 
-  vline(j=2)
+  vline(j=c(1,2,3)) %>% 
+  set_header_labels( 
+  Country="País", 
+  letalidade_media="Letalidade Média Diária",
+  desvio_padrao="Desvio Padrão",
+  Casos_maximo="Máximo de casos em 24h", 
+  Obitos_maximo="Máximo de óbitos em 24h")
+  
   
 tab1
 ```
 
 ```{r include=FALSE }
-tab1 <- flextable( letalidade_Brasil_Italia) %>% 
+tab1 <- flextable( letalidade) %>% 
   autofit() %>% 
   align(align="r", part="all") %>% 
   align(align="c", j=c(1,2),  part="all") %>% 
   bold(part="header") %>% 
   bold(j=c(1,2)) %>% 
-  bg(bg="lightgrey", j=c(1,2), part="all") %>% 
+  bg(bg="lightgrey", j=1, part="all") %>% 
+  bg(bg="grey", j=c(2,3), part="all") %>% 
   hline(i=c(2,4,6)) %>% 
-  vline(j=2)
+  vline(j=c(1,2,3)) %>% 
+  set_header_labels( 
+  Country="País", 
+  letalidade_media="Letalidade Média Diária",
+  desvio_padrao="Desvio Padrão",
+  Casos_maximo="Máximo de casos em 24h", 
+  Obitos_maximo="Máximo de óbitos em 24h")
   
   
 tab1 %>% save_as_image("../img/tab2.png")
@@ -146,152 +157,137 @@ tab1 %>% save_as_image("../img/tab2.png")
 
 ![](../img/tab2.png){fig-alt="Tab2" fig-align="center" width="100%"}
 
-## Título e cabeçalho
-
--   set_header_labels()
-
-. . .
-
-```{r eval=F}
-
-tab1 %>% 
-  set_header_labels( 
-  Country="País", 
-  letalidade_media="Letalidade Média Diária",
-  desvio_padrao="Desvio Padrão",
-  Casos_maximo="Máximo de casos em 24h", 
-  Obitos_maximo="Máximo de óbitos em 24h")
- 
-  
-```
-
-```{r include=F}
-tab1 %>% 
-  set_header_labels( 
-  Country="País", 
-  letalidade_media="Letalidade Média Diária",
-  desvio_padrao="Desvio Padrão",
-  Casos_maximo="Máximo de casos em 24h", 
-  Obitos_maximo="Máximo de óbitos em 24h") %>% 
-  save_as_image("../img/tab4.png")
-```
-
-![](../img/tab4.png){fig-alt="Tab4" fig-align="center" width="100%"}
-
--   Quebrar a linha onde eu desejar: "\\n"
-
-. . .
+## Mesclando celulas
 
 ```{r eval=F}
 
 tab2 <- tab1 %>% 
-  set_header_labels( 
-  Country="País", 
-  letalidade_media="Letalidade Média Diária",
-  desvio_padrao="Desvio\n Padrão",
-  Casos_maximo="Máximo de casos em 24h", 
-  Obitos_maximo="Máximo de óbitos em 24h")
- 
+  merge_v(j=c(1,2)) 
+
 tab2
 ```
 
 ```{r include=F}
+
 tab2 <- tab1 %>% 
-  set_header_labels( 
-  Country="País", 
-  letalidade_media="Letalidade Média Diária",
-  desvio_padrao="Desvio\n Padrão",
-  Casos_maximo="Máximo de casos em 24h", 
-  Obitos_maximo="Máximo de óbitos em 24h") 
+  merge_v(j=c(1,2))  %>% 
+  fix_border_issues(part="body")
 
-  tab2 %>% save_as_image("../img/tab5.png")
-
-
+tab1 %>%  save_as_docx(path="../img/tab3.docx")
 ```
 
-![](../img/tab5.png){fig-alt="Tab4" fig-align="center" width="100%"}
+![](../img/tab3.png){fig-alt="Tab3" fig-align="center" width="100%"}
 
-## Cabeçalho Extra
+-   Procure sobre a função fix_border_issues()
 
--   add_header_row()
-
-. . .
+## Coloração condicional
 
 ```{r eval=F}
 tab3 <- tab2 %>% 
-  add_header_row(values = c("Tempo/Lugar", "Indicadores"),
-                 colwidths = c(2,5))
+  bg(i = ~ Country =="Brasil" ,  # nome da coluna original 
+     j = c(6,7),
+     bg="red")
 
 tab3
 ```
 
-```{r include=F}
+```{r include=FALSE}
 tab3 <- tab2 %>% 
-  add_header_row(values = c("Tempo/Lugar", "Indicadores"),
-                 colwidths = c(2,5)) %>% 
-  align(align="c", part="header")
+  bg(i = ~ Country =="Brasil" ,  # nome da coluna original 
+     j = c(6,7),
+     bg="red")
 
-  tab3 %>% save_as_image("../img/tab6.png")
-
-
+tab3 %>% save_as_image("../img/tab4.png")
 ```
 
-![](../img/tab6.png){fig-alt="Tab4" fig-align="center" width="100%"}
+![](../img/tab4.png){fig-alt="Tab4" fig-align="center" width="100%"}
 
-## Título
+## Coloração condicional
 
--   set_caption
--   Cabeçalho YAML
-    -   output: officedown::rdocx_document
-
-. . .
-
-```{r}
-
-run_num <- run_autonum(seq_id = "tab", pre_label = "Tabela", 
-                       post_label=". ", bkm = "anytable")
-
-tab3 %>% 
-set_caption("Título da tabela",
-            autonum=run_num ) 
+```{r echo=F}
+tab2_num <- dados_covid %>% 
+  filter(Country %in% paises, 
+         New_cases>0) %>% 
+  separate(Date_reported, c("Ano", "Mês", "Dia")) %>% 
+  filter(Ano=="2023"|Ano=="2022") %>% 
+  mutate(Country=case_when(
+    Country=="Brazil" ~ "Brasil",
+    Country=="Italy" ~ "Itália",
+    Country=="France" ~ "França",
+    Country=="Uruguay" ~ "Uruguai")) %>% 
+  mutate(letalidade_diaria = New_deaths/New_cases*100)%>% 
+   mutate(Continente = ifelse(Country=="Brasil"|Country=="Uruguai",
+                              "América do Sul", "Europa")) %>% 
+  group_by( Ano, Continente, Country) %>% 
+  summarise(letalidade_media = mean(letalidade_diaria), 
+            desvio_padrao = sd(letalidade_diaria ),
+            Casos_maximo = max(New_cases),
+            Obitos_maximo = max(New_deaths)) %>% 
+  ungroup() %>% 
+  flextable() %>% 
+  autofit() %>% 
+  align(align="r", part="all") %>% 
+  align(align="c", j=c(1,2),  part="all") %>% 
+  bold(part="header") %>% 
+  bold(j=c(1,2)) %>% 
+  bg(bg="lightgrey", j=1, part="all") %>% 
+  bg(bg="grey", j=c(2,3), part="all") %>% 
+  hline(i=c(2,4,6)) %>% 
+  vline(j=c(1,2,3)) %>% 
+  set_header_labels( 
+  Country="País", 
+  letalidade_media="Letalidade Média Diária",
+  desvio_padrao="Desvio Padrão",
+  Casos_maximo="Máximo de casos em 24h", 
+  Obitos_maximo="Máximo de óbitos em 24h")
 ```
-
-## Fonte
-
--   A fonte deve estar instalada no seu computador!
-
-. . .
 
 ```{r eval=F}
-tab3 %>% font(part = "all", fontname = "Verdana")
+tab4 <- tab2_num  %>% 
+ bg(i = ~ Casos_maximo >200000 ,  # nome da coluna original 
+     bg="yellow") %>% 
+  colformat_double(decimal.mark = ",",
+                   digits = 2) %>% 
+  colformat_int(big.mark = ".")
+
+tab4
 ```
 
 ```{r include=F}
-tab4 <- tab3  %>% 
-  font(part = "all", fontname = "Verdana")
+tab4 <- tab2_num  %>% 
+  bg(i = ~ Casos_maximo >200000 ,  # nome da coluna original 
+     bg="yellow") %>% 
+  colformat_double(decimal.mark = ",",
+                   big.mark = ".",
+                   digits = 2) %>% 
+  colformat_int(big.mark = ".")
 
-  tab4 %>% save_as_image("../img/tab7.png")
-
+tab4 %>%  save_as_image(path="../img/tab5.png")
 ```
 
-![](../img/tab7.png){fig-alt="Tab4" fig-align="center" width="100%"}
+![](../img/tab5.png){fig-alt="Tab3" fig-align="center" width="100%"}
 
--   Com uma fonte nova
+## COMENTÁRIOS
 
-. . .
+-   Tem que ser o nome original na base! Sugestão: deixe para mudar os nomes só no final
 
-```{r eval=F}
-tab3 %>% font(part = "all", fontname = "Poppins")
-```
+-   Vantagem: Não preciso dizer o número das linhas , ele vai atualizar baseado no valor do banco! Isso é mais reprodutível.
 
-```{r include=F}
-tab5 <- tab3  %>% 
-  font(part = "all", fontname = "Poppins")
+-   **PARA CONDICIONAR SOBRE OS NÚMEROS, O R TEM QUE ESTAR RECONHECENDO COMO NUMÉRICO**
 
-  tab5 %>% save_as_image("../img/tab8.png")
+    -   Por isso removi o mutate_if() que haviamos feito no início da manipulação.
+    -   Há possibilidade de mudar isso na própria tabela.
 
-```
+## Tarefa do fim do módulo
 
-![](../img/tab8.png){fig-alt="Tab4" fig-align="center" width="100%"}
+-   Entregar uma tabela em Word (.docx) criada com o **flextable** com uma base de dados do seu interesse. O código .Rmd deve ser entregue juntamente com a tabela gerada.
 
-# Até mais, pessoal!
+-   Sugiro não utilizar as mesmas bases que usamos aqui na aula, a não ser que faça uma abordagem muito diferentes das já feitas.
+
+-   Para chegar na tabela, você deve usar funções de manipulações de dados de acordo como seu objetivo. Deve conter pelo menos alguma manipulação com o *filter()* e com o *mutate()*, **no mínimo**.
+
+-   Deve conter pelo menos 3 funções de formatação da tabela.
+
+-   **Desafio:** usar funções novas de formatação ou manipulação não apresentadas na aula.
+
+# Até o próximo módulo!
