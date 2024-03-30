@@ -1,0 +1,269 @@
+---
+title: "Aula 33 - Mapas iterativos"
+subtitle: "Módulo 3: Apresentando suas análises"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Esta semana
+
+### Aula 31 - Mapas {style="color: gray;"}
+
+-   [O que é GIS, como usar ggplot para Mapas ...]{style="color: gray;"}
+
+### Aula 32 - Meu primeiro Mapa {style="color: gray;"}
+
+-   [Mapa usando shapefiles salvos no computador e outras formas.]{style="color: gray;"}
+
+### Aula 33 - Mapas Iterativos
+
+-   Um gostinho de mapas iterativos para dashboards
+
+## Leituras para aprofundamento
+
+-   [Cap 42 Dashboards with R, The Epidemiologist R Handbook](https://epirhandbook.com/en/gis-basics.html)
+
+-   [Flexdashboard 1](https://pkgs.rstudio.com/flexdashboard/),
+
+-   [Flexdashboard 1](https://www.fulljoin.com.br/posts/2019-12-30-dashboards-no-r-com-o-pacote-flexdashboard/),
+
+-   [leaflet](https://leafletjs.com),
+
+-   [Making Maps with R](https://bookdown.org/nicohahn/making_maps_with_r5/docs/leaflet.html)
+
+-   [leafeflet for R](https://rstudio.github.io/leaflet/)
+
+-   [Curso DataCamp](https://app.datacamp.com/learn/courses/interactive-maps-with-leaflet-in-r)
+
+-   [Quarto](https://quarto.org)
+
+## Dashboards
+
+-   [Shiny](https://www.rstudio.com/products/shiny) , o mais famoso, poderoso, flexível, R e Python.
+
+[![](../img/shiny.jpeg){fig-align="center"}](https://www.rstudio.com/products/shiny/)
+
+-   Veja [aqui](https://shiny.posit.co)
+
+-   Mas ...pode ser bem difícil
+
+## Veja o código
+
+```{r eval=F}
+
+
+penguins_csv <- "https://raw.githubusercontent.com/jcheng5/simplepenguins.R/main/penguins.csv"
+
+df <- readr::read_csv(penguins_csv)
+# Find subset of columns that are suitable for scatter plot
+df_num <- df |> select(where(is.numeric), -Year)
+
+ui <- page_sidebar(
+  theme = bs_theme(bootswatch = "minty"),
+  sidebar = sidebar(
+    varSelectInput("xvar", "X variable", df_num, selected = "Bill Length (mm)"),
+    varSelectInput("yvar", "Y variable", df_num, selected = "Bill Depth (mm)"),
+    checkboxGroupInput(
+      "species", "Filter by species",
+      choices = unique(df$Species), 
+      selected = unique(df$Species)
+    ),
+    hr(), # Add a horizontal rule
+    checkboxInput("by_species", "Show species", TRUE),
+    checkboxInput("show_margins", "Show marginal plots", TRUE),
+    checkboxInput("smooth", "Add smoother"),
+  ),
+  plotOutput("scatter")
+)
+
+server <- function(input, output, session) {
+  subsetted <- reactive({
+    req(input$species)
+    df |> filter(Species %in% input$species)
+  })
+
+  output$scatter <- renderPlot({
+    p <- ggplot(subsetted(), aes(!!input$xvar, !!input$yvar)) + list(
+      theme(legend.position = "bottom"),
+      if (input$by_species) aes(color = Species),
+      geom_point(),
+      if (input$smooth) geom_smooth()
+    )
+
+    if (input$show_margins) {
+      margin_type <- if (input$by_species) "density" else "histogram"
+      p <- ggExtra::ggMarginal(p, type = margin_type, margins = "both",
+        size = 8, groupColour = input$by_species, groupFill = input$by_species)
+    }
+
+    p
+  }, res = 100)
+}
+
+shinyApp(ui, server)
+```
+
+## Outra opção
+
+-   Flexdashboard
+
+-   Baseado em R Markdown
+
+-   Pode ser salvo em html, partilhado ou publicado em uma página simples.
+
+-   Precisamos então...
+
+## Da preparação de sempre
+
+```{r}
+rm(list=ls())  #limpa  o ambient
+if (!require(pacman)) install.packages("pacman") #garante que tem o pacman
+pacman::p_load(tidyverse, rio, sf, rnaturalearth,  geobr,
+               lubridate, ggspatial, ggthemes, gsubfn, ggsn,
+               leaflet, htmlwidgets, flexdashboard, shiny, 
+               bslib,ggExtra, plotly ) 
+
+pacman::p_load_gh("yutannihilation/ggsflabel")
+```
+
+## Veja como abrir o arquivo de Dashboard
+
+::: columns
+::: {.column width="40%"}
+![](../img/file_rmd.png){fig-align="center"}
+:::
+
+::: {.column width="60%"}
+![](../img/template_dash1.png)
+:::
+:::
+
+## Flexdashboard
+
+### Cabeçalho YAML
+
+```{yaml}
+---
+title: "Meu primeiro Dash"
+author: "Professora maravilhosa"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    self-contained: true
+---
+```
+
+-   **Exemplos**
+
+    -   Meu primeiro Dashboard
+    -   Veja o trabalho de [Bruna Paes](https://rpubs.com/sdsunb/painel-csap-df)
+
+# Vamos aos mapas!
+
+## Leaflet
+
+-   JavaScript
+-   Na prática acaba sendo tipo um ggplot, mas as camadas são adicionadas com o %\>% mesmo.
+
+[![](../img/leaf.png){fig-align="center"}](https://leafletjs.com)
+
+## Exemplo
+
+Onde o R Nasceu
+
+```{r}
+leaflet() %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addMarkers(lng=174.768, lat=-36.852, popup="The birthplace of R")
+```
+
+## Brasil
+
+```{r eval=F}
+regiao_geobr <- read_region() %>% 
+  rename(regiao=`name_region`) %>% 
+  mutate(regiao=if_else(regiao=="Centro Oeste", "Centro-Oeste", regiao))
+
+brasil_bruto <- import("covid_br_2022.csv")
+
+brasil_regiao <- brasil_bruto %>% 
+  filter(codmun != "") %>% 
+  group_by(regiao) %>% 
+  summarise(Maximo_dia=max(casosNovos, na.rm=T)) 
+
+brasil_regiao_geom <- brasil_regiao%>% 
+  left_join(regiao_geobr) %>% 
+  mutate(LL=st_coordinates(st_centroid(geom)))
+
+
+leaflet(brasil_regiao_geom) %>%
+  addTiles() %>% 
+  addCircles(lng = ~LL[,"X"], lat = ~LL[,"Y"], weight = 1,
+    radius = ~Maximo_dia*10, popup = ~paste(regiao, 
+                                            format(Maximo_dia, big.mark="."), "casos"
+  ))
+
+
+
+```
+
+. . .
+
+```{r echo=F, results='hide'}
+regiao_geobr <- read_region() %>% 
+  rename(regiao=`name_region`) %>% 
+  mutate(regiao=if_else(regiao=="Centro Oeste", "Centro-Oeste", regiao))
+```
+
+```{r echo=F }
+brasil_bruto <- import("covid_br_2022.csv")
+
+brasil_regiao <- brasil_bruto %>% 
+  filter(codmun != "") %>% 
+  group_by(regiao) %>% 
+  summarise(Maximo_dia=max(casosNovos, na.rm=T)) 
+
+brasil_regiao_geom <- brasil_regiao%>% 
+  left_join(regiao_geobr) %>% 
+  mutate(LL=st_coordinates(st_centroid(geom)))
+
+
+leaflet(brasil_regiao_geom) %>%
+  addTiles() %>% 
+  addCircles(lng = ~LL[,"X"], lat = ~LL[,"Y"], weight = 1,
+    radius = ~Maximo_dia*10, popup = ~paste(regiao, 
+                                            format(Maximo_dia, big.mark="."), "casos"
+  ))
+
+
+
+```
+
+## Já que estamos aqui...
+
+```{r}
+graf <- brasil_regiao %>% 
+  ggplot(aes(x=regiao, y=Maximo_dia))+
+  geom_col()
+
+ggplotly(graf)
+```
+
+# Gostaram?

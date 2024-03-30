@@ -1,0 +1,683 @@
+---
+title: "Aula 34 - Rmarkdown avançado"
+subtitle: "Módulo 3: Apresentando suas análises"
+author: "Carolina Musso"
+institute: "PROFESP, DEMSP, MS"
+format:
+  revealjs:
+    scrollable: true
+    preview-links: true
+    incremental: true 
+    theme: default
+    code-block-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+filters:
+  - roughnotation
+editor: visual
+---
+
+## Esta semana
+
+```{r include=F}
+rm(list=ls())
+if(!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, gt, kableExtra, htmltools, 
+               officer, flextable, stringi)
+```
+
+### Aula 33 - Rmarkdown avançado
+
+-   Compilando apresentações em power-point e pdf
+
+### Aula 34 - Rmardown & Word
+
+-   Edições específicas para .docx
+
+### Aula 35 - Fim do curso!
+
+-   Aula síncrona!
+
+## Leituras para aprofundamento
+
+-   [EpiR-Handbook, Cap 40, Reports with Rmarkdown](https://epirhandbook.com/en/reports-with-r-markdown.html)
+
+-   [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/),
+
+-   [R Markdown Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/),
+
+-   [Livro Curso-R: Capítulo 9 Relatórios](https://livro.curso-r.com/9-relatorios.html)
+
+-   [DataCamp: Curso Reporting with RMarkdown](https://app.datacamp.com/learn/search?q=rmarkdown)
+
+-   [RMarkdown para cientistas](https://rmd4sci.njtierney.com/figures-tables-captions-.html)
+
+-   [Quarto](https://quarto.org)
+
+## Introdução
+
+-   RMarkdown e suas aplicações na epidemiologia em saúde.
+
+. . .
+
+<center><img src="img/ciclo.png" width="760px"/></center>
+
+-   Muito tempo + softwares + profissionais
+
+    -   Maior possibilidade de erro
+
+## Documentos reprodutíveis
+
+-   Economia de tempo
+
+-   Não ficam atreladas a uma pessoa
+
+. . .
+
+![](img/repro.jpeg){fig-align="center" width="528"}
+
+## Bons costumes: projetos
+
+-   Ter um "pacotinho" reprodutível.
+
+-   Pasta do projeto
+
+    -   com subpastas
+
+        -   caminho relativo, em vez de caminho absoluto.
+
+. . .
+
+![](images/proj-01.png){fig-align="center"}
+
+## Revisando: Estrutura do RMarkdown
+
+::: columns
+::: {.column width="20%"}
+::: nonincremental
+-   Cabeçalho
+
+-   Código
+
+-   Texto
+:::
+:::
+
+::: {.column width="80%"}
+![](img/tela_markdown.png){fig-align="center" width="700"}
+:::
+:::
+
+. . .
+
+![](images/proj.png){fig-align="center" width="477"}
+
+## Opções no
+
+-   Vimos no cabeçalho do chunk
+
+-   Título no chunk
+
+```{r, um_titlo}
+
+```
+
+-   *echo=* ; *message=* ; *warning=* ; *include=*
+
+-   *eval=*
+
+-   *results=*
+
+## Chunk geral
+
+-   Onde é possível fazer nele as configurações gerais
+
+. . .
+
+```{r eval=F}
+knitr::opts_chunk$set(echo = FALSE,
+                      message  = FALSE, 
+                      warning= FALSE)
+```
+
+Mais coisas no site do [YiHui](https://yihui.org/knitr/options/) 
+
+## Outros formatos...
+
+-   HTML, PDF, Power Point, ...
+
+## PPT
+
+```{yaml}
+---
+title: "Título"
+subtitle: "Subtitle"
+date: "22/10"
+output:powerpoint_presentation:
+---
+```
+
+. . .
+
+```{yaml}
+---
+title: "Título"
+subtitle: "Subtitle"
+date: "22/10"
+output:
+  powerpoint_presentation:
+    reference_doc: template.pptx
+---
+```
+
+## HTML
+
+-   Muitas funcionalidades
+
+    -   Dashboard, disponibilidade online, interatividade
+    -   ...
+
+. . .
+
+```{yaml, echo=T}
+---
+title: "Untitled"
+author: "Carolina Musso"
+date: "2023-08-19"
+output: html_document
+---
+```
+
+. . .
+
+```{r echo=F}
+
+
+# Add tooltip to column labels
+with_tooltip <- function(value, tooltip) {
+  tags$abbr(style = "text-decoration: underline; text-decoration-style: solid; cursor: question; color: blue",
+            title = tooltip, value)
+}
+
+# note you could use ANY font-awesome logo
+# https://fontawesome.com/cheatsheet
+rating_stars <- function(rating, max_rating = 5) {
+  rounded_rating <- floor(rating + 0.5)  # always round up
+  stars <- lapply(seq_len(max_rating), function(i) {
+    if (i <= rounded_rating) fontawesome::fa("star", fill= "orange") else fontawesome::fa("star", fill= "grey")
+  })
+  label <- sprintf("%s out of %s", rating, max_rating)
+  div_out <- div(title = label, "aria-label" = label, role = "img", stars)
+  
+  as.character(div_out) %>% 
+    gt::html()
+}
+
+rank_chg <- function(change_dir){
+  if (change_dir == "increase") {
+    logo_out <- fontawesome::fa("arrow-up", fill = "blue")
+  } else if (change_dir == "decrease"){
+    logo_out <- fontawesome::fa("arrow-down", fill = "red")
+  }
+  
+  logo_out %>% 
+    as.character() %>% 
+    gt::html()
+  
+}
+
+add_cyl_color <- function(cyl){
+      add_color <- if (cyl == 4) {
+        "background: hsl(116, 60%, 90%); color: hsl(116, 30%, 25%);"
+      } else if (cyl == 6) {
+        "background: hsl(230, 70%, 90%); color: hsl(230, 45%, 30%);"
+      } else if (cyl == 8) {
+        "background: hsl(350, 70%, 90%); color: hsl(350, 45%, 30%);"
+      }
+      div_out <- htmltools::div(
+        style = paste(
+          "display: inline-block; padding: 2px 12px; border-radius: 15px; font-weight: 600; font-size: 12px;",
+          add_color
+          ),
+        paste(cyl, "Cylinders")
+      )
+      
+      as.character(div_out) %>% 
+        gt::html()
+}
+
+bar_chart <- function(value, color = "red"){
+    
+    glue::glue("<span style=\"display: inline-block; direction: ltr; border-radius: 4px; padding-right: 2px; background-color: {color}; color: {color}; width: {value}%\"> &nbsp; </span>") %>% 
+    as.character() %>% 
+    gt::html()
+}
+
+
+set.seed(377)
+mpg_rng <- range(mtcars$mpg)
+mtcars %>% 
+  tibble() %>% 
+  select(1:4) %>% 
+  sample_n(size = 6) %>% 
+  mutate(
+    rank_change = sample(c("increase", "decrease"), size = 6, replace = TRUE),
+    rank_change = map(rank_change, rank_chg)
+  )%>% 
+  mutate(
+    rating = sample(1:5, size = 6, replace = TRUE),
+    rating = map(rating, rating_stars)
+    ) %>% 
+  mutate(
+    cylinder = map(cyl, add_cyl_color)
+  ) %>% 
+  mutate(
+    mpg_plot = mpg/max(mpg) * 100,
+    mpg_plot = map(mpg_plot, ~bar_chart(value = .x, color = "lightblue"))
+    ) %>% 
+  gt() %>% 
+  cols_align(
+    align = "left",
+    columns = vars(mpg_plot)
+  ) %>% 
+  cols_label(
+    mpg = gt::html(as.character(with_tooltip("MPG", "Miles per Gallon")))
+  ) %>% 
+  tab_source_note(
+    source_note = html(
+      htmltools::tags$a(
+        href = "https://gt.rstudio.com/reference/md.html", 
+        target = "_blank", 
+        "Data Source"
+        ) %>% 
+        as.character()
+      )
+    ) %>% 
+  tab_source_note(
+    source_note = html(
+      "<details><h3 style='font-face:bold'>Table Key</h3><div>MPG: Miles Per Gallon</div><div>Cyl: Cylinders</div><div>disp: Displacement</div><div>hp: Horsepower</div><div>rank_change: Rank Change</div><div>rating: Rating</div></details>"
+    )
+  ) %>% 
+  tab_options(
+    data_row.padding = px(5)
+  )
+
+bar_chart <- function(value, color = "red"){
+    
+    glue::glue("<span style=\"display: inline-block; direction: ltr; border-radius: 4px; padding-right: 2px; background-color: {color}; color: {color}; width: {value}%\"> &nbsp; </span>") %>% 
+    as.character() %>% 
+    gt::html()
+}
+```
+
+-   [Fonte](https://themockup.blog/posts/2020-10-31-embedding-custom-features-in-gt-tables/)
+
+## PDF
+
+-   Compilar em .pdf -\> LateX
+
+-   Documentos técnicos, científicos e profissionais com formatação precisa.
+
+-   Usa comandos de marcação para estruturar o conteúdo, como títulos, equações e tabelas.
+
+-   Qualidade tipográfica consistente, sendo útil para equações complexas, índices e citações formatadas.
+
+## PDF
+
+-   Precisamos instalar uma "engine"
+
+-   No R: tinytex
+
+    -   instala pelo R
+    -   mais leve
+
+. . .
+
+```{r eval=F, echo=T}
+pacman::p_load(tinytex)
+tinytex::install_tinytex()
+```
+
+## Um exemplo de relatório em PDF
+
+```{yaml, echo=T}
+---
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_file=paste0("Boletins/Boletim_Covid_View",
+  format(as.Date(Sys.time()),'%d.%m.%y'), ".pdf"))})
+output:
+  pdf_document:
+    fig_crop: false
+    includes:
+      in_header: Arquivos_auxiliares/preamble.tex
+  word_document: default
+mainfont: Arial
+geometry: "left=3cm,right=3cm,top=2.5cm,bottom=2cm, headsep=1.5cm"
+header-includes: |
+  \usepackage{booktabs}
+  \usepackage{float}
+  \usepackage{newfloat}
+  \usepackage{framed}
+  \usepackage{color}
+  \usepackage{float}
+  \usepackage{fancyhdr}
+  \usepackage[format=hang,font=small,labelfont=bf]{caption}
+  \captionsetup{width=150mm}
+  \usepackage{tabularx}
+  \usepackage{array}
+  \usepackage[brazil]{babel}
+  \pagestyle{fancy}
+  \fancyhead{}
+  \fancyfoot{}
+  \usepackage{graphicx}
+  \usepackage{fancyhdr}
+  \pagestyle{fancy}
+  \setlength\headheight{25pt}
+  \fancyhead[L]{\textbf{Gerência de Epidemiologia de Campo \\ Diretoria de Vigilância Epidemiológica }}
+  \fancyhead[C]{\includegraphics[width = .2\textwidth]{Arquivos_auxiliares/gdf.png}} 
+  \fancyhead[R]{\textbf{ Subsecretaria de Vigilância em Saúde\\ Secretaria de Saúde do Distrito Federal}}
+  \lfoot{\today}\rfoot{Pag \thepage}
+  \usepackage[default]{sourcesanspro}
+  \usepackage[T1]{fontenc}
+  \DeclareFloatingEnvironment[listname=loq, listname={Lisra de Quadros}]{quadro}
+  \newenvironment{ctable}{\comicfont }{}
+  \usepackage{enumitem,booktabs,cfr-lm}
+  \usepackage[referable]{threeparttablex}
+  \renewlist{tablenotes}{enumerate}{1}
+  \makeatletter
+  \setlist[tablenotes]{label=\tnote{\alph*},ref=\alph*,align=left,before={\footnotesize}}
+  \makeatother
+  \setlength\parindent{24pt}
+  \usepackage{setspace}\doublespacing
+  \usepackage{indentfirst}
+  \usepackage{pdflscape}
+  \newcommand{\blandscape}{\begin{landscape}}
+  \newcommand{\elandscape}{\end{landscape}}
+---
+```
+
+. . .
+
+{{< pdf https://www.saude.df.gov.br/documents/37101/0/SEM_Boletim_Covid_n972+DF+2023.pdf width=100% height=800 >}}
+
+## Templates
+
+```{yaml,echo=T}
+---
+titulo: "Análise de Dados Categorizados"
+subtitulo: "Trabalho Final"
+aluno1:  "Carolina Musso 18/0047850"
+aluno2: "Juliana Magalhães Rosa 18/0020935"
+orientador: "Maria Teresa Leão"
+ano: "1/2023"
+referencias: auxiliar/referencias.bib
+output: 
+  bookdown::pdf_document2:
+    template: auxiliar/template.tex
+---
+
+```
+
+## Templates
+
+-   Arquivo .tex
+
+. . .
+
+```{latex, results='asis'}
+
+%%%
+% TIPO DE DOCUMENTO E PACOTES ----
+%%%%
+\documentclass[12pt, a4paper, twoside]{article}
+\usepackage[left = 3cm, top = 3cm, right = 2cm, bottom = 2cm]{geometry}
+
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+
+\usepackage[brazilian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+\usepackage{amsmath, amsfonts, amssymb}
+\numberwithin{equation}{subsection} %subsection
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{titletoc,titlesec}
+\usepackage{setspace}
+\usepackage{indentfirst}
+%\usepackage{natbib}
+\usepackage[colorlinks=true, allcolors=black]{hyperref}
+%\usepackage[brazilian,hyperpageref]{backref}
+\usepackage[alf]{abntex2cite}
+\usepackage{multirow} % https://www.ctan.org/pkg/multirow
+%\\usepackage{float} % https://www.ctan.org/pkg/float
+\usepackage{booktabs} % https://www.ctan.org/pkg/booktabs
+\usepackage{enumitem} % https://www.ctan.org/pkg/enumitem
+\usepackage{quoting} % https://www.ctan.org/pkg/quoting
+\usepackage{epigraph}
+\usepackage{subfigure}
+\usepackage{anyfontsize}
+\usepackage{caption}
+\usepackage{adjustbox}
+\usepackage{bm}
+\usepackage{floatrow}
+\floatsetup[figure]{capposition=bottom}
+\floatsetup[table]{capposition=top}
+
+
+
+
+\raggedbottom % https://latexref.xyz/_005craggedbottom.html
+
+
+% COMANDOS -----
+%%%%
+
+\newtheorem{teo}{Teorema}[section]
+\newtheorem{lema}[teo]{Lema}
+\newtheorem{cor}[teo]{Corolário}
+\newtheorem{prop}[teo]{Proposição}
+\newtheorem{defi}{Definição}
+\newtheorem{exem}{Exemplo}
+
+\newcommand{\titulo}{$titulo$ \\ $subtitulo$}
+\newcommand{\autora}{$aluno1$}
+\newcommand{\autorb}{$aluno2$}
+\newcommand{\autorc}{$aluno3$}
+\newcommand{\autord}{$aluno4$}
+\newcommand{\orientador}{ $orientador$ }
+\usepackage[labelsep=period,labelfont=bf
+]{caption}
+
+
+
+
+\pagestyle{fancy}
+\fancyhf{}
+%\renewcommand{\headrulewidth}{0pt}
+\setlength{\headheight}{16pt}
+%C - Centro, L - Esquerda, R - Direita, O - impar, E - par
+\fancyhead[RO, LE]{\thepage}
+\renewcommand{\sectionmark}[1]{\markboth{#1}{}}
+
+\titlecontents{section}[0cm]{}{\bf\thecontentslabel\ }{}{\titlerule*[.75pc]{.}\contentspage}
+\titlecontents{subsection}[0.75cm]{}{\thecontentslabel\ }{}{\titlerule*[.75pc]{.}\contentspage}
+
+\setcounter{secnumdepth}{3}
+%\setcounter{tocdepth}{3}
+
+\DeclareCaptionFormat{myformat}{ \centering \fontsize{10}{12}\selectfont#1#2#3}
+\captionsetup{format=myformat}
+
+%%%
+%% INÍCIO DO DOCUMENTO 
+%%%%%%
+
+%% CAPA ----
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\begin{figure}[h!]
+	\centering
+		\includegraphics[scale = 0.8]{img/unb.png}
+	\label{fig:unb}
+\end{figure}
+{\bf Universidade de Brasília \\
+\bf Instituto de Exatas \\
+\bf Departamento de Estatística}
+\vspace{5cm}
+
+\setcounter{page}{0}
+\null
+\Large
+\textbf{\titulo}
+\vspace{2.5cm}
+
+\small
+\vspace{0.2cm}
+\textbf{\autora}\\
+\textbf{\autorb}\\
+\textbf{\autorc}\\
+\textbf{\autord}\\
+
+\vspace{1.5cm}
+\small
+Professor(a): \orientador \\
+\end{center}
+
+
+
+\vspace{5cm}
+
+\begin{center}
+{\bf{Brasília} \\ }
+\bf{$ano$}
+\end{center}
+\end{titlepage}
+
+
+
+\newpage
+
+\pagenumbering{arabic}
+\setcounter{page}{2}
+\onehalfspacing
+
+
+
+
+\setlength{\parindent}{1.5cm}
+\setlength{\parskip}{0.2cm}
+\setlength{\intextsep}{0.5cm}
+
+\titlespacing*{\section}{0cm}{0cm}{0.5cm}
+\titlespacing*{\subsection}{0cm}{0.5cm}{0.5cm}
+\titlespacing*{\subsubsection}{0cm}{0.5cm}{0.5cm}
+\titlespacing*{\paragraph}{0cm}{0.5cm}{0.5cm}
+
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+
+\pagenumbering{arabic}
+\setcounter{page}{3}
+
+\fancyhead[RE, LO]{\nouppercase{\emph\leftmark}}
+%\fancyfoot[C]{Departamento de Estatística}
+
+% SUMÁRIO
+%%%
+
+\tableofcontents
+
+\newpage
+
+
+% CONTEÚDO (AS SEÇÕES SAO SEPARADAS NO RMARKDOWN) ---
+%%%
+
+
+$body$
+
+
+%% CRONOGRAMA ----
+%%%
+
+
+
+%% REFERÊNCIAS ----
+\newpage
+\bibliography{$referencias$}
+
+
+\end{document}
+
+```
+
+## Templates
+
+. . .
+
+{{< pdf trabalho.pdf width=100% height=800 >}}
+
+## Outras formas de apresentação
+
+-   Aula de [Xaringan Beatriz Milz](https://beatrizmilz.github.io/slidesR/xaringan/09-2021-rday.html#9)
+
+-   [A palestra Quarto](https://www.youtube.com/watch?v=7nnZGIQEy7E)
+
+-   [Apresentações](https://thomasmock.quarto.pub/reports-presentations/#/title-slide)
+
+## Officer
+
+```{r}
+my_pres <- read_pptx() 
+layout_summary(my_pres)
+```
+
+```{r}
+my_pres <- my_pres %>% 
+  add_slide(layout = "Title and Content", master = "Office Theme") %>% 
+  ph_with(value = c("Table cars"),
+          location = ph_location_type(type = "title")) %>% 
+  ph_with(value = c("Nota , fontes ..."),
+          location = ph_location_type(type = "ftr")) %>% 
+  ph_with(value = stri_rand_lipsum(1, start_lipsum = TRUE),
+          location = ph_location_type(type = "body"), index=1) 
+
+
+print(my_pres, target = "Example.pptx") %>% 
+  invisible()
+
+```
+
+-   [Officer](https://davidgohel.github.io/officer/)
+
+-   [Powerpoint Presentaion](http://cran.nexr.com/web/packages/officer/vignettes/powerpoint.html)
+
+-   [Officer for PowerPoint](file:///Users/carolinamusso/Desktop/R-PROFESP/Aula34_Rmarkdown_avancado.html#/officer)
+
+## Extensões
+
+**Rmd**
+
+-   [Bookdown](https://bookdown.org)
+
+-   [Pagedown](https://pagedown.rbind.io)
+
+. . .
+
+**qmd**
+
+-   [Coisas legais como]{.rn rn-color="orange"}
+
+-   <https://quarto.org/docs/extensions/>
+
+# Obrigada!
