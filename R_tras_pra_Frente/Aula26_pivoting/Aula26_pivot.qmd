@@ -57,7 +57,7 @@ Paleta de cores, temas, e outras firulas
 
 . . .
 
-#### Pacote tidy
+#### Pacote tidyR
 
 -   Deixar o data frame no formato ideal.
 
