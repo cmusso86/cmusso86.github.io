@@ -205,7 +205,7 @@ linelist <- import("linelist_cleaned.rds") %>%
          age_years>=0) 
 ```
 
-## Histrograma
+## Histograma
 
 -   Precisa de uma variável só: **Entender a sua distribuição**
 
