@@ -43,7 +43,7 @@ Extensões do ggplot , inclusão de texto e imagens, gráficos de Violino, Jitte
 
 -   [EpiRHabdbook - ggplot basics](https://epirhandbook.com/en/ggplot-basics.html?q=facet#ggplot-basics)
 
--   [Pacote patckwork](https://patchwork.data-imaginist.com)
+-   [Pacote patchwork](https://patchwork.data-imaginist.com)
 
 ## Vários gráficos
 
@@ -157,7 +157,7 @@ ggplot(linelist, aes(x = age, y = wt_kg))+
   facet_wrap(~age_cat, ncol = 4)
 ```
 
-## Pacote patckwork
+## Pacote patchwork
 
 ```{r}
 p1 <- ggplot(linelist, aes(x = age, y = wt_kg))+
