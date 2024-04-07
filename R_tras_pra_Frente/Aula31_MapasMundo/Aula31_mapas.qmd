@@ -31,9 +31,9 @@ editor: source
 
 -   Mapa do Brasil usando shapefiles salvos no computador..
 
-### Aula 33 - Mapas Iterativos
+### Aula 33 - Mapas Interativos
 
--   Um gostinho de mapas iterativos para dashboards
+-   Um gostinho de mapas interativos para dashboards
 
 ## Leituras para aprofundamento
 
