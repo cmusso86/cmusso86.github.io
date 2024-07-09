@@ -1,0 +1,109 @@
+/*-- scss:defaults --*/
+
+
+// fonts
+@font-face {
+  font-display: swap; 
+  font-family: 'Lato';
+  src: url('/Users/carolinamusso/Downloads/unb/unb-office_regular.ttf');
+}
+
+
+.reveal .slide-logo {
+  display: block;
+  position: left;
+  bottom: unset !important;
+  right: 1200px;
+  top: 8px;
+  left: unset !important;
+  height: 100px !important;
+  width: 100px !important;
+  max-width: unset !important;
+  max-height: unset !important;
+}
+
+
+
+// colors
+$body-bg: #FFFFFF !default;
+$body-color: #273a8c !default;
+$link-color: #24979b !default;
+$selection-bg:#24979b  !default;
+$presentation-heading-color: #24979b;
+$code-color:#24979b;
+$code-block-bg:#fbf6b8;
+$code-block-border-color:#273a8c;
+
+
+
+/*-- scss:rules --*/
+
+// Slide numbers to the bottom-left
+.slide-number, .reveal.has-logo .slide-number {
+  bottom: 14px !important;
+  right: 50px !important;
+  top: unset !important;
+  color: #777777 !important;
+}
+
+
+#title-slide {
+  
+  font-family: 'Lato';
+    src: url('../../../../../lato/Lato-Regular.ttf');
+  text-align: left;
+  .quarto-title-authors {
+    justify-content: left;
+    .quarto-title-author { // optional, test it for yourself
+      padding-left: 0;
+      padding-right: 0;
+      width: 38%;
+    }
+  }
+}
+
+
+/*-- scss:rules --*/
+
+.stacked-columns {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Optional: Center the columns horizontally */
+  }
+
+  /* Optional: Set a maximum width for the columns */
+  .quarto-column {
+    max-width: 600px; /* Adjust the value as needed */
+  }
+.text-col {
+  height: 80%;
+  background-color: lightgray;
+  padding-left: 10px;
+  box-sizing: border-box;
+}
+
+// Define your variables
+$body-font-size: 50px; // Replace with your desired font size
+$subtitle-font-size: 80px; // Replace with your desired font size
+
+// Customize the body text
+body, .reveal .slides section {
+  font-size: $body-font-size;
+}
+
+// Customize the subtitle in the title slide
+.reveal .slides section h2 {
+  font-size: $subtitle-font-size;
+}
+
+// Additional customizations for title and headings
+.reveal .slides section h1 {
+  font-size: 2.5em; // Customize as needed
+}
+
+.reveal .slides section h3,
+.reveal .slides section h4,
+.reveal .slides section h5,
+.reveal .slides section h6 {
+  font-size: 1.5em; // Customize as needed
+}
