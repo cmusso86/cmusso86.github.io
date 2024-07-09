@@ -21,7 +21,7 @@ editor: source
 bibliography: ref.bib
 ---
 
-## Programção
+## Programação
 
 ### Aula 33 - Rmarkdown avançado {style="color: gray;"}
 
@@ -158,7 +158,7 @@ csl: abnt.csl
 -   Introdução e interpretação dos resultados.
 -   Todos (ou quase) os valores, do texto devem ser automatizados com o código *inline*:
     -   \` r objeto \`.
--   Deve conter pelo menos **1** customização do cabeçalho YAML, podendo ser
+-   Deve conter pelo menos **1** customização do cabeçalho YAML.
 -   Deve-se prezar o máximo pela formatação do trabalho.
 
 ## Instruções para o trabalho final
