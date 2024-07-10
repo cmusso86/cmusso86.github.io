@@ -420,9 +420,9 @@ ajuste_modelo + p_value_local
 
   -   Torres et al (2024): Calibration across various representations of the covariate space: useful for Artificial Neural Networks (ANNs).
 
-. . .
 
-**Algorithm**
+
+## Algorithm
 
 ![](imgs/algo.png){fig-align="center"}
 
@@ -530,7 +530,7 @@ gg_PIT_local(pit_local)+
 # Neural Networks
 
 
-## Neural Network example
+## 
 
 **Data**
 ```{r}
@@ -563,9 +563,9 @@ y_test  <- y[(split2*n+1):n]
 
 ```
 
-. . . 
 
-**Keras**
+
+## Keras
 ```{r, eval=F}
 model_nn <- keras_model_sequential()
 
@@ -979,4 +979,4 @@ diamGlob + diamLoc
 
 # Thank You!
 
-[GitHub](
+[GitHub](https://github.com/cmusso86/cmusso86.github.io.git/UseR2024)
