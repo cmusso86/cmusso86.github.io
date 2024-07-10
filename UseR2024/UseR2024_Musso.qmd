@@ -979,4 +979,4 @@ diamGlob + diamLoc
 
 # Thank You!
 
-[GitHub](https://github.com/cmusso86/cmusso86.github.io.git/UseR2024)
+[GitHub](https://github.com/cmusso86/cmusso86.github.io.git)
