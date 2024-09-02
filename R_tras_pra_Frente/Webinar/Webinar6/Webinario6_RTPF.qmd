@@ -1,0 +1,420 @@
+---
+title: "Webinario 6"
+subtitle: "Visualização de dados"
+author: 
+  - Carolina Musso
+institute: "PROFESP/DEMSP/SVSA/MS"
+format:
+  revealjs:
+    incremental: true 
+    multiplex: true
+    scrollable: true
+    theme: style.scss
+    logo: img/logo_R.png
+    code-blo=k-border-left: "#31BAE9"
+    code-block-bg: "#011627"
+    code-overflow: wrap
+    transition: fade
+    self-contained: true
+knitr:
+  opts_chunk:
+    echo: false
+    warnings: false
+editor: source
+markdown: 
+    wrap: 72
+---
+
+
+## Exploratória X Descritiva
+
+**Análise Exploratória**
+
+-   É um trabalho de **investigação** de dados
+
+    -   A ferramenta: precisa ser **rápida/fácil**
+
+    -   O objetivo é **aprender**
+
+. . .
+
+**Análise descritiva**
+
+-   É um trabalho de **otimização visual**
+
+    -   A ferramenta: precisa ser **customizável**
+
+    -   O objetivo é **comunicar**
+
+. . .
+
+### Spoiler alert
+
+-   o ggplot2 faz as duas coisas!
+
+## Onde usamos a visualização
+
+![](../img/ciclo.png){fig-align="center"}
+
+## Exploratória X Descritiva
+
+**Exploratória**
+
+```{r}
+#| echo: true
+pacman::p_load(tidyverse, palmerpenguins, fstatix,
+               ggtext, esquisse, palmerpenguins)
+ggplot(data = mtcars, aes(x = hp, y = mpg)) +
+  geom_point()
+```
+
+. . .
+
+**Descritiva**
+
+```{r}
+#| echo: true
+
+ggplot(data = mtcars, aes(x = hp, y = mpg)) +
+  geom_point(size=3, color = "steelblue4") +
+  geom_smooth(se = F, color = "indianred3")+
+  theme_classic(base_size = 16) +
+  labs(title = "Relação entre cavalos e consumo de combustível",
+       x = "Cavalos",
+       y = "Milhas por galão")
+```
+
+## Primeiro passo
+
+::: columns
+::: {.column width="50%"}
+::: nonincremental
+-   Conhecer suas variáveis.
+
+-   Numéricas/Quantitativas: contínuas e discretas
+
+-   Categóricas/Qualitativas: Nominais e Ordinais
+:::
+
+![](../img/var.png){fig-align="center"}
+:::
+
+::: {.column width="50%"}
+![](../img/var2.jpg){fig-align="center"}
+:::
+:::
+
+# Tipos de gráficos
+
+## 1 variável quantitativa
+
+```{r}
+
+
+
+
+ggplot(data = iris, aes(x = Sepal.Length)) +
+  geom_histogram(aes(y = ..density..), fill = "steelblue4", color = "white") +
+  geom_density(alpha = 0.2, fill = "steelblue4" , bw = 0.2, bounds =c(0,9)) + #ajustar limites da densidade para zero
+  
+  theme_classic(base_size = 16) +
+  labs(title = "Distribuição do comprimento da sépala",
+       x = "Comprimento da sépala",
+       y = "Densidade")
+
+
+
+
+```
+
+## 2 quantitativas e 2 categórica
+
+```{r}
+# Gráfico com a base penguind de dispersao com as cores por especie e tamanho por massa corporal e comprimento da nadadeira e facetado por ilha
+
+
+ggplot(data = penguins, aes(x = body_mass_g, y = flipper_length_mm, color = species)) +
+  geom_point(size = 3) +
+  theme_classic(base_size = 16) +
+  labs(title = "Relação entre massa corporal e comprimento da nadadeira",
+       x = "Massa corporal (g)",
+       y = "Comprimento da nadadeira (mm)")+
+  scale_color_brewer(name = "Espécie", palette = "Set2")+
+  facet_wrap(~island)
+
+
+```
+
+## Sites interessantes
+
+[from Data to Viz](https://www.data-to-viz.com/)
+
+[R gallery](https://www.r-graph-gallery.com/)
+
+[ggplot extensions](https://exts.ggplot2.tidyverse.org/gallery/)
+
+## Uso de cores
+
+::: columns
+::: {.column width="50%"}
+RGB (Red, Green, Blue)/ Hexadecimal ![](../img/rgp.png){fig-align="center"}
+:::
+
+::: {.column width="50%"}
+HSL (Hue, Saturation, Lightness) ![](../img/hue.png){fig-align="center"}
+:::
+:::
+
+## Uso de cores
+
+Paletas de cores prontas
+
+-   Escalas **qualitativas**: utilizado para variáveis nominais (sexo, cor/raça)
+
+-   Escalas **divergentes**: utilizado para variáveis que têm um centro neutro (favorável/neutro/desfavorável, correlação)
+
+-   Escalas **sequenciais**: utilizado para variáveis ordinais (faixa etária, renda)
+
+. . .
+
+### Paletas
+
+-   [ColorBrewer](http://colorbrewer2.org/)
+-   [I want Hue](http://medialab.github.io/iwanthue/)
+-   [Learn UI Design](https://learnui.design/tools/data-color-picker.html)
+-   [Adobe](https://color.adobe.com/pt/create/color-wheel)
+-   [Coolers](https://coolors.co/048a81-ad343e-d7ceb2-001514-ffc8fb)
+
+## O que faz mais sentido?
+
+```{r}
+# um grafico com uma paleta categorica com a base diamonds com a quantidade de diamantes por qualidade de corte
+
+ggplot(data = diamonds, aes(x = cut)) +
+  geom_bar(aes(fill=cut)) +
+  theme_classic(base_size = 16) +
+  labs(title = "Quantidade de diamantes por qualidade de corte",
+       x = "Qualidade de corte",
+       y = "Quantidade")+
+  scale_fill_brewer(name = "Qualidade de corte", palette = "Set2")+
+  coord_flip()
+
+
+
+```
+
+. . .
+
+```{r}
+# um grafico com uma paleta sequencial com a base diamonds com a quantidade de diamantes por qualidade de corte
+
+ggplot(data = diamonds, aes(x = cut)) +
+  geom_bar(aes(fill=cut), color = "black", linewidth=0.5) +
+  theme_classic(base_size = 16) +
+  labs(title = "Quantidade de diamantes por qualidade de corte",
+       x = "Qualidade de corte",
+       y = "Quantidade")+
+  scale_fill_brewer(name = "Qualidade de corte", palette = "YlGnBu")+
+  coord_flip()
+
+
+
+```
+
+## Eixos
+
+[Como mentir com estatística](https://www.amazon.com.br/Como-Mentir-Estatística-Darrell-Huff/dp/858057952X)
+
+```{r}
+library(ggplot2)
+
+# Carrega o dataset iris se necessário
+data(iris)
+
+# Calcula a média do comprimento das pétalas por espécie
+avg_petal_length <- aggregate(Petal.Length ~ Species, data = iris, FUN = mean)
+
+# Cria o gráfico de barras
+avg_petal_length |> 
+  filter(Species != "setosa") |>  # Remove a espécie "setosa"
+ggplot(aes(x = Species, y = Petal.Length, fill = Species)) +
+  geom_bar(stat = "identity", width = 0.5) +  # Barras com largura de 0.5
+  coord_cartesian(ylim = c(4, 5.5)) +
+  labs(title = "Média do Comprimento das Pétalas por Espécie",
+       x = "Espécie",
+       y = "Comprimento Médio das Pétalas (cm)") +
+  theme_classic(base_size = 16) +  # Usa um tema minimalista
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Ajusta o texto do eixo x
+
+avg_petal_length |> 
+  filter(Species != "setosa") |>  # Remove a espécie "setosa"
+ggplot(aes(x = Species, y = Petal.Length, fill = Species)) +
+  geom_bar(stat = "identity", width = 0.5) +  # Barras com largura de 0.5
+  coord_cartesian(ylim = c(0,30)) +
+  labs(title = "Média do Comprimento das Pétalas por Espécie",
+       x = "Espécie",
+       y = "Comprimento Médio das Pétalas (cm)") +
+  theme_classic(base_size = 16) +  # Usa um tema minimalista
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Ajusta o texto do eixo x
+
+avg_petal_length |> 
+  filter(Species != "setosa") |>  # Remove a espécie "setosa"
+ggplot(aes(x = Species, y = Petal.Length, fill = Species)) +
+  geom_bar(stat = "identity", width = 0.5) +  # Barras com largura de 0.5
+  coord_cartesian(ylim = c(0,7)) +
+  labs(title = "Média do Comprimento das Pétalas por Espécie",
+       x = "Espécie",
+       y = "Comprimento Médio das Pétalas (cm)") +
+  theme_classic(base_size = 16) +  # Usa um tema minimalista
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Ajusta o texto do eixo x
+
+
+```
+
+
+## Outros exemplos
+
+![](../img/pay.jpg){fig-align="center"}
+
+. . .
+
+![](../img/pay2.jpg){fig-align="center"} - [Correlações espúrias](https://www.tylervigen.com/spurious-correlations)
+
+## Recursos pré-atentativos
+
+-   Uma propriedade visual pré-atentativa é **processada** pelo nosso cérebro antes de uma ação consciente.
+
+-   Como isso esse processamento é **muito rápido**, trata-se de uma oportunidade para tornar visualizações mais amigáveis e diretamente interpretadas.
+
+## Recursos pré-atentativos
+
+![](../img/atent.png){fig-align="center"}
+
+## Storytelling com dados
+
+[![](../img/pizza.png){fig-align="center"}](https://ge.globo.com/futebol/times/flamengo/noticia/2023/06/09/elenco-atual-do-flamengo-passa-dos-500-gols-pelo-clube-veja-numeros-dos-times-da-serie-a.ghtml)
+
+. . .
+
+```{r}
+library(tidyverse)
+library(ggtext)
+
+dados <- as.data.frame(list(Jogador = c("Gabriel", "Pedro", "Bruno Henrique", 
+"Arrascaeta", "Everton Ribeiro", "Gérson", "Matheus França", 
+"Ayrton Lucas", "Léo Pereira", "Marinho", "Rodrigo Caio", "Everton Cebolinha", 
+"Fabrício Bruno", "Filipe Luís", "Matheuzinho", "Thiago Maia", 
+"Victor Hugo", "Matheus Gonçalves", "Vidal", "André Luiz", 
+"David Luiz", "Erick Pulgar", "Lorran", "Werton", "Wesley"),
+Gols = c(149, 93, 79, 55, 44, 10, 9, 8, 6, 6, 6, 5, 5, 4,
+          4, 4, 4, 2, 2, 1, 1, 1, 1, 1, 1)))
+
+dados |>
+ mutate(Jogador_unido = ifelse(Gols <= 4, "Outros", Jogador)) |> 
+  group_by(Jogador_unido) |> 
+  mutate(Gols = sum(Gols)) |> 
+  select(-Jogador) |> 
+  distinct() |> 
+  ungroup() |> 
+  mutate(porc = Gols/sum(Gols),
+         label = paste0(Gols, " (", round(100*porc, 1), "%)")) |> 
+  ggplot(aes(y = fct_inorder(Jogador_unido), x = Gols)) +
+  geom_bar(stat = "identity", fill = "#8C0303") +
+  geom_text(aes(label = label), size = 2.8, color = "black",
+            hjust = -0.1) +
+  scale_y_discrete(limits = rev) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.05))) +
+  coord_cartesian(clip = "off") +
+  labs(y = NULL,
+       title = "Distribuição dos 501 gols do<br>elenco atual pelo <b style='color:#8C0303'>Flamengo</b><br>por jogador",
+       x = "Gols marcados") +
+  theme_minimal() +
+  theme(plot.margin = margin(5, 40, 5, 5),
+        plot.title = element_markdown(margin = margin(0,0,2,0), size = 11),
+        plot.background = element_rect(fill = "white", colour = "white"),
+        panel.grid = element_blank(),
+        axis.line.x = element_line(color = "grey80"))
+```
+
+[Fernanda Peres](https://fernandafperes.com.br)
+
+## Storytelling com dados
+
+![](../img/gol.png){fig-align="center"}
+
+. . .
+
+```{r}
+dados2 <- as.data.frame(list(Time = c("Athletico-PR", "Vasco", "Fluminense", 
+"Bahia", "Corinthians", "Goiás", "Botafogo", "Palmeiras", "Grêmio", 
+"Santos"), Gols = c(29, 28, 27, 17, 17, 17, 16, 16, 15, 15)))
+
+imagens <- c("https://conteudo.cbf.com.br/cdn/imagens/escudos/00004pr.jpg",
+             "https://conteudo.cbf.com.br/cdn/imagens/escudos/60646rj.jpg",
+             "https://conteudo.cbf.com.br/cdn/imagens/escudos/00009rj.jpg",
+             "https://conteudo.cbf.com.br/cdn/imagens/escudos/00005ba.jpg",
+             "https://conteudo.cbf.com.br/cdn/imagens/escudos/00021sp.jpg",
+             "https://conteudo.cbf.com.br/cdn/imagens/escudos/00009go.jpg",
+             "https://conteudo.cbf.com.br/cdn/imagens/escudos/60175rj.jpg",
+             "https://conteudo.cbf.com.br/cdn/imagens/escudos/00019sp.jpg",
+             "https://conteudo.cbf.com.br/cdn/imagens/escudos/00008rs.jpg",
+             "https://conteudo.cbf.com.br/cdn/imagens/escudos/00018sp.jpg")
+
+
+dados2$labels <- setNames(
+  paste0("<img src='", imagens, "' width='20' /><br>", dados2$Time),
+  dados2$Time
+)
+
+
+ggplot(dados2, aes(y = fct_inorder(Time), x = Gols)) +
+  geom_bar(stat = "identity", fill = "#8C0303", width = 0.6) +
+  scale_y_discrete(labels = rev(dados2$labels), limits = rev) +
+  geom_text(aes(label = Gols), size = 2.8, color = "white",
+            hjust = 1.3, fontface = "bold") +
+  coord_cartesian(clip = "off") +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.05))) +
+  labs(y = NULL,
+       title = "Times que mais levaram gols do<br>elenco atual do <b style='color:#8C0303'>Flamengo</b>",
+       x = "Gols sofridos") +
+  theme_minimal() +
+  theme(axis.text.y  = element_markdown(color = "black", size = 7),
+        plot.margin = margin(5, 10, 5, 5),
+        plot.title = element_markdown(margin = margin(0,0,2,0)),
+        plot.background = element_rect(fill = "white", colour = "white"),
+        panel.grid = element_blank(),
+        axis.line.x = element_line(color = "grey80"))
+```
+
+## Storytelling com dados
+
+![](../img/inf.png){fig-align="center"}
+
+## Storytelling com dados
+
+![](../img/story.png){fig-align="center"}
+
+## Storytelling com dados
+
+![](../img/shape1.png){fig-align="center"} . . .
+
+![](../img/shape2.png){fig-align="center"}
+
+## Storytelling com dados
+
+![](../img/story2.png){fig-align="center"} . . . ![](../img/story3.png){fig-align="center"}
+
+## Pacote Esquisse
+
+- [Como usar, CursoR](https://blog.curso-r.com/posts/2022-03-22-esquisse/)
+- [Vignette](https://cran.r-project.org/web/packages/esquisse/vignettes/get-started.html)
+- [GitHub](https://dreamrs.github.io/esquisse/)
+
+. . . 
+
+```{r eval = F, echo = T }
+library(palmerpenguins)
+
+esquisser(penguins)
+```
+# Por hoje é só pessoal!

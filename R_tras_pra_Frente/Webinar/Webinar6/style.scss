@@ -1,0 +1,98 @@
+/*-- scss:defaults --*/
+
+// fonts
+@font-face {
+  font-display: swap; 
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../../../../../lato/Lato-Regular.ttf');
+}
+
+$font-family-sans-serif: 'Lato';
+//$font-family-monospace: 'Lato';
+$font-size-root: 12px; 
+$presentation-heading-font: "Lato", sans-serif;
+
+// border-image-slice: ;
+.reveal .footer {
+  font-size: 0.35em !important;
+  text-align: right !important;
+}
+
+.reveal .slide-logo {
+  display: block;
+  position: left;
+  bottom: 5px ;
+  right: unset !important;
+  top: unset !important;
+  left: 1100px;
+  height: 45px !important;
+  max-width: unset !important;
+  max-height: unset !important;
+}
+
+// colors
+
+$body-bg: #FFFFFF !default;
+$body-color: #787a7d !default;
+$link-color: #3767B5 !default;
+$selection-bg: #3767B5  !default;
+$presentation-heading-color: #3767B5;
+$presentation-h1-font-size: 2.5em; 
+$presentation-h2-font-size: 1.6em; 
+$presentation-h3-font-size: 1.2em; 
+$code-color:#3767B5;
+$code-block-bg: #ffddbf;
+$code-block-border-color:#787a7d;
+
+
+/* Target only ordered lists within the presentation */
+.reveal ol {
+    list-style-type: decimal; /* Ensures numbers are used */
+    list-style-position: inside; /* Positions numbers inside the content box */
+    padding-left: 20px; /* Adjusts padding to avoid cropping */
+    margin-left: 0px; /* Removes any default margin that might push content off */
+}
+
+/* Specific adjustments to list items */
+.reveal ol li {
+    text-indent: -20px; /* Adjusts the starting position of text relative to the number */
+    margin-left: 20px; /* Ensures there's space on the left if needed */
+    font-size: 100%; /* Optionally adjust the font size */
+}
+
+#title-slide {
+  
+  font-family: 'Lato';
+    src: url('../../../../lato/Lato-Regular.ttf');
+  text-align: left;
+  .quarto-title-authors {
+    justify-content: left;
+    .quarto-title-author { // optional, test it for yourself
+      padding-left: 0;
+      padding-right: 20;
+      width: 100%;
+    }
+  }
+}
+
+
+  /* Optional: Set a maximum width for the columns */
+  .quarto-column {
+    max-width: 600px; /* Adjust the value as needed */
+  }
+.text-col {
+  height: 80%;
+  background-color: lightgray;
+  padding-left: 10px;
+  box-sizing: border-box;
+}
+
+.stacked-columns {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Optional: Center the columns horizontally */
+  }
+  
+  
