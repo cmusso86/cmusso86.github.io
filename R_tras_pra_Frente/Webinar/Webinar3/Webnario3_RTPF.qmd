@@ -1,0 +1,194 @@
+---
+title: "Fim do primeiro módulo"
+subtitle: "Atualidades e outras cositas mais..."
+author: "Carolina Musso"
+institute: "DEMPSP"
+format: 
+  revealjs:
+    theme: solarized
+    embed-resources: true
+    multiplex: true
+    logo: img/logo.png
+    css: img/logo.css
+    incremental: true
+    scrollable: true
+    highlight-style: arrow
+    preview-links: true
+    transition: fade
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Só o começo ...
+
+. . .
+
+**Primeiros 30min**
+
+-   Quarto
+
+-   Outras IDEs
+
+-   Copilot & GuitHub Actions
+
+-   Análises avançadas e outras linguagens
+
+-   Eventos
+
+. . .
+
+**Segunda parte**
+
+-   Tutoria coletiva
+
+# Quarto
+
+![](img/quarto-illustration.png){fig-align="center"}
+
+## Quarto - linha do tempo
+
+. . .
+
+**"Ouvi" a primeira vez: Set/21**
+
+-   [Video](https://www.youtube.com/live/T24nt-d4cEg?si=Mi3vHpVv5Wd_8-4V)
+
+-   "We don't talk about Bruno"
+
+. . .
+
+**Lançamento**
+
+-   Primeira palestra que vi [SER-2022](https://beatrizmilz.github.io/2022-SER-quarto/#/)
+
+-   [rstudio::conf 2022](https://rstudio-conf-2022.github.io/get-started-quarto/)
+
+. . .
+
+**É atualizado continuamente!**
+
+. . .
+
+**Materiais para aprender**
+
+-   [Quarto](https://quarto.org/)
+
+-   [Workshop](https://www.youtube.com/watch?v=yvi5uXQMvu4)
+
+-   [ThomMock](https://jthomasmock.github.io/quarto-2hr-webinar/materials/01-intro-quarto.html#/TitleSlide)
+
+## Outras IDEs
+
+::: columns
+::: {.column width="50%"}
+VSCode
+
+![](img/vs.png){fig-align="center" width="100"}
+
+-   Preferido dos pythonistas
+
+-   [R no VisualStudio](https://code.visualstudio.com/docs/languages/r)
+
+-   [Live Curso-R](https://www.youtube.com/live/jhECta1RU7g?si=Dfkq0Mwl8HS5GZvd)
+:::
+
+::: {.column width="50%"}
+Positron
+
+![](img/positron.png){fig-align="center" width="100"}
+
+-   [Saiu semana passada!](https://www.infoworld.com/article/3715702/maker-of-rstudio-launches-new-r-and-python-ide.html)
+
+-   [Meio que RStudio + VSCODE](https://youtu.be/-jhTjOK4vQ8?si=O0df2XW5J_7SsepC)
+
+-   [Instalação](https://github.com/posit-dev/positron/releases)
+:::
+:::
+
+## Copilot & GitHub Actions
+
+-   [Copilot](https://github.com/features/copilot)
+-   [GitHub Actions](https://docs.github.com/pt/actions/learn-github-actions/understanding-github-actions)
+
+## Análises avançadas e integração com outras linguagens
+
+::: columns
+::: {.column width="25%"}
+Python
+
+[![](img/reticulated_python.png){fig-align="center" width="230"}](https://cmusso86.github.io/reticulate/#/title-slide)
+:::
+
+::: {.column width="25%"}
+SQL
+
+[![](img/dbplyr.png){fig-align="center" width="150"}](https://dbplyr.tidyverse.org)
+:::
+
+::: {.column width="25%"}
+Spark
+
+[![](img/apple-touch-icon.png){fig-align="center"}](https://spark.rstudio.com/get-started/)
+:::
+
+::: {.column width="25%"}
+Stan
+
+[![](img/stan.png){fig-align="center" width="171"}](https://cmusso86.github.io/EC/)
+:::
+:::
+
+## Eventos
+
+::: columns
+::: {.column width="50%"}
+[Latin R](https://latin-r.com/pt/)
+
+[![](img/latin.png){fig-align="center" width="231"}](https://youtu.be/6PILgf_1ZOI?si=9KL4-AjpKgbF5L1J)
+
+-   RLadies + R Consortium
+-   Próximo no Brasil?
+-   Últimos dois no Uruguai.
+
+[R day](http://rday.leg.ufpr.br)
+
+![](img/r-day-4-logo.png){fig-align="center" width="82"}
+
+-   UFSCAR
+-   Último: 4 Rday
+-   Penúltimo: [3Rday](https://www.youtube.com/@LEGUFPR)
+:::
+
+::: {.column width="50%"}
+[posit::conf 2024](https://posit.co/conference/)
+
+![](img/positconf.png){fig-align="center" width="137"}
+
+-   12-14 Agosto 2024 , Seattle
+
+-   Online gratuito!
+
+[useR](https://events.linuxfoundation.org/user/)!
+
+![](img/user.png){fig-align="center" width="107"}
+
+-   8 - 11 Julho 2024, Salzburgo
+
+-   [Adivinha quem vai?](https://userconf2024.sched.com/speaker/cmusso86)
+:::
+:::
+
+## Tutoria coletiva
+
+-   Tarefa em si e seus objetivos
+
+-   Formato de entrega
+
+-   O problema da Turquia
+
+-   Dúvidas específicas.
+
+# Obrigada!
