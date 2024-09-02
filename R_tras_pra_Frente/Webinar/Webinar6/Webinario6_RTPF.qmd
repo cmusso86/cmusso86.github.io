@@ -54,7 +54,7 @@ markdown:
 
 ## Onde usamos a visualização
 
-![](../img/ciclo.png){fig-align="center"}
+![](img/ciclo.png){fig-align="center"}
 
 ## Exploratória X Descritiva
 
@@ -96,11 +96,11 @@ ggplot(data = mtcars, aes(x = hp, y = mpg)) +
 -   Categóricas/Qualitativas: Nominais e Ordinais
 :::
 
-![](../img/var.png){fig-align="center"}
+![](img/var.png){fig-align="center"}
 :::
 
 ::: {.column width="50%"}
-![](../img/var2.jpg){fig-align="center"}
+![](img/var2.jpg){fig-align="center"}
 :::
 :::
 
@@ -157,11 +157,11 @@ ggplot(data = penguins, aes(x = body_mass_g, y = flipper_length_mm, color = spec
 
 ::: columns
 ::: {.column width="50%"}
-RGB (Red, Green, Blue)/ Hexadecimal ![](../img/rgp.png){fig-align="center"}
+RGB (Red, Green, Blue)/ Hexadecimal ![](img/rgp.png){fig-align="center"}
 :::
 
 ::: {.column width="50%"}
-HSL (Hue, Saturation, Lightness) ![](../img/hue.png){fig-align="center"}
+HSL (Hue, Saturation, Lightness) ![](img/hue.png){fig-align="center"}
 :::
 :::
 
@@ -274,11 +274,11 @@ ggplot(aes(x = Species, y = Petal.Length, fill = Species)) +
 
 ## Outros exemplos
 
-![](../img/pay.jpg){fig-align="center"}
+![](img/pay.jpg){fig-align="center"}
 
 . . .
 
-![](../img/pay2.jpg){fig-align="center"} - [Correlações espúrias](https://www.tylervigen.com/spurious-correlations)
+![](img/pay2.jpg){fig-align="center"} - [Correlações espúrias](https://www.tylervigen.com/spurious-correlations)
 
 ## Recursos pré-atentativos
 
@@ -288,11 +288,11 @@ ggplot(aes(x = Species, y = Petal.Length, fill = Species)) +
 
 ## Recursos pré-atentativos
 
-![](../img/atent.png){fig-align="center"}
+![](img/atent.png){fig-align="center"}
 
 ## Storytelling com dados
 
-[![](../img/pizza.png){fig-align="center"}](https://ge.globo.com/futebol/times/flamengo/noticia/2023/06/09/elenco-atual-do-flamengo-passa-dos-500-gols-pelo-clube-veja-numeros-dos-times-da-serie-a.ghtml)
+[![](img/pizza.png){fig-align="center"}](https://ge.globo.com/futebol/times/flamengo/noticia/2023/06/09/elenco-atual-do-flamengo-passa-dos-500-gols-pelo-clube-veja-numeros-dos-times-da-serie-a.ghtml)
 
 . . .
 
@@ -340,7 +340,7 @@ dados |>
 
 ## Storytelling com dados
 
-![](../img/gol.png){fig-align="center"}
+![](img/gol.png){fig-align="center"}
 
 . . .
 
@@ -388,21 +388,21 @@ ggplot(dados2, aes(y = fct_inorder(Time), x = Gols)) +
 
 ## Storytelling com dados
 
-![](../img/inf.png){fig-align="center"}
+![](img/inf.png){fig-align="center"}
 
 ## Storytelling com dados
 
-![](../img/story.png){fig-align="center"}
+![](img/story.png){fig-align="center"}
 
 ## Storytelling com dados
 
-![](../img/shape1.png){fig-align="center"} . . .
+![](img/shape1.png){fig-align="center"} . . .
 
-![](../img/shape2.png){fig-align="center"}
+![](img/shape2.png){fig-align="center"}
 
 ## Storytelling com dados
 
-![](../img/story2.png){fig-align="center"} . . . ![](../img/story3.png){fig-align="center"}
+![](img/story2.png){fig-align="center"} . . . ![](img/story3.png){fig-align="center"}
 
 ## Pacote Esquisse
 
