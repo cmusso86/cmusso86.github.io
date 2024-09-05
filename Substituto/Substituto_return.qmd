@@ -1,0 +1,456 @@
+---
+title: "Testes de Hipóteses"
+subtitle: "Prova Didática: Seleção professor substituto"
+author: "Carolina Musso"
+institute: "Departamento de Estatística - UnB"
+bibliography: biblio/referencias.bib
+csl: biblio/abnt.csl
+format:
+  revealjs:
+    embed-resources: true
+    multiplex: true
+    incremental: true
+    logo: imagens/unb.png
+    scrollable: true
+    highlight-style: arrow
+    theme: [style.scss]
+    transition: fade
+knitr:
+  opts_chunk:
+    echo: false
+    warnings: false
+---
+
+## Exemplo fictício
+
+-   Imagine existe uma forma de medir a ansiedade com um número *A* ($-\infty, +\infty$).
+
+-   Quanto mais negativo, mais calma e quanto mais positivos mais ansiosa a pessoa está.
+
+-   Um censo no DF nos anos 90:
+
+    -   A média de ansiedade é de 0 "ansiogramas" com um desvio padrão de 1 "ansiograma".
+
+    -   Ou seja $A_{DF} \sim N(\mu_{DF_0} = 0, \sigma^2_{DF_0} = 1)$
+
+## Resultado censo
+
+```{r echo=F}
+pacman::p_load(tidyverse, BSDA)
+
+
+# Set the seed
+set.seed(42)
+n <- 1000000
+
+# Compute the 95th percentile value
+percentile_95 <- qnorm(0.95)
+percentile_95_rounded <- round(percentile_95, 1)
+
+# Create the density plot
+graf0 <- ggplot() + 
+  geom_density(aes(x = rnorm(n, 0, 1)), fill="#007940", alpha=0.5) + 
+  xlim(-3, 3) + 
+  theme_classic(base_size=24) + 
+  labs(x="Valor de Ansiedade", y = "Densidade")
+
+# Add vertical lines and text annotation with the 95th percentile value
+graf1 <- graf0 + 
+  geom_vline(xintercept = 0, color="red3") 
+
+
+ 
+
+# Print the plot
+graf1
+
+```
+
+## Motivação
+
+-   **Desconfiamos** que esse nível de ansiedade **aumentou**.
+
+    -   Em 2024, **amostra aleatória** de mil pessoas.
+
+-   $\bar{x}$ = **2,32 ansiogramas**, e a variância *não mudou.*
+
+-   
+
+    -   Será que essa média é *mesmo* maior que meu valor de referência (média 0)?
+
+## Ou será
+
+```{r }
+graf1 +
+  geom_vline(xintercept = 2.32,
+             color = "darkgreen",
+             linetype="dashed") 
+```
+
+## Qual a intuição do teste de hipótese
+
+-   Queremos tirar conclusões sem ter acesso a toda a informação.
+    -   Nunca terei ***certeza***
+    -   Qual a chance de, ao acaso, eu ter selecionado justamente as pessoas mais ansiosas?
+    -   Tirar uma conclusão sabendo essa "incerteza".
+
+## Formulação de um teste de hipótese
+
+-   **Hipótese Nula (**$H_0$): É a hipótese inicial, frequentemente assumindo que não há efeito ou diferença significativa.
+
+-   **Hipótese Alternativa (**$H_1$ ou $H_a$): É a hipótese que se quer testar, indicando a presença de um efeito ou diferença significativa.
+
+. . .
+
+$H_0: \mu_{DF_1} = \mu_{DF_0} = 0$
+
+$H_1: \mu_{DF_1} > \mu_{DF_0} = 0$
+
+## Como testamos essa hipótese?
+
+-   Temos que estabelecer um critério.
+
+-   O quanto estamos dispostos a "errar"?
+
+    -   *Dado que* $H_0$ é verdadeira.
+
+-   Nível de significância $\alpha$
+
+-   $\alpha=0.05$ é um dos mais comuns.
+
+## Nível de significância de 5%.
+
+-   Parece uma chance baixa o suficiente?
+
+```{r}
+graf1+
+  geom_text(aes(x = 1.5, y = 0.4, label=paste("~95% (", percentile_95_rounded, ")", sep="")), size = 6) + 
+  geom_vline(xintercept = 1.64,
+             color = "red",
+             linetype="dotted") 
+```
+
+## E se a média da população tiver mesmo mudado?
+
+-   Faz mais sentido, certo?
+
+```{r echo=F}
+
+x_new <- 2.32
+graf3 <- graf0 +
+  geom_density(aes(rnorm(n, 1.5, 1)), 
+               fill="#003366",alpha=0.5)+
+  theme_classic(base_size = 24)+
+  xlim(-5,5)+
+  labs(x="Valor médio de Ansiedade", y = "Densidade")+
+  geom_vline(xintercept = 0, color="red3")+
+   geom_vline(xintercept = 1.5, color="red3")+
+  geom_vline(xintercept = x_new, color="darkgreen", linetype="dashed", linewidth = 1)
+
+graf3
+```
+
+## Tipos de Erro que posso cometer
+
+|          | Rejeita H0                       | Não-rejeita H0                    |
+|-------------------|--------------------------|---------------------------|
+| H0 verd. | [Erro tipo I]{style="color:red"} | Correto!                          |
+| H0 falsa | Correto!                         | [Erro tipo II]{style="color:red"} |
+
+. . .
+
+![](images/1-1.jpg){fig-align="center"}
+
+# Na prática
+
+## Precisaremos calcular algum valor
+
+-   Dificilmente será: $A \sim N(\mu_{0} = 0, \sigma^2_{0} = 1)$
+
+    -   Temos que padronizar!
+
+    -   Calcular alguma estatística.
+
+. . .
+
+**O que já sabemos?**
+
+-   Distribuição amostral da média $\bar{x} \sim N(\mu, \frac{\sigma^2}{n})$
+
+. . .
+
+-   Uma amostra de uma distribuição normal, (ou grande o suficiente), e que eu conheço a variância populacional:
+
+## Para padronizar
+
+$$Z = \frac{(\bar{x} - \mu_{nula})}{\frac{\sigma}{\sqrt{n}}} \sim N(0,1)$$
+
+-   Para tirar a conclusão
+
+    -   Olhar na Tabela
+    -   Usar algum software
+
+# Recaptulando
+
+## "Receita"
+
+-   $\mu_0, \sigma^2, \bar{x}$
+-   Fixe a probabilidade \alpha
+    -   Probabilidade de cometer o erro de tipo I :
+
+        -   5% (0.05) por exemplo
+-   Elabore as hipóteses
+
+. . .
+
+$H_0: \mu_{1} = \mu_0$
+
+$H_1: \mu_{1} > \mu_0$
+
+## "Receita"
+
+-   Calcule a estatística do teste
+
+. . .
+
+$$Z = \frac{(\bar{x} - \mu_{nula})}{\frac{\sigma}{\sqrt{n}}} \sim N(0,1)$$
+
+. . .
+
+-   Baseado em $\alpha$
+
+    -   Defina a Região Crítica
+    -   Calcule o p-valor
+
+-   Tire a conclusão
+
+    -   Rejeitar ou Não Rejeitar a hipótese nula
+
+## Região Crítica
+
+. . .
+
+![](imagens/z.png){fig-align="center"}
+
+## Região Crítica
+
+$$\alpha = 0.05$$
+
+. . .
+
+```{r}
+x_new <- 2.1
+pvalue <- round(1 - pnorm(x_new, 0, 1 ),4)
+beta <- round(pnorm(2.1, 1.5, 1),4)
+
+
+graf1+
+  geom_text(aes(x = 1.5, y = 0.4, label=paste("~95% (", percentile_95_rounded, ")", sep="")), size = 6) + 
+
+  geom_vline(xintercept = 1.64,
+             color = "red",
+             linetype="dotted") +
+  geom_text(aes(1.85, 0.2, label="a = 0.05"), size=6, angle="270") 
+
+# graf1 +
+#   geom_text(aes(2.8,0.12, label=pvalue), size=6)
+# 
+# +
+#   geom_curve(aes(x = 2.3, y = 0.01, xend = 2.5, 
+#                   yend = 0.1),curvature = -0.5,
+#    arrow = arrow(length = unit(0.03, "npc"),type = "closed"))
+
+```
+
+## Veja se o valor está na região crítica
+
+```{r}
+graf2 <- graf1+
+  geom_text(aes(x = 1.5, y = 0.4, label=paste("~95% (", percentile_95_rounded, ")", sep="")), size = 6) + 
+  geom_vline(xintercept = 2.32,
+             color = "darkgreen",
+             linetype="dashed") +
+  geom_vline(xintercept = 1.64,
+             color = "red",
+             linetype="dotted")
+graf2
+```
+
+## p-valor
+
+-   Idéia inversa
+-   Suponha $Z = 2,02$
+    -   ![](imagens/z2.png){fig-align="center"}
+
+## p-valor
+
+\`
+
+```{r}
+set.seed(42)
+n=100000
+
+
+graf1 +
+  labs(x="z", y = "Densidade")+
+    geom_vline(xintercept = 2.202, color="darkgreen", linetype="dashed")+
+  xlim(-5,5)+
+  geom_text(aes(2.202, -0.01, label=2.2), size=6) +
+  geom_text(aes(3.5, 0.1, label="Área < alfa?"), size=6) +
+  
+  
+  geom_curve(aes(x =2.5, y = 0.01, xend = 3.5, 
+                 yend = 0.08),
+  arrow = arrow(length = unit(0.03, "npc"),type = "closed"))
+```
+
+-   Se p-valor for menor que $\alpha$, rejeite $H_0$
+
+## Voltando ao nosso exemplo da ansiedade
+
+-   Dessa vez, temos os dados da população de São Paulo em 1990.
+
+    -   Asiedade $A_{SP} \sim N(2,4)$
+
+-   Em 2023, medimos a ansiedade de 50 pessoas e a média foi de 2,5 ansiogramas.
+
+## Teste de hipótese Z
+
+-   Hipóteses
+
+. . .
+
+$H_0: \mu_{SP_1} = \mu_{SP_0}= 2$
+
+$H_1: \mu_{SP_1} > \mu_{SP_0} = 2$
+
+-   Significância
+
+. . .
+
+$\alpha=0.05$
+
+-   Calcular a estatística.
+
+. . .
+
+$Z \sim N(0,1)$
+
+## Calculando a Estatística Z
+
+$$Z = \frac{2,5 - 2}{\frac{2}{\sqrt(50)}} = 1.77 $$
+
+## Construa a região crítica
+
+```{r}
+graf0+
+  theme_classic(base_size = 24)+
+  labs(x="z", y = "Densidade")+
+  geom_vline(xintercept = 1.77, color="darkgreen", linetype="dashed")+
+  geom_vline(xintercept = 1.645, color="red", linetype="dotted")
+```
+
+## Tire a conclusão
+
+. . .
+
+$Z = 1.77 > 1.645$ Está na região crítica!
+
+-   Rejeita-se a Hipótese Nula ($H_0$). Há evidencias que a média de ansiedade na população do DF aumentou.
+
+## OU ... Calcule o p-valor
+
+-   Olhe na tabela, qual a probabilidade acumulada à direta de 1.77?
+
+. . .
+
+```{r}
+
+p_value <- round(1 - pnorm(1.77, 0, 1),4)
+graf0+
+  theme_classic(base_size = 24)+
+  labs(x="z", y = "Densidade")+
+  geom_vline(xintercept = 1.77, color="darkgreen", linetype="dashed")+
+  geom_text(aes(2.4, 0.1, label=p_value), size=6)
+
+```
+
+## Que teste fizemos?
+
+-   Teste para uma amostra:
+
+    -   De uma população com distriuição normal
+
+    -   Ou uma amostra suficientemente grande
+
+-   Variância conhecia
+
+-   Unilateral
+
+## Como seria o bilaterial?
+
+$$
+H_0: \mu_{1} = 0\\
+H_{1}: \mu_{1} \neq 0
+$$
+
+. . .
+
+```{r}
+set.seed(42)
+n=100000
+
+
+ggplot()+
+  geom_density(aes(rnorm(n)), 
+               fill="#003366",alpha=0.5)+
+  theme_classic()+
+  labs(x="z", y = "Densidade")+
+  geom_vline(xintercept = 1.96, color="red3", linetype="dotted")+
+  geom_vline(xintercept = -1.96, color="red3", linetype="dotted")+
+  xlim(-5,5)+
+  geom_text(aes(2.2, 0.3, label="0.025"), size=4, angle="90") +
+  geom_text(aes(-2.2, 0.3, label="0.025"), size=4, angle="90") 
+```
+
+## Para a próxima aula
+
+-   Leia sobre o teste de proporção. Tente relacionar com a média.
+-   Outros tipos de teste
+
+## Você sabia?
+
+::: columns
+::: {.column width="50%"}
+"p-hacking"
+:::
+
+::: {.column width="50%"}
+![](imagens/sci.jpg){fig-align="center" width="280"}
+:::
+:::
+
+## Para aprofundamento
+
+Bibliografia básica:
+
+-   @bussab Disponível: [USP](https://edisciplinas.usp.br/pluginfile.php/7552971/mod_resource/content/0/Bussab%20e%20Morettin%20%282010%29%20A%20estatística%20básica_Cap6e7.pdf)
+
+-   @barbetta
+
+-   @lapponi
+
+## Bibliografia mais "lúdica" {.nonincremental}
+
+-   [Fernanda Peres](https://www.youtube.com/@FernandaPeres)
+-   [Amour Learning](https://youtu.be/ChLO7wwt7h0?si=ubb6sZxPeNl0645C)
+-   [Statistics by Jim](https://statisticsbyjim.com/hypothesis-testing/t-tests-excel/)
+-   [Stat Quest](https://statquest.org)
+-   [Tom Faulkenberry](https://www.youtube.com/@TomFaulkenberry)
+-   [P-value](https://youtu.be/ukcFrzt6cHk?si=Soczzf-QL5oIuTF5)
+-   [Statistics with Mia](https://youtu.be/mLhzq9omhZ4?si=SZtQ3pAwBCdlX3i5)
+-   [Modern Statitics in Biology](https://web.stanford.edu/class/bios221/book/06-chap.html)
+-   [Estatistica Aplicada Psicologia](https://sites.google.com/site/araujolb/disciplinas/EstatApliPsico?pli=1)
+-   [Maricopa Comunity College](https://open.maricopa.edu/psy230mm/chapter/9-hypothesis-testing/)
+-   [Jason Delaney](https://youtu.be/E3AF3ebEsjY?si=KTMDYUn9pcmMvPNR)
+-   [Fernanda Maciel](https://www.youtube.com/watch?v=vK_FBEwDidE)
