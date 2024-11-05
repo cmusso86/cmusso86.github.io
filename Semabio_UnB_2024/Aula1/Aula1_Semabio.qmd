@@ -379,13 +379,13 @@ Stan
 ::: {.column width="50%"}
 [Latin R](https://latin-r.com/pt/)
 
-[![](img/latin.png){fig-align="center" width="165"}](https://youtu.be/6PILgf_1ZOI?si=9KL4-AjpKgbF5L1J)
+[![](../img/latin.png){fig-align="center" width="165"}](https://youtu.be/6PILgf_1ZOI?si=9KL4-AjpKgbF5L1J)
 
 -   RLadies; Próximo [Online](https://latinr.org/pt/)
 
 [R day](http://rday.leg.ufpr.br)
 
-![](img/r-day-4-logo.png){fig-align="center" width="88"}
+![](../img/r-day-4-logo.png){fig-align="center" width="88"}
 
 -   UFSCAR; Penúltimo: [3Rday](https://www.youtube.com/@LEGUFPR)
 :::
@@ -393,13 +393,13 @@ Stan
 ::: {.column width="50%"}
 [posit::conf 2024](https://posit.co/conference/)
 
-[![](img/positconf.png){fig-align="center" width="106"}](https://r-wasm.github.io/quarto-live/)
+[![](../img/positconf.png){fig-align="center" width="106"}](https://r-wasm.github.io/quarto-live/)
 
 -   [12-14 Agosto 2024 , Seattle](https://r-wasm.github.io/quarto-live/)
 
 [useR](https://events.linuxfoundation.org/user/)!
 
-![](img/user.png){fig-align="center" width="106"}
+![](../img/user.png){fig-align="center" width="106"}
 
 -   Julho 2024, Salzburgo [Adivinha quem foi?](https://userconf2024.sched.com/speaker/cmusso86)
 
