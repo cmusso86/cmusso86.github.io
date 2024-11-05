@@ -1,0 +1,91 @@
+/*-- scss:defaults --*/
+
+// fonts
+@font-face {
+  font-display: swap; 
+  font-family: 'Jost';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/Users/carolinamusso/Downloads/Jost/Jost-VariableFont_wght.ttf');
+}
+
+$font-family-sans-serif: 'Jost';
+//$font-family-monospace: 'Lato';
+$font-size-root: 12px; 
+$presentation-heading-font: "Jost", sans-serif;
+
+// border-image-slice: ;
+.reveal .footer {
+  font-size: 0.35em !important;
+  text-align: right !important;
+}
+
+.reveal .slide-logo {
+  display: block;
+  position: left;
+  bottom: 5px ;
+  right: unset !important;
+  top: unset !important;
+  left: 1200px;
+  height: 100px !important;
+  width: 500x !important;
+  max-width: unset !important;
+  max-height: unset !important;
+}
+
+.reveal .slide-logo {
+  z-index: -999 !important;
+}
+
+// colors
+$body-bg:  #FFFFFF!default;
+$body-color: #598822 !default;
+$link-color: #CC0A0F !default;
+$selection-bg: #CC0A0F  !default;
+$presentation-heading-color: #CC0A0F;
+$presentation-h1-font-size: 2.4em; 
+$presentation-h2-font-size: 1.5em; 
+$presentation-h3-font-size: 1.1em; 
+$code-color:#598822;
+$code-block-bg: #DFF38E;
+$code-block-border-color:#598822;
+
+
+
+/*-- scss:rules --*/
+
+#title-slide {
+  
+  font-family: 'Jost';
+    src: url('../Jost-VariableFont_wght.ttf');
+  text-align: left;
+  .quarto-title-authors {
+    justify-content: left;
+    .quarto-title-author { // optional, test it for yourself
+      padding-left: 0;
+      padding-right: 20;
+      width: 100%;
+    }
+  }
+}
+
+
+/*-- scss:rules --*/
+
+.stacked-columns {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Optional: Center the columns horizontally */
+  }
+
+  /* Optional: Set a maximum width for the columns */
+  .quarto-column {
+    max-width: 600px; /* Adjust the value as needed */
+  }
+.text-col {
+  height: 80%;
+  background-color: lightgray;
+  padding-left: 100px;
+  box-sizing: border-box;
+}
+

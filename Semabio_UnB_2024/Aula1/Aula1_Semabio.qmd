@@ -1,0 +1,406 @@
+---
+title: "Aula 1 "
+subtitle: "Semabio 2024"
+author: "Carolina Musso"
+institute: "IB/UnB"
+title-slide-attributes:
+    data-background-image: ../img/fundo.png
+    font-family: "Jost"
+format: 
+  revealjs:
+    embed-resources: true
+    multiplex: true
+    incremental: true
+    logo: ../img/logo1.png
+    scrollable: true
+    highlight-style: arrow
+    theme: ../style.scss
+    transition: fade
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Sobre o curso
+
+-   Origens
+
+-   **Estrutura**:
+
+    -   Aula 1: Instalação e Rmarkdown
+    -   Aula 2: Erros comuns e gráficos com ggplot
+    -   Aula 3: Tabelas resumo e testes estatísticos
+
+## Nossa bibliografia
+
+-   [R para Ciência de Dados](https://cienciadedatos.github.io/pt-r4ds/)
+
+-   [Manual de R para Epidemiologistas](https://epirhandbook.com/pt/index.pt.html)
+
+-   [CURSO-R Ciência de Dados em R](https://livro.curso-r.com/index.html)
+
+-   **Outras** . . .
+
+-   [Data Analysis and Visualisation in R for Ecologists](https://datacarpentry.org/R-ecology-lesson/00-before-we-start.html)
+
+-   [R for ecological sciences](https://brouwern.github.io/BOOK_R_Ecological_Data_Science/)
+
+-   [Modern Statistics with R](https://www.modernstatisticswithr.com)
+
+## Quem somos nós?
+
+::: columns
+::: {.column width="50%"}
+![](../img/sara.jpg)
+:::
+
+::: {.column width="50%"}
+-   Bióloga, doutora em ecologia de vegetal 🌱
+
+-   Estatística, Especialista em Ciência de dados
+
+-   Fui Servidora GDF (Secretaria de Saúde, IPEDF)
+
+-   Atualmente: Banco do Brasil
+
+-   Fã de [Sara's Scribbles](https://sarahcandersen.com/about) e outros cartoons
+:::
+:::
+
+::: footnote
+cmusso86\@gmail.com; GitHub: [cmusso86](https://github.com); Linkedin: [cmusso86](www.linkedin.com/in/cmusso86)
+:::
+
+## Mas o que eu faço mesmo na prática?
+
+-   Análise estatística e relatórios automatizados.
+
+-   Já ouvira falar?
+
+-   Que nada a ver...
+
+-   Mas peraí, essa apresentação é pra ficar falando de você ou é pra ajudar a gente em alguma coisa afinal?
+
+. . .
+
+<center>![](../img/smurf.webp){height="250"}</center>
+
+## Calma jovem padawan ...
+
+-   Vamos chegar lá!
+
+-   O que todo esse caminho tem em comum?
+
+-   **Análise de dados!**
+
+. . .
+
+<center>![](../img/data-analysis.gif){width="400"}</center>
+
+## A revolução dos dados
+
+"Entre o início da civilização e 2003, foram criados 5 exabytes de informação, mas atualmente essa quantidade de informação é gerada a cada 2 dias, e o ritmo está acelerando."
+
+> -   Eric Schmidt, CEO Google
+
+## Importância da reprodutibilidade
+
+-   Crise de repoducibilidade/replicabilidade
+
+<center>![](../img/economist.png)</center>
+
+-   [Why](https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0020124)
+
+## O que é o R
+
+[**Enquete**](https://forms.gle/i1kh1AkH21okrigi9)
+
+-   Um programa de análise Estatística?
+
+-   Uma linguagem de programação?
+
+-   Um ambiente de programação?
+
+-   Uma comunidade?
+
+-   **TODAS AS ALTERNATIVAS!**
+
+## O que é uma linguagem de programação?
+
+-   Instruções que damos para a máquina resolver problemas.
+
+-   Mais flexível e poderoso do que operar somente a interface
+
+. . .
+
+![](../img/pseudocodigo.png){fig-align="center" width="567"}
+
+## E o que dá pra fazer no R?
+
+-   Testes Estatísticos
+
+-   Gráficos
+
+-   Tabelas
+
+-   Mapas
+
+-   Web Apps
+
+-   Desenvolver pacotes...
+
+-   Sua monografia/tese/relatórioIC INTEIRA. Do início ao fim.
+
+## E o que dá pra fazer no R?
+
+Resumindo... Tudo!
+
+![](../img/canivete.jpg){fig-align="center" width="325"}
+
+## [Enquete](https://forms.gle/CUxaHvS8SjsuQ37M7) (é difícil?)
+
+. . .
+
+[Jornada do Herói](https://www.ted.com/talks/matthew_winkler_what_makes_a_hero?utm_campaign=tedspread&utm_medium=referral&utm_source=tedcomshare)
+
+::: centered
+![](../img/heros.png){width="300/"}
+:::
+
+## Exemplos
+
+-   Esta apresentação.
+-   [Livros](https://r4ds.had.co.nz)
+-   [Dashboards](https://www.ide.df.gov.br/calculadora_emissoes/)
+-   Uma infinidade de gráficos: [R gallery](https://r-graph-gallery.com), [Data-to-Viz](https://www.data-to-viz.com)
+-   [Blogs](https://beamilz.com)
+-   [Relatórios automatizados](https://www.saude.df.gov.br/documents/37101/0/Boletim_Covid_932.pdf)
+
+## Outras vantagens
+
+-   **Gratuito e open source:**
+    -   Vai conseguir usar sempre!
+-   **Um grande processo colaborativo:**
+    -   O que você imaginar alguém já fez! (E provavelmente vai te ajudar)
+-   **"Conversa" com outras linguagens e ambientes.**
+    -   LateX, Markdown, Python, Collab, GitHub...
+-   **REPRODUTIBIBILIDADE DAS SUAS ANÁLISES.**
+    -   Bom pra você e para a ciência!
+
+## Cursos
+
+-   [DataCamp](https://app.datacamp.com/learn/courses/free-introduction-to-r)
+-   [Coursera](https://www.coursera.org/learn/data-analysis-r)
+-   [Udemy](https://www.udemy.com/course/introducao-a-programacao-para-biologosbiologicas-com-r/)
+-   [Harvad edX](https://www.edx.org/course/data-science-r-basics?index=product&queryID=15beff7b3e86fcef93ef76b044533a37&position=1)
+-   [Future Learn](,https://www.futurelearn.com/subjects/it-and-computer-science-courses/r-programming%3E)
+-   [Curso-R](https://curso-r.com)
+
+## Outras recomendações
+
+-   Muitos livros gratuitos online:
+    -   [R para usuários de Excel](https://rstudio-conf-2020.github.io/r-for-excel/)
+    -   [RMarkdown: The Defenitive Guide](https://bookdown.org/yihui/rmarkdown/)
+-   Canais e site:
+    -   [Marcel Santos](https://www.youtube.com/channel/UCO6x7sQurFTw0Su0vsexE5g)
+    -   [Beatriz Milz](https://beamilz.com)
+    -   [RLadies](https://www.rladies.org),[StatQuest](https://www.youtube.com/watch?v=pYxNSUDSFH4),[CheatSheets](https://posit.co/resources/cheatsheets/), [Reproducible Analysis with R](https://nceas.github.io/sasap-training/materials/reproducible_research_in_r_fairbanks/), [Esse Post](https://marcoarmello.wordpress.com/2019/06/03/rstats/), [Statistics By Jim](https://marcoarmello.wordpress.com/2019/06/03/rstats/)
+
+# Aceite o desafio!
+
+## Quem criou o R
+
+-   Criado / Lançado em [1993/1995](https://www.stat.auckland.ac.nz/~ihaka/downloads/Interface98.pdf "R: Past and Future History") e mantido pela [R-Foundation](https://www.r-project.org/foundation/ "R Foundation")
+
+-   Estatísticos da Universidade de Aukland, NZ
+
+-   [Robert Gentleman](https://computationalbiomed.hms.harvard.edu/about/people/robert-gentleman-phd/), [Ross Ihaka](https://www.stat.auckland.ac.nz/~ihaka/), S Language . . .
+
+. . .
+
+![](../img/rlogo.jpg){fig-align="center" width="314"}
+
+## E o R-Studio?
+
+-   Criado pela empresa RStudio, atualmente [Posit](https://posit.co)
+
+    ![](../img/posit_logo.jpg){width="356"}
+
+-   [Hadley Wickham](https://hadley.nz): Cientista de dados chefe
+
+-   Esforços atualmente para integrar com outras linguagem além do R
+
+## Dois softwares
+
+-   Um é a linguagem em si o cérebro: R
+
+-   O outro É a interface: O RStudio
+
+    -   Existem outras formas de usar o R, mas a mais intuitiva e a que vamos nos familirizar aqui é por meio do RStudio.
+
+. . .
+
+![](../img/rstudio_logo.png){fig-align="center" width="395"}
+
+## Instalando o R
+
+-   Vamos seguir as istruções da mantenedora do RStudio, que é a Posit:
+
+    -   [Instalar](https://posit.co). www.posit.co
+
+    -   Canto superior direito
+
+-   [Tutorial](https://www.youtube.com/watch?v=A8A-OU_nlsw)
+
+-   Resumindo: Baixe tanto o R quanto o RStudio e instale ambos seguindo a configuração padrão
+
+## Material para aprofundamento
+
+-   [EpiHandbook, 1. Porque usar o R.](https://epirhandbook.com/en/r-basics.html)
+
+-   [Instalação do R](https://livro.curso-r.com/1-1-instalacao-do-r.html)
+
+-   Aulas na SDS, Unb: [1](https://youtu.be/AgmOlK0ABx8) e [2](https://youtu.be/LkAzLDEgGgk)
+
+## Como é a cara do R (sem RStudio)
+
+-   meio assustador não é?
+
+![](../img/giphy.gif){width="390"}
+
+## Os Quatro Paineis do R-Studio
+
+![](../img/paineis.png)
+
+# Prática
+
+## Quiz
+
+[![](images/kahoot.png)](https://create.kahoot.it/share/aula-1-semabio2024/8139c701-3ff8-4d1f-8de0-a8dbac5c7ef1)
+
+# Para saber mais ....
+
+# Quarto
+
+![](../img/quarto-illustration.png){fig-align="center"}
+
+## Mais recente
+
+**Materiais para aprender**
+
+-   [Quarto](https://quarto.org/)
+
+-   [Workshop](https://www.youtube.com/watch?v=yvi5uXQMvu4)
+
+-   [ThomMock](https://jthomasmock.github.io/quarto-2hr-webinar/materials/01-intro-quarto.html#/TitleSlide)
+
+## Outras IDEs
+
+::: columns
+::: {.column width="50%"}
+VSCode
+
+![](../img/vs.png){fig-align="center" width="125"}
+
+-   Preferido dos pythonistas
+
+-   [R no VisualStudio](https://code.visualstudio.com/docs/languages/r)
+
+-   [Live Curso-R](https://www.youtube.com/live/jhECta1RU7g?si=Dfkq0Mwl8HS5GZvd)
+:::
+
+::: {.column width="50%"}
+Positron
+
+![](../img/positron.png){fig-align="center" width="124"}
+
+-   [Saiu há poucos meses!](https://www.infoworld.com/article/3715702/maker-of-rstudio-launches-new-r-and-python-ide.html)
+
+-   [Meio que RStudio + VSCODE](https://youtu.be/-jhTjOK4vQ8?si=O0df2XW5J_7SsepC)
+
+-   [Instalação](https://github.com/posit-dev/positron/releases)
+:::
+:::
+
+## Copilot & GitHub Actions
+
+-   [Copilot](https://github.com/features/copilot)
+-   [GitHub Actions](https://docs.github.com/pt/actions/learn-github-actions/understanding-github-actions)
+
+## Análises avançadas e integração com outras linguagens
+
+::: columns
+::: {.column width="25%"}
+Python
+
+[![](../img/reticulated_python.png){fig-align="center" width="230"}](https://cmusso86.github.io/reticulate/#/title-slide)
+:::
+
+::: {.column width="25%"}
+SQL
+
+[![](../img/dbplyr.png){fig-align="center" width="150"}](https://dbplyr.tidyverse.org)
+:::
+
+::: {.column width="25%"}
+Spark
+
+[![](../img/apple-touch-icon.png){fig-align="center"}](https://spark.rstudio.com/get-started/)
+:::
+
+::: {.column width="25%"}
+Stan
+
+[![](../img/stan.png){fig-align="center" width="171"}](https://cmusso86.github.io/EC/)
+:::
+:::
+
+## Avançando com R ....
+
+-   Dashboards com [Shiny](https://mastering-shiny.org)
+
+-   Machine learning com [tidymodels](https://www.tmwr.org)
+
+-   Desenvolver [pacotes](https://r-pkgs.org)
+
+## Meu pacote
+
+[![](images/recalibratiNN.png){fig-align="center" width="305"}](https://github.com/cmusso86/recalibratiNN)
+
+## Eventos
+
+::: columns
+::: {.column width="50%"}
+[Latin R](https://latin-r.com/pt/)
+
+[![](img/latin.png){fig-align="center" width="165"}](https://youtu.be/6PILgf_1ZOI?si=9KL4-AjpKgbF5L1J)
+
+-   RLadies; Próximo [Online](https://latinr.org/pt/)
+
+[R day](http://rday.leg.ufpr.br)
+
+![](img/r-day-4-logo.png){fig-align="center" width="88"}
+
+-   UFSCAR; Penúltimo: [3Rday](https://www.youtube.com/@LEGUFPR)
+:::
+
+::: {.column width="50%"}
+[posit::conf 2024](https://posit.co/conference/)
+
+[![](img/positconf.png){fig-align="center" width="106"}](https://r-wasm.github.io/quarto-live/)
+
+-   [12-14 Agosto 2024 , Seattle](https://r-wasm.github.io/quarto-live/)
+
+[useR](https://events.linuxfoundation.org/user/)!
+
+![](img/user.png){fig-align="center" width="106"}
+
+-   Julho 2024, Salzburgo [Adivinha quem foi?](https://userconf2024.sched.com/speaker/cmusso86)
+
+# 
+:::
+:::
+
+# Até amanhã!
