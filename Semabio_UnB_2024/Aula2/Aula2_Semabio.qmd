@@ -203,6 +203,8 @@ cars %>% #isso chama pipe
   head(3)
 ```
 
+# Objetos, funções, variáveis e pacotes
+
 # Erros comuns
 
 -   [Erros comuns](https://epirhandbook.com/en/common-errors.html?q=error#common-errors)
