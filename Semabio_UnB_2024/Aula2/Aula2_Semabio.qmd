@@ -4,7 +4,7 @@ subtitle: "Semabio 2024"
 author: "Carolina Musso"
 institute: "IB/UnB"
 title-slide-attributes:
-    data-background-image: img/fundo.png
+    data-background-image: ../img/fundo.png
     data-background-size: contain
     font-family: "Lato"
 format:
@@ -12,7 +12,7 @@ format:
     embed-resources: true
     multiplex: true
     incremental: true
-    logo: ../img/logo.png
+    logo: ../img/logo1.png
     scrollable: true
     highlight-style: arrow
     theme: ../style.scss
