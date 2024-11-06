@@ -15,6 +15,7 @@ output:
 # COMENTÁRIOS INICIAIS ----
 
 #  tá vendo que eu estou escrevendo em uma parte que tem um fundo mais acicentado? Isso é chamado de "chunk" que significa "pedaço" em inglês. Um "chunk" é onde vamos escrever os códigos de R mesmo. Em outras partes escreveremos texto normal, como a interpretação dos dados...  Depois vamos voltar a esses assuntos com mais detalhes!
+
 # PRE-SETS ----
 rm(list=ls()) # limpa  o ambiente
 # Colocar , como decimal

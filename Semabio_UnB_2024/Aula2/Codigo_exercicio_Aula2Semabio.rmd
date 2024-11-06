@@ -1,0 +1,236 @@
+---
+title: "Analise dos dados 'iris'"
+author: "Carolina Musso"
+date: "2023-11-28"
+output:
+  bookdown::html_document2:
+    df_print: paged
+    self-contained: true
+    number_sections: false
+    table_caption: yes
+---
+
+```{r setup, include=FALSE}
+
+# COMENTÁRIOS INICIAIS ----
+
+#  tá vendo que eu estou escrevendo em uma parte que tem um fundo mais acicentado? Isso é chamado de "chunk" que significa "pedaço" em inglês. Um "chunk" é onde vamos escrever os códigos de R mesmo. Em outras partes escreveremos texto normal, como a interpretação dos dados...  Depois vamos voltar a esses assuntos com mais detalhes!
+
+# PRE-SETS ----
+rm(list=ls()) # limpa  o ambiente
+# Colocar , como decimal
+Sys.setlocale("LC_NUMERIC", "C") # para que o R entenda que o separador decimal é a vírgula
+
+# Sugestão para salvar arquivos, não é obrigatório
+pasta=paste0("Saidas-Exercicios-", Sys.Date()) # cria uma pasta para as saídas do dia
+if(!dir.exists(pasta)) dir.create(pasta) #cria uma pasta para as saídas do dia
+
+## CONFIGURAÇÕES INICIAIS ----
+
+# Justa para que nenhum código seja exibido no relatório
+knitr::opts_chunk$set(echo = F)
+
+# Pacotes ----
+# agora vou caggerar os pacotes que vamos usar usando uma função especial. Não se preocupe em entender isso agora. Apenas rode! Vai instalar os pacotes que não tiver instalados no seu computador. E carregar todos. 
+
+if (!require(pacman)) install.packages("pacman")
+pacman::p_load(palmerpenguins, tidyverse, # Carrega os pacotes necessarios, garantindo que estão instalados
+               ggstatsplot,gtsummary, ggpubr, bookdown)
+```
+
+## Introdução (Veja que isso vira um subtítulo no documento final)
+
+Este relatório tem como foco a análise da renomada base de dados Iris, um conjunto de dados clássico no campo da estatística. Originalmente coletada pelo botânico Edgar Anderson e popularizada pelo estatístico Ronald Fisher, a base de dados Iris consiste em 150 observações de três espécies de íris (Iris setosa, Iris virginica e Iris versicolor). Cada observação registra quatro características das flores: o comprimento e a largura da sépala, e o comprimento e a largura da pétala.
+
+Neste relatório, empregaremos técnicas de análise exploratória de dados para extrair insights valiosos sobre as características dessas espécies de íris. Além disso, exploraremos como diferentes métodos de visualização de dados podem ser utilizados para compreender melhor as relações entre as variáveis. O objetivo é proporcionar uma compreensão abrangente da base de dados Iris, servindo como um ponto de referência para futuras análises e utilização de relatórios automatizados.
+
+# Material e métodos
+
+Neste relatório, utilizaremos métodos de análise exploratória de dados para explorar as características físicas dos pinguins e as diferenças entre as espécies. Nosso foco será em destacar padrões interessantes, identificar correlações potenciais e proporcionar insights visuais por meio de gráficos e análises estatísticas.
+
+
+# Resultados
+
+Um gráfico clássico.
+
+```{r analises}
+
+# Vamos começar carregando a base de dados Iris que já está disponível no R. Veja que não foi preciso importar a base de dados, pois ela já está disponível no ambiente de trabalho.
+
+iris_area <- iris %>%  # base já disponível no R
+  mutate(area_petala = Petal.Length*Petal.Width/2) %>% # calcula a área aproximada da pétala
+  filter(area_petala<=6)# filtra as pétalas com área menor ou igual a 6 cm^2
+  
+iris_media_area <- iris_area %>% # base que acabei de criar 
+  group_by(Species) %>% # agrupa por espécie
+  summarise(area_media=mean(area_petala), # calcula a média da área da pétala
+            area_dp=sd(area_petala))
+
+
+# Extraindo alguma informação da figura para adicionar no texto. 
+# essas informações serão introduzidas no texto após a figura. # Tente descobrir como isso foi feito. 
+iris_ara_maxima <-  iris_media_area |> 
+  filter(area_media == max(area_media)) |> 
+  select(Species, area_media) 
+
+especie_maior_area <- iris_ara_maxima |> 
+  pull(Species) |> 
+  as.character() # tranformar para caractere porque estava como fator
+
+area_maxima <- iris_ara_maxima |>
+  pull(area_media) |> 
+  round(2) # arredondar para duas casas decimais
+```
+
+```{r}
+## Gráfico -----
+
+# Uso do ggplot2 para criar um gráfico de barras com a média da área da pétala para cada espécie de íris.
+
+graf1 <- iris_media_area %>% 
+  ggplot(aes(x=Species,
+             y=area_media)) +
+  geom_col(fill="#9c9ff7",
+           color="#684dcf")+
+  geom_errorbar(aes(ymin = area_media-area_dp, 
+                ymax = area_media+area_dp),
+                width=0.3,
+                color="#684dcf")+
+  theme_classic(base_size = 16)+
+  labs(x = "",
+      y=expression("Área média da pétala (cm"^2*")"))+
+  coord_flip()+
+  theme(axis.text.y = element_text(face = "italic"))
+  
+  
+# Dados da figura 1 ----
+# caminho para salvar a figura. Criei essa pasta no primeiro chunk, lembram?
+img1_path <- paste0(pasta, "/Graf1_Barras_area.png") # posso escolher a extensao que quiser, png, jpg, pdf, etc
+
+ggsave(filename =img1_path, width=6, height=3 )
+
+legenda1 <- "Gráfico de barras com a média da área da pétala para cada espécie de íris."
+
+```
+
+Podemos observar a média de área da pétala das espécies na Figura \@ref(fig:fig1). A espécie com maior área média da pétala é a `r especie_maior_area` com `r area_maxima` cm$^2$.
+
+```{r fig1, fig.cap = legenda1}
+
+# A forma que eu prefiro para incluir figuras é usando o knitr, primcipalmente para o .docx. Para html podemos simplesmente escrever o nome do objeto, como deixei comentado abaixo.
+
+knitr::include_graphics(img1_path) # inclui a figura no relatório
+
+# graf1 # para incluir a figura no html
+```
+
+
+
+Uma tabela resumo \@ref(tab:tab1).
+
+```{r tab1}
+
+# usando o pacote gtsummary para criar uma tabela resumo com as médias e desvios padrão das variáveis contínuas para cada espécie de íris.
+
+#adicionar titulo a tabela
+
+
+tbl_summary(iris,
+            by = Species,
+            statistic = list(all_continuous() ~ "{mean} ({sd})"),
+            label = list(
+              Sepal.Length ~ "Comprimento da Sépala",
+              Sepal.Width ~ "Largura da Sépala",
+              Petal.Length ~ "Comprimento da Pétala",
+              Petal.Width ~ "Largura da Pétala")) %>% 
+  modify_header(label ~ "**Variável (cm)**") %>%
+  modify_caption("**Estatísticas Descritivas das Variáveis de Íris por Espécie**")
+```
+
+## Gráficos e testes
+
+Tente repetir o que foi feito antes para inserir a referencia cruzada do texto com a prxuma figura. 
+
+```{r}
+
+# usando o pacote ggstatsplot para criar um gráfico de dispersão com linha de regressão e intervalo de confiança para cada espécie de íris e aplicar testes estatisticos diretamente aos gráficos. 
+
+
+graf2 <- ggscatter(iris_area,
+          x = "Sepal.Length", 
+          y = "Petal.Length",
+          add = "reg.line",                         # Adicionar linha de regressão
+          conf.int = TRUE,                          # Adicionar intervalo de confiança
+          color = "Species", 
+          palette = "Set1"
+         ) +
+  stat_cor(aes(color = Species), 
+           label.x = 6.8,label.y=c(2,3,4))  +
+  labs(x="Comprimento da Pétala (cm)",
+       y= "Comprimento da Sétala (cm)") # Ajustar posição dos labels
+
+# salvar a figura
+img2_path <- paste0(pasta, "/Graf2_dispersao.png") # posso escolher a extensao que quiser, png, jpg, pdf, etc
+
+ggsave(filename =img2_path, width=6, height=3 )
+
+
+
+```
+
+```{r fig2, fig.cap = "Gráfico de dispersão com linha de regressão e intervalo de confiança para cada espécie de íris."}
+# outra forma de incluir figuras, simplesmente chamando o nome do objeto. Mas não fica com boa qualidade em formato .docx
+
+graf2
+```
+
+```{r}
+my_comparisons <- list( c(1, 2), c(1, 3), c(2, 3) )
+
+graf3 <- ggboxplot(iris_area, 
+         x = "Species", y = "area_petala", fill = "Species",
+         palette = c("green", "blue", "red"),
+          add.params = list(fill = "white"))+
+  stat_compare_means(comparisons = my_comparisons,
+                     label = "p.signif",
+                     label.y = c(5, 7.95, 9),
+                     p.adjust.method = "bonferroni",
+                     method = "t.test")+ # Add significance levels
+  stat_compare_means(label.y = 10, 
+                     label.x = 0.75,
+                     method = "anova")   +
+   labs(x="", 
+        y=expression("Área média da pétala (cm"^2*")"))+
+  theme(axis.text.x = element_text(face="italic"))
+ 
+# salvar a figura
+img3_path <- paste0(pasta, "/Graf3_boxplot.png") # posso escolher a extensao que quiser, png, jpg, pdf, etc
+
+ggsave(filename =img3_path, width=6, height=3 )
+
+
+```
+
+Agora com ainda menos ajuda, faça o cabeçalho para a próxima figura e escolha uma das suas opcoes que vimos (importando a imagem salva ou simplesmente chamando o nome)
+
+
+```{r}
+
+```
+
+# Exercício para a segunda aula
+
+
+```{r}
+# Execício para o segundo dia de aula ----
+## Abaixo fazemos o código com o R base, tente transferir para o dplyr
+
+media_virginica <- iris_media_area[iris_media_area$Species=="virginica", "area_media"] |> as.numeric()
+
+media_setosa <- iris_media_area[iris_media_area$Species=="setosa", "area_media"] |> as.numeric()
+
+media_versicolor <- iris_media_area[iris_media_area$Species=="versicolor", "area_media"] |> as.numeric()
+
+# repare onde no no texto estamos "chamando" esses objetos.
+
+```

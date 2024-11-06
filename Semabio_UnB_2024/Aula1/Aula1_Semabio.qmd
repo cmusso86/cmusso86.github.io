@@ -29,9 +29,9 @@ editor: source
 
 -   **Estrutura**:
 
-    -   Aula 1: Instalação e Rmarkdown
-    -   Aula 2: Erros comuns e gráficos com ggplot
-    -   Aula 3: Tabelas resumo e testes estatísticos
+    -   Aula 1: Instalação e "se vira" no Rmarkdown
+    -   Aula 2: Principais funções do dplyr
+    -   Aula 3: Gráficos e tabelas resumo
 
 ## Nossa bibliografia
 

@@ -1,0 +1,349 @@
+---
+title: "Aula 2 "
+subtitle: "Semabio 2024"
+author: "Carolina Musso"
+institute: "IB/UnB"
+title-slide-attributes:
+    data-background-image: img/fundo.png
+    data-background-size: contain
+    font-family: "Lato"
+format:
+  revealjs:
+    embed-resources: true
+    multiplex: true
+    incremental: true
+    logo: ../img/logo.png
+    scrollable: true
+    highlight-style: arrow
+    theme: ../style.scss
+    transition: fade
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+## Sobre o curso
+
+-   **Estrutura**:
+
+    -   Aula 1: Instalação e Intro Rmarkdown
+    -   **Aula 2 (hoje): Rmarkdown, pacote dplyr**
+    -   Aula 3: Gráficos ggplot, Tabelas resumo e testes estatísticos
+
+# Quiz
+
+[![](../img/kahoot.png)](https://create.kahoot.it/share/aula-1-semabio2024/8139c701-3ff8-4d1f-8de0-a8dbac5c7ef1)
+
+## Os Quatro Paineis do R-Studio
+
+![](../img/paineis.png)
+
+## Rmarkdown
+
+-   Rmarkdown ![](../img/rmarkdown.png){width="164"}
+
+-   Quarto ![](../img/quarto.png){width="330" height="92"}
+
+-   [YiHui](https://yihui.org/en/)
+
+
+## R de trás-pra-frente
+
+-   Fizemos o download de um código pronto.
+
+-   Analisamos, rodasmos, sem "entender"!
+
+. . .
+
+## Você conseguiu diferenciar essas partes?
+
+::: columns
+::: {.column width="20%"}
+-   Cabeçalho
+
+-   Texto
+
+-   Código
+:::
+
+::: {.column width="80%"}
+![](../img/tela_markdown.png){fig-align="center" width="859"}
+:::
+:::
+
+## Cabeçalho
+
+-   Metadados
+
+-   Linguagem YAML
+
+-   É MUITO sensível (qualquer coisa atrapalha)
+
+    ![](img/Captura%20de%20Tela%202022-10-24%20a%CC%80s%2017.41.50.png){width="455"}
+
+## Texto
+
+-   Markdown
+
+    ![](img/texto.png)
+
+## Código
+
+-   É o coração do R mesmo
+
+    -   Linguagem de programação
+
+    -   Como que difere de Excel (apontar e clicar?)
+
+        ![](../img/chunk.png)
+
+## Brincando com o código
+
+![](../img/dog.webp){fig-align="center" width="383"}
+
+-   Mudar de cor, posição ...
+
+-   Prática
+
+## O que são esses chunks afinal?
+
+-   O "código" própriamente dito
+
+-   As partes dos chunks
+
+    -   cabeçalho (do chunk)
+    -   conteúdo
+        -   código
+        -   comentários
+
+# Pacotes
+
+## E os pacotes o que são?
+
+-   Extensões do R
+
+-   Teremos uma aula só sobre o uso de pacotes
+
+    -   [CRAN](https://cran.r-project.org)
+
+    -   Vamos usar muito o [tidyverse](https://r4ds.had.co.nz)
+
+-   [EpiR-Handbook](https://epirhandbook.com/en/suggested-packages-1.html)
+
+-   [Instalação de pacotes, Curso-R](https://livro.curso-r.com/4-pacotes.html)
+
+-   [Tidyverse, R4DS](https://r4ds.had.co.nz/introduction.html?q=pac#other-packages)
+
+## Instalar e Carregar
+
+-   Para utilizar um pacote é preciso **instalá-lo** (uma única vez) e depois **carregá-lo** (sempre que for usar)
+
+. . .
+
+### Jeito clássico
+
+```{r eval=F, echo=T}
+# para instalar
+install.packages("tidyverse") # precisa estar entre aspas
+
+# para carregar
+library(tidyverse) #pode estar entre aspas ou não
+```
+
+## Pacote Pacman
+
+-   Mas nós vamos fazer de outro jeito!
+
+-   Vamos usar um pacote que gerencia pacotes (eu disse que tinha pacotes para tudo!)
+
+. . .
+
+```{r}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load("tidyverse")
+```
+
+-   Verifica a instalação e carrega! : Garantir reprodutibilidade e automatização.
+
+-   O pacote é o pacman, a função que faz isso é o p_load.
+
+## O que são funções
+
+-   O pacote é um conjunto de funções... mas o que são funções?
+
+-   "Funções em programação é um conjunto de instruções para simplificar uma tarefa repetitiva"
+
+-   precisam de **argumentos**.
+
+. . .
+
+```{r, echo=T}
+sqrt(9)
+round(3.89, digits = 0 )
+round(3.89,  0 )
+```
+
+## O pacote tidyverse
+
+![](../img/tidy.jpg){fig-align="center" width="600"}
+
+## RBase
+
+```{r echo=T}
+head(cars[cars$speed>7,],3)
+```
+
+### Com o tidyverse
+
+```{r echo=T}
+cars %>% #isso chama pipe
+  filter(speed>7) %>% 
+  head(3)
+```
+
+# Erros comuns
+
+-   [Erros comuns](https://epirhandbook.com/en/common-errors.html?q=error#common-errors)
+
+-   [Pedindo Ajuda](https://livro.curso-r.com/3-1-pedindo-ajuda.html)
+
+-   [Geting Help](https://epirhandbook.com/en/getting-help.html?q=help#getting-help)
+
+-   [Palestra Latin-R: Conquistando Errores en R](https://www.youtube.com/watch?v=CAw3-pZhzfk), [material](https://paocorrales.github.io/errores_tutorial/)
+
+
+# Parte 2: Pacote dplyr
+
+## Leituras para aprofundamento
+
+-   [EpiHandbook, 8.Cleaning data and core functions](https://epirhandbook.com/en/cleaning-data-and-core-functions.html)
+
+-   [Curso-R, 7. Manipulação](https://livro.curso-r.com/7-manipulacao.html)
+
+-   [DataCamp, Introduction to the Tidyverse](https://app.datacamp.com/learn/courses/introduction-to-the-tidyverse)
+
+-   [R4DS, 5. Data transformation](https://r4ds.had.co.nz/transform.html)
+
+## Pacote do tidyverse
+
+-   Vamos dar preferência para funções desse pacote
+
+    -   do pacote dplyr que faz parte do tidyverse
+
+        ![](../img/dplyr.png){width="171"}
+
+## select()
+
+-   Trabalhando com as colunas
+
+-   As vezes queremos selecionar apenas algumas colunas (pode ser pesado e confuso manter todas as colunas sempre)
+
+. . .
+
+<center><img src="../img/select2.png" height="300px&quot;"/></center>
+
+. . .
+
+```{r echo=F}
+pacman::p_load(tidyverse, rio)
+
+# importando a base
+head(iris)
+```
+
+## Função select()
+
+-   Vimos que as funções são intruções: muitas vezes tem cara de verbo
+
+-   a função select precisa de 2 argumentos: a base de dados e as colunas que você quer selecionar
+
+. . .
+
+```{r}
+# dplyr
+
+select(iris, Sepal.Length, Sepal.Width) %>% 
+  head(5)
+
+# dplyr
+select(iris, starts_with("Sepal")) %>% 
+  head(5)
+```
+
+. . .
+
+```{r}
+# R base
+
+iris[,c("Sepal.Length", "Sepal.Width")][1:6,]
+```
+
+## Função filter()
+
+-   Trabalhando com as linhas
+
+-   As vezes queremos selecionar apenas algumas linhas: algum grupo específico.
+
+-   Raciocínio parecido com a função select(): precisa de 2 argumentos: a base de dados e a *condição sobre alguma coluna* para fazer o filtro.
+
+. . .
+
+```{r}
+# dplyr
+iris %>% # outra forma de fazer 
+  filter(Species == "setosa") %>% 
+  select(starts_with("Petal"), Species) %>% 
+  head(5)
+```
+
+. . .
+
+```{r}
+#R base
+iris[iris$Species=="setosa", ]
+```
+
+## mutate()
+
+-   criar nosvas variáveis
+
+. . .
+
+```{r}
+# dplyr
+
+iris %>% 
+  mutate(area = Petal.Length*Petal.Width/2) %>% 
+  select(area) %>% 
+  head(5)
+```
+
+. . .
+
+```{r}
+# R base
+iris$area <- iris$Petal.Length*iris$Petal.Width/2
+```
+
+# group_by()
+
+-   sempre agrupar e fazer alguma conta!
+
+. . .
+
+```{r}
+# dplyr
+iris %>% 
+  mutate(area = Petal.Length*Petal.Width/2) %>% 
+  group_by(Species) %>% 
+  summarise(media=mean(area))
+```
+
+. . . 
+
+
+<center>![](img/groupby.png){width="600"}</center>
+
+# Obrigada
