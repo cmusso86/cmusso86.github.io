@@ -81,13 +81,13 @@ editor: source
 
 -   É MUITO sensível (qualquer coisa atrapalha)
 
-    ![](img/Captura%20de%20Tela%202022-10-24%20a%CC%80s%2017.41.50.png){width="455"}
+    ![](../img/Captura%20de%20Tela%202022-10-24%20a%CC%80s%2017.41.50.png){width="455"}
 
 ## Texto
 
 -   Markdown
 
-    ![](img/texto.png)
+    ![](../img/texto.png)
 
 ## Código
 
@@ -290,6 +290,9 @@ iris[,c("Sepal.Length", "Sepal.Width")][1:6,]
 
 -   Raciocínio parecido com a função select(): precisa de 2 argumentos: a base de dados e a *condição sobre alguma coluna* para fazer o filtro.
 
+. . . 
+
+<center><img src="../img/filtertodo.png" height="300px&quot;"/></center>
 . . .
 
 ```{r}
@@ -312,6 +315,10 @@ iris[iris$Species=="setosa", ]
 -   criar nosvas variáveis
 
 . . .
+
+<center><img src="../img/mutate.png" height="300px&quot;"/></center>
+
+. . . 
 
 ```{r}
 # dplyr
@@ -346,6 +353,8 @@ iris %>%
 . . . 
 
 
-<center>![](img/groupby.png){width="600"}</center>
+<center>![](../img/groupby.png){width="600"}</center>
 
-# Obrigada
+# Desafio RBase
+
+# Até amanhã!
