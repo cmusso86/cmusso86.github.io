@@ -12,7 +12,9 @@ output:
 
 ```{r setup, include=FALSE}
 
-# COMENTÁRIOS INICIAIS ----
+
+
+# COMENTÁRIOS INICIAIS -----
 
 #  tá vendo que eu estou escrevendo em uma parte que tem um fundo mais acicentado? Isso é chamado de "chunk" que significa "pedaço" em inglês. Um "chunk" é onde vamos escrever os códigos de R mesmo. Em outras partes escreveremos texto normal, como a interpretação dos dados...  Depois vamos voltar a esses assuntos com mais detalhes!
 
@@ -124,8 +126,6 @@ knitr::include_graphics(img1_path) # inclui a figura no relatório
 # graf1 # para incluir a figura no html
 ```
 
-
-
 Uma tabela resumo \@ref(tab:tab1).
 
 ```{r tab1}
@@ -225,11 +225,15 @@ Agora com ainda menos ajuda, faça o cabeçalho para a próxima figura e escolha
 # Execício para o segundo dia de aula ----
 ## Abaixo fazemos o código com o R base, tente transferir para o dplyr
 
-media_virginica <- iris_media_area[iris_media_area$Species=="virginica", "area_media"] |> as.numeric()
+media_virginica <- iris_media_area[iris_media_area$Species=="virginica", "area_media"]
 
-media_setosa <- iris_media_area[iris_media_area$Species=="setosa", "area_media"] |> as.numeric()
+iris_media_area |> 
+  filter(Species == "virginica") |> 
+  select(area_media)
 
-media_versicolor <- iris_media_area[iris_media_area$Species=="versicolor", "area_media"] |> as.numeric()
+media_setosa <- iris_media_area[iris_media_area$Species=="setosa", "area_media"] 
+
+media_versicolor <- iris_media_area[iris_media_area$Species=="versicolor", "area_media"] 
 
 # repare onde no no texto estamos "chamando" esses objetos.
 

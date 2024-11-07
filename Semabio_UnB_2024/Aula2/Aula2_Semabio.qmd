@@ -99,14 +99,6 @@ editor: source
 
         ![](../img/chunk.png)
 
-## Brincando com o código
-
-![](../img/dog.webp){fig-align="center" width="383"}
-
--   Mudar de cor, posição ...
-
--   Prática
-
 ## O que são esses chunks afinal?
 
 -   O "código" própriamente dito
@@ -117,6 +109,16 @@ editor: source
     -   conteúdo
         -   código
         -   comentários
+        
+## Brincando com o código
+
+![](../img/dog.webp){fig-align="center" width="383"}
+
+-   Mudar de cor, posição ...
+
+-   Prática
+
+
 
 # Pacotes
 
@@ -215,6 +217,7 @@ cars %>% #isso chama pipe
 
 -   [Palestra Latin-R: Conquistando Errores en R](https://www.youtube.com/watch?v=CAw3-pZhzfk), [material](https://paocorrales.github.io/errores_tutorial/)
 
+# Google Forms
 
 # Parte 2: Pacote dplyr
 
@@ -227,6 +230,7 @@ cars %>% #isso chama pipe
 -   [DataCamp, Introduction to the Tidyverse](https://app.datacamp.com/learn/courses/introduction-to-the-tidyverse)
 
 -   [R4DS, 5. Data transformation](https://r4ds.had.co.nz/transform.html)
+
 
 ## Pacote do tidyverse
 
@@ -354,6 +358,8 @@ iris %>%
 
 
 <center>![](../img/groupby.png){width="600"}</center>
+
+
 
 # Desafio RBase
 

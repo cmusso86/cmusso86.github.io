@@ -1,0 +1,476 @@
+---
+title: "Aula 3"
+subtitle: "Semabio 2024"
+author: "Carolina Musso"
+institute: "IB/UnB"
+title-slide-attributes:
+    data-background-image: ../img/fundo.png
+    data-background-size: contain
+    font-family: "Lato"
+format:
+  revealjs:
+    embed-resources: true
+    multiplex: true
+    incremental: true
+    logo: ../img/logo1.png
+    scrollable: true
+    highlight-style: arrow
+    theme: ../style.scss
+    transition: fade
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+editor: source
+---
+
+-   **Estrutura**:
+
+    -   Aula 1: Instalação e Intro Rmarkdown
+    -   Aula 2 (hoje): Rmarkdown, pacote dplyr
+    -   **Aula 3: Gráficos ggplot, Tabelas resumo e testes estatísticos**
+
+# [Quiz](https://create.kahoot.it/creator/149ed18b-d388-4e78-8a2d-a6894fbee242)
+
+# Revisando ...
+
+## O Rmarkdown tem 3 partes
+
+::: columns
+::: {.column width="20%"}
+-   Cabeçalho: YAML
+
+-   Texto: Markdown
+
+-   Código: chunk e inline
+:::
+
+::: {.column width="80%"}
+![](../img/tela_markdown.png){fig-align="center" width="859"}
+:::
+:::
+
+## Termos
+
+- Funções
+- Pacotes
+- Objetos
+- Variáveis
+
+# Gráficos
+
+## Leitura para aprofundamento
+
+-   [EpiHandbook, Cap.30](https://epirhandbook.com/en/ggplot-basics.html)
+
+-   Curso-R, [Livro, cap. 13.8](https://livro.curso-r.com/13-8-o-pacote-ggplot2-1.html); [Curso Visualização](https://curso-r.github.io/202207-visualizacao)
+
+-   [DataCamp, Introdução a visualização com ggplot](https://app.datacamp.com/learn/courses/introduction-to-data-visualization-with-ggplot2)
+
+-   [R4DS](https://r4ds.had.co.nz) *O livro começa com gráficos!*
+
+-   [GGPLOT](https://ggplot2-book.org/mastery.html)
+
+## O poder da visualização
+
+::: columns
+::: {.column width="50%"}
+\- DataViz, para os íntimos
+
+-   Muito importante já na parte de exploração dos dados
+
+    -   Ajudam ao cérebro a dar sentido em todas aquelas informações
+
+    -   Ajuda a levantar hipóteses
+
+-   Importante na apresentação final dos resultados
+:::
+
+::: {.column width="50%"}
+![](../img/paste-86468225.png){fig-align="center" width="450"}
+:::
+:::
+
+## ggplot2
+
+Mas onde está o carregamento desse pacote no nosso software?
+
+![](../img/ggplot.png){fig-align="center" width="233"}
+
+-   Ele faz parte do tidyverse!
+
+## O que vamos (começar) aprender hoje
+
+-   Uma forma mais rápida de visualizar (poucas linhas de código)
+
+    -   Sem (muitas) firulas visuais
+
+-   Não vamos focar, no momento, em deixar os gráficos pefeitos.
+
+-   Adivinhem: o ggplot faz as duas coisas!
+
+    -   [Data-to-Viz](https://www.data-to-viz.com)
+    -   [R Gallery](https://r-graph-gallery.com)
+    -   [Bruno Mioto](https://brunomioto.com/charts.html)
+
+## A lógica do ggplot2
+
+-   Utiliza a [Gramática dos gráficos](https://link.springer.com/book/10.1007/0-387-28695-0) (daí o gg de ggplot): você precisa de atributos estéticos (cor, tamanho...) e atributos geométricos (pontos, linhas, colunas...).
+
+-   [São utilizadas camadas](https://vita.had.co.nz/papers/layered-grammar.html): Sobreposição de elementos visuais.
+
+## A lógica do ggplot
+
+```{r echo=F}
+# PREPARAÇÕES  INICIAIS ----
+pacman::p_load(tidyverse, ggstatsplot,gtsummary, rstantools, flextable, officer)
+
+iris_area <- iris %>% 
+  mutate(area_petala = Petal.Length*Petal.Width/2) %>% 
+  filter(area_petala <= 6)
+  
+iris_media_area <- iris_area %>% 
+  group_by(Species) %>% 
+  summarise(area_media = mean(area_petala),
+            area_dp = sd(area_petala))
+```
+
+::: panel-tabset
+### Primeira camada
+
+O "canvas" vazio
+
+```{r echo=T}
+iris_media_area %>% 
+  ggplot()
+```
+
+### Segunda camada
+
+Os dados (eixos)
+
+```{r echo=T}
+iris_media_area %>% 
+  ggplot() +
+  aes(x = Species, y = area_media)
+```
+
+### Terceira camada
+
+A geometria
+
+```{r echo=T}
+iris_media_area %>% 
+  ggplot() +
+  aes(x = Species, y = area_media)+
+  geom_col()
+```
+
+### Firulas
+
+```{r echo=T}
+iris_media_area %>% 
+  ggplot(aes(x=Species, y=area_media)) +
+  geom_col(fill="#9c9ff7",
+           color="#684dcf")+
+  geom_errorbar(aes(ymin = area_media-area_dp, 
+                ymax = area_media+area_dp),
+                width = 0.3,
+                color = "#684dcf")+
+  geom_text(aes(y = area_media+area_dp,
+                label = round(area_media,1) ),
+                hjust = -0.5)+
+  theme_classic(base_size = 15)+
+  labs(title = "Área média da Pétala ",
+       subtitle = "Comparação entre espécies",
+       caption = "Fonte: Dados iris",
+       x = "",
+      y = expression("Área média da pétala (cm"^2*")"))+
+  coord_flip()+
+  theme(axis.text.y = element_text(face = "italic"))
+```
+:::
+
+
+## Lógica do ggplot
+
+As camadas são adicionadas com um "+"
+
+-   Diferença **+** para **%\>%**
+-   Há as partes *estáticas* e partes que *dinâmicas* (que respondem aos dados)
+    -   estão dentro do aes().
+-   Cuidado com as aspas (principalmente nas opções de parâmetros)!
+-   Conheça as variáveis (numéricas ou categóricas)
+-   É preciso ter no mínimo a função ggplot() e uma função de geometria geom\_?()
+-   Há várias formas de escrever a mesma coisa!
+
+## Várias formas de escrever a mesma coisa
+
+::: panel-tabset
+## Opção 1
+
+```{r}
+ggplot(data = iris) + 
+  geom_point(mapping = aes(x = Petal.Length, y = Petal.Width))
+```
+
+## Opção 2
+
+```{r}
+ggplot(iris) + 
+  geom_point(aes(x = Petal.Length, y = Petal.Width))
+```
+
+## Opção 3
+
+```{r}
+ggplot(iris, aes(x = Petal.Length, y = Petal.Width)) + 
+  geom_point( )
+```
+
+## Opção 4
+
+```{r}
+ggplot(iris) + 
+  aes(x = Petal.Length, y = Petal.Width) +
+  geom_point()
+```
+:::
+
+## Customizações 
+
+```{r}
+ggplot(iris) + 
+  aes(x = Petal.Length, y = Petal.Width,
+      shape=Species, color=Species) +
+  geom_point()+
+  scale_color_manual(values=c("aquamarine", 
+                              "deeppink1",
+                              "#684dcf"))+
+  theme_classic()
+```
+
+- ggthemes [ggplot extensions](https://exts.ggplot2.tidyverse.org/ggthemes.html)
+-   [Nomes cores](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf)
+-   [Fazer paletas](https://coolors.co/96bdc6-81968f-cfb9a5-e8ccbf-e9d6ec)
+
+-   [Adobe](https://color.adobe.com/pt/create/color-wheel)
+
+-   [Color Brewer](https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3)
+
+
+# Desafio (#Forms)
+
+:::{.scroll-container style="overflow-y: scroll; height: 400px;"}
+```{r}
+iris |> 
+ggplot() +
+  geom_boxplot(
+    aes(x = Species,
+        y = Petal.Width,
+        fill=Species))
+```
+:::
+
+# PRÁTICA
+
+# pacote ggstatsplot
+
+[Documentação](https://indrajeetpatil.github.io/ggstatsplot/)
+
+
+```{r echo = F}
+ggbetweenstats(
+  data = iris,
+  x = Species,
+  y = Petal.Length,
+  p.adjust.method = "bonferroni",
+  title = "Comprimento das Pétalas entre Espécies",
+  type = "parametric"
+  
+)
+```
+
+
+- Vários parâmetros
+
+## Pacotes para tabelas
+
+-   [DT](https://rstudio.github.io/DT/) (iterativos em html)
+
+-   [kable, kableExtra](https://haozhu233.github.io/kableExtra/awesome_table_in_pdf.pdf) (mais "LateX friendly")
+
+-   [formattable](https://www.r-bloggers.com/2018/11/make-beautiful-tables-with-the-formattable-package/), [gt](https://gt.rstudio.com), [stargazer](https://cran.r-project.org/web/packages/stargazer/vignettes/stargazer.pdf)...
+
+-   [gtsummary](https://www.danieldsjoberg.com/gtsummary/)
+
+## flextable
+ - Ótimo para gerar os arquivos em word!
+
+```{r }
+tab1 <- iris_media_area %>% 
+flextable()
+
+```
+
+## Lógica...
+
+Gosto de pensar que também funciona como **"camadas"**.
+
+-   alinhamento
+-   fonte
+-   largura
+-   cores...
+
+
+## width : Largura
+
+```{r}
+flextable( iris_media_area) %>% 
+  width(width=3)
+```
+
+. . .
+
+```{r}
+flextable(iris_media_area) %>% 
+  width(width=1) %>% 
+  width (j=1, width=2) 
+```
+
+## bold: Negrito
+
+-   podemos usar a mesma lógica para as colunas
+
+-   Mas com o negrito, e outras formatações internas podemos também trabalhar nas **linhas**.
+
+-   **j** eram as colunas ...
+
+-   **i** são as linhas
+
+. . . 
+
+```{r}
+flextable(iris_media_area) %>% 
+  width(width=1) %>% 
+  width(j=1, width=3) %>% 
+  bold(i=1)
+  
+```
+
+. . .
+
+```{r}
+flextable(iris_media_area) %>% 
+  width(width=1) %>% 
+  width(j=1, width=3) %>% 
+  bold(part= "header")
+  
+```
+
+# alinhamento
+
+```{r}
+flextable(iris_media_area) %>% 
+  width(width=1) %>% 
+  width (j=1, width=2) %>% 
+  bold (part = "header") %>% 
+  align(align="center", part="all") %>% 
+  align(align="left", j=1,  part="all")
+  
+```
+
+## Mais firulas
+
+```{r}
+flextable(iris_media_area) %>% 
+  width(width=1) %>% 
+  width (j=1, width=0.5) %>% 
+  bold (part = "header") %>% 
+  align(align="center", part="all") %>% 
+  align(align="left", j=1,  part="all") %>% 
+  vline(j=1, border=fp_border(color = "purple",
+                              style = "dotted", 
+                              width = 1) ) %>% 
+  set_header_labels( 
+  Species="Espécie") %>% 
+  compose(
+    i = 1, j = c(2,3), part = "header",
+  value = c(as_paragraph(
+    "Área Média / cm",
+    as_sup("2")),
+    as_paragraph(
+    "Desvio Padrão / cm",
+    as_sup("2"))
+  )
+) %>% 
+  font(part = "all", fontname = "Verdana") %>% 
+  bg(i =  ~ area_dp/area_media >= 0.45, bg="yellow") %>% 
+  colformat_double(decimal.mark = ",",
+                   big.mark = ".",
+                   digits = 2) %>% 
+  colformat_int(big.mark = ".")
+  
+```
+
+# gtsummary
+
+-   [Relatorios Clínicos com gtsummary](https://www.danieldsjoberg.com/clinical-reporting-gtsummary-rmed/slides/#/title-slide)
+
+-   [Documentação](http://www.danieldsjoberg.com/gtsummary-v0.1/) . . .
+
+## gtsummary
+```{r}
+iris_filt <- iris %>% 
+  mutate(Species=as.character(Species)) %>% 
+  filter(Species!="setosa") 
+  
+ iris_filt %>%  
+  select(-Species) %>% 
+  tbl_summary()
+```
+
+. . .
+
+```{r}
+iris_filt %>% 
+  tbl_summary(by= Species)
+```
+
+## gtsummary
+
+```{r}
+iris_filt %>% 
+  tbl_summary(by= Species, 
+              statistic = list(all_continuous() ~ "{mean} ({sd})") )
+```
+
+. . .
+
+```{r}
+iris_filt %>% 
+  tbl_summary(by= Species, 
+              statistic = list(
+                all_continuous() ~ "{mean} ({sd})") ) %>% 
+  add_p() %>% 
+  bold_labels() %>% 
+  italicize_levels() %>%  
+  bold_p(t = 0.8)
+```
+
+. . .
+
+```{r}
+iris_filt %>% 
+  tbl_summary(by= Species, 
+              statistic = list(
+                all_continuous() ~ "{mean} ({sd})")) %>% 
+  add_p(test= everything() ~"t.test") %>% 
+  bold_labels() %>% 
+  italicize_levels() %>%  
+  bold_p(t = 0.8)
+```
+
+# Prática Tabelas
+
+# Obrigada!
