@@ -1,0 +1,96 @@
+---
+title: "Exercicio dplyr"
+author: "Carolina Musso"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+```
+
+```{r pacotes, echo=F, message=F, warning=F }
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, palmerpenguins)
+```
+
+# Select
+
+Veja as primeiras linhas da base de dados abaixo. Você pode usar as setas para todas as colunas.
+
+
+```{r}
+penguins |> 
+  head()
+
+```
+
+Agora usando a função select para selecionar as três primeiras colunas. 
+
+```{r}
+# uma forma 
+
+penguins_menor <- penguins |> 
+  select(species, island, bill_length_mm)
+
+# outra forma 
+penguins_menor <- penguins |> 
+  select(species:bill_length_mm)
+
+# outra forma 
+penguins_menor <- penguins |> 
+  select(1,2,3)
+
+# outra forma 
+penguins_menor <- penguins |> 
+  select(1:3)
+
+# visualizar o resultado
+penguins_menor
+```
+
+Agora tente usar as funções auxiliares do select para selecionar as colunas que começam com "bill".
+
+```{r}
+penguin_bill <- penguins |> 
+  select(starts_with("bill"))
+```
+ 
+# Filtro
+
+Use a função filter para selecionar apenas as linhas onde a espécie é "Adelie".
+
+```{r}
+penguins_adelie <- penguins |> 
+  filter(species == "Adelie")
+```
+
+Agora todas as diferentes de Adelie
+```{r}
+penguins_nao_adelie <- penguins |> 
+  filter(species != "Adelie")
+```
+
+
+# Mutate 
+
+Crie uma coluna que é a soma das colunas bill_length_mm e bill_depth_mm.
+
+
+```{r}
+penguins |> 
+  mutate(soma_bico = bill_length_mm + bill_depth_mm)
+```
+
+# group_by e summarise
+
+Agrupe por duas variaveis, Espécie e Ilha e calcule o desvio padrão da largura do bico em cada um desses grupos.
+
+```{r}
+penguins |> 
+  group_by(species, island) |> 
+  summarise(sd_bill_depth = sd(bill_depth_mm))
+```
+

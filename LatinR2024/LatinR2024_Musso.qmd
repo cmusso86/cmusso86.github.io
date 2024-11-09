@@ -1,0 +1,937 @@
+---
+title: "Qual o tamanho da sua incerteza?"
+subtitle: "Pacote _recalibratiNN_"
+author:
+  - name: Carolina Musso 
+    affiliations: "LatinR 2024"
+
+title-slide-attributes:
+    data-background-image: imgs/recalibratiNN.png
+    data-background-size: 25%
+    data-background-position: 70% 80%
+bibliography: biblio/referencias.bib
+csl: biblio/abnt.csl
+format:
+  revealjs:
+    width: 1600
+    height: 900
+    slide-number: true
+    embed-resources: true
+    multiplex: true
+    incremental: true
+    logo: imgs/logo_latinr.png
+    scrollable: true
+    highlight-style: arrow
+    theme: [auxl/style.scss]
+    transition: fade
+knitr:
+  opts_chunk:
+    echo: true
+    warnings: false
+---
+
+
+## Introdução: Redes Neurais hoje
+
+- Deveriam ser capaz de quantificar sua incerteza.
+- As RNs podem ser construídas para produzir resultados probabilísticos:
+  - Otimizadas pela log-verossimilhança.
+  - Como qualquer modelo, pode ser mal calibrado.
+     - Um IC de 95% deve conter 95% da saída real.
+     - $\mathbb{P}(Y \leq \hat{F_Y}^{-1}(p))= p , \forall ~ p \in [0,1]$  
+
+. . . 
+
+::: {.callout-note} 
+Se otimizado pelo MSE, estarei assumindo uma distribuição normal.
+:::
+
+## Observando a falta de calibração
+
+Considere um conjunto de dados sintéticos $(x_i, y_i), i \in (1, ..., n)$ gerados por um modelo não linear heteroscedástico:
+
+$$
+x_i \sim Uniform(1,10)\\
+$$
+
+$$
+ y_i|x_i \sim Normal(\mu = f_1(x_i), \sigma= f_2(x_i)) \\ f_1(x) = 5x^2 + 10 ~; ~ f_2(x) = 30x
+$$
+E então ajustamos um modelo de regressão linear simples...
+
+$$
+\hat{y}_i = \beta_0 + \beta_1 x_i +\epsilon_i, ~\epsilon_i ~ iid \sim N(0,\sigma)
+$$
+
+## Observando a falta de calibração
+
+Uma regressão linear simples, só para aquecer.
+
+. . . 
+
+```{r, include=F}
+pacman::p_load(tidyverse, 
+               patchwork,
+               NeuralNetTools,
+               glue,
+               RANN,
+               gt)
+pacman::p_load_gh("AllanCameron/geomtextpath")
+
+n <- 10000 # numero de observações
+split <- 0.8 # proporção para o treino
+
+#Auxiliary functions
+
+mu <- function(x1){
+ 10 + 5*x1^2
+ }
+ sg <- function(x1){
+   30*x1
+ }
+
+ # Gerando dados heterocedásticos.
+ set.seed(42)
+x <- runif(n, 1, 10)
+y <- rnorm(n, mu(x), sg(x))
+
+
+# Grupos de treino 
+
+x_train <- x[1:(n*split)]
+y_train <- y[1:(n*split)]
+
+# de calibração
+x_cal <- x[(n*split+1):n]
+y_cal <- y[(n*split+1):n]
+
+# Novas observações ou o conjunto de teste.
+x_new <- runif(n/5, 1, 10)
+
+# Ajustando um modelo de regressão linear simples
+# que sabemos de antemão que não capturará a heterocedasticidade
+model <- lm(y_train ~ x_train)
+
+# predições e mse do conjunto de calibração
+predict_scatter <- predict(model, 
+                           newdata=data.frame(x_train=x_cal), 
+                           interval = "prediction")%>%
+  as.data.frame() %>% 
+   mutate(x_cal=x_cal, y_cal=y_cal,
+          `IC 95%`=ifelse(y_cal<=upr&y_cal>=lwr, "in", "out"))
+scatter1 <- predict_scatter %>% 
+   ggplot()+
+   geom_point(aes(x_cal, y_cal, color=`IC 95%`))+
+  scale_colour_manual(values=c("#80b298", "#003366"))+
+  labs(x="x", y="y")+
+  theme_bw(base_size = 14) +
+  theme(axis.title.y=element_text(colour="black"),
+        axis.title.x = element_text(colour="black"),
+        axis.text = element_text(colour = "black"),
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"),
+        plot.margin = margin(0, 0, 0, 0.2, "cm"))
+cover1 <- mean(predict_scatter$`IC 95%`=="in")*100
+```
+
+- Global Coverage: `r cover1`%.
+
+```{r example, include=FALSE}
+
+
+
+set.seed(42)
+n <- 10000
+split <- 0.8
+
+# Auxiliary functions
+mu <- function(x1){
+10 + 5*x1^2
+}
+
+sigma_v <- function(x1){
+30*x1
+}
+
+# generating heterocedastic data (true model)
+
+x <- runif(n, 1, 10)
+y <- rnorm(n,mu(x), sigma_v(x))
+
+
+# slipting data 
+x_train <- x[1:(n*split)]
+y_train <- y[1:(n*split)]
+
+x_cal <- x[(n*split+1):n]
+y_cal <- y[(n*split+1):n]
+
+# fitting a simple linear model
+model <- lm(y_train ~ x_train)
+
+y_hat_cal <- predict(model, data.frame(x_train=x_cal))
+x_new <- runif(1000, 1, 10)
+y_new <- rnorm(length(x_new),mu(x_new), sigma_v(x_new))
+y_hat_new <- predict(model, data.frame(x_train=x_new))
+```
+<div style="text-align: center;">
+```{r, echo=F,   out.width = "75%" }
+
+# use predict to get the confidence intervals
+data_predict <- predict(model, 
+                        newdata=data.frame(x_train=x_cal), 
+                        interval = "prediction") %>% 
+  as_tibble() %>% 
+  dplyr::mutate(x_cal=x_cal, 
+                y_cal=y_cal,
+          CI=ifelse(y_cal <= upr&y_cal>=lwr, "in", "out")) 
+
+graf1 <- data_predict %>% 
+  ggplot(aes(x_cal))+
+  geom_point(mapping=aes(x_cal, y_cal, color=CI), alpha=0.6, size=3)+
+  geom_labelline(aes( y=mu(x_cal), label="True Mean" ), 
+                 size=4, hjust=-0.01, linewidth=1.2, color="red3" )+
+  geom_smooth(aes( y=y_cal ), color="black",se=F,linewidth=1.2,
+                   method="lm", formula=y~x,linetype="dashed" )+
+  scale_color_manual("IC 95%", values=c("#00822e", "#2f1d86"))+
+  theme_classic(base_size=16)+
+  labs(x="covariate", "output" )
+graf1
+   
+```
+</div>
+
+## Valores PIT
+
+- Histograma dos valores da Transformação Integral de Probabilidade (PIT).
+
+- Seja $F_Y(y)$ a função de distribuição acumulada de uma variável aleatória contínua Y, então:
+
+. . .
+
+$$U = F_Y (Y ) ∼ Uniform(0, 1)$$
+
+- Em particular, se $Y \sim Normal(\mu, \sigma)$:
+
+. . .
+
+$$Y = F_Y^{-1} (U) ∼ Normal(\mu, \sigma)$$
+
+## Visualizando os valores PIT
+
+
+```{r echo=F}
+
+set.seed(42)
+
+mu <- function(x1){
+  10 + 5*x1^2
+}
+
+sg <- function(x1){
+  30*x1
+}
+
+# Gera os dados
+n = 100000
+
+x1 <- runif(n, 2, 20)
+y <- rnorm(n, mu(x1), sg(x1))
+
+n.v = 10000
+x1.v = runif(n.v, 2, 20)
+y.v = rnorm(n.v, mu(x1.v), sg(x1.v))
+
+n.t = 10000
+x1.t = runif(n.t, 2, 20)
+y.t = rnorm(n.t, mu(x1.t), sg(x1.t))
+
+# Estima o modelo
+
+mod <- lm(y ~ x1)
+yhat.v = predict(mod, newdata = data.frame("x1" = x1.v))
+yhat.t = predict(mod, newdata = data.frame("x1" = x1.t))
+
+# Gráfico de dispersão
+k <- 4.5
+sigma <- sigma(mod)
+ab <- coef(mod)
+a <- ab[1]
+b <- ab[2]
+
+
+obs_v <- 549
+obs_a <- 937
+
+x0_v <- x1.t[obs_v]
+x0_a <- x1.t[obs_a]
+  
+  
+y0_v <- a+b*x0_v
+y0_a <- a+b*x0_a
+
+x_normal_v <- seq(-k*sigma, k*sigma, length.out = 50)
+y_normal_v <- dnorm(x_normal_v, 0, sigma)/dnorm(0, 0, sigma) * 3
+
+x_normal_a <- seq(-k*sigma, k*sigma, length.out = 50)
+y_normal_a <- dnorm(x_normal_a, 0, sigma)/dnorm(0, 0, sigma) * 3
+
+path1_v <- data.frame(x = y_normal_v + x0_v, y = x_normal_v + y0_v)
+segment1_v <- data.frame(x = x0_v, y = y0_v - k*sigma, xend = x0_v, yend = y0_v + k*sigma)
+
+path1_a <- data.frame(x = y_normal_a + x0_a, y = x_normal_a + y0_a)
+segment1_a <- data.frame(x = x0_a, y = y0_a  - k*sigma, xend = x0_a, yend = y0_a + k*sigma)
+
+
+viz_v = order(abs(x1.t[obs_v]-x1.t))[1:(n.t*0.1)]
+viz_a = order(abs(x1.t[obs_a]-x1.t))[1:(n.t*0.1)]
+
+x1v <- x1.t[viz_v]
+x1a <- x1.t[viz_a]
+
+yv<- y.t[viz_v]; yhatv <- yhat.t[viz_v]
+ya<- y.t[viz_a]; yhata <- yhat.t[viz_a]
+
+p <- pnorm(y.t, yhat.t, summary(mod)$sigma)
+pv <- pnorm(yv, yhatv, summary(mod)$sigma)
+pa <- pnorm(ya, yhata, summary(mod)$sigma)
+
+p_uni <- pnorm(rnorm(10000, mean=a*x1.t + b, summary(mod)$sigma),
+               mean=a*x1.t + b, summary(mod)$sigma)
+p_unia <- pnorm(rnorm(1000, mean=a*x1v + b, summary(mod)$sigma),
+               mean=a*x1v + b, summary(mod)$sigma)
+p_univ <- pnorm(rnorm(1000, mean=a*x1a + b, summary(mod)$sigma),
+               mean=a*x1a + b, summary(mod)$sigma)
+
+dados <- data.frame(teo=sort(p), empi=sort(p_uni)) %>% 
+  sample_n(1000) %>% 
+  mutate(teov = sort(pv), 
+         empiv = sort(p_univ),
+         teoa = sort(pa), 
+         empia = sort(p_unia)) 
+
+
+qq_plot <- ggplot(dados)+
+  geom_point(aes(x=teo, y=empi), color="#4B5D4D", size=0.01)+
+  geom_point(aes(x=teoa, y=empia), color="#003376", size=0.01)+
+   geom_point(aes(x=teov, y=empiv), color="#00922E", size=0.01)+
+  labs(x="Predicted", 
+       y="Empirical")+
+    geom_abline(slope = 1, linetype="dashed", color="red")+
+  theme_bw(base_size = 14) +
+  theme(axis.title.y=element_text(colour="black"),
+        axis.title.x = element_text(colour="black"),
+        axis.text = element_text(colour = "black"),
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"),
+        plot.margin = margin(0,0.5, 0,0, "cm"))
+
+p_value_global <- ggplot(NULL, aes(p, after_stat(density)))+
+  geom_histogram(breaks=seq(0, 1, 0.05), fill="#4B5D4D", color="#4a555f", alpha=0.8)+
+  geom_hline(yintercept = 1, linetype="dashed")+
+  labs(x="Cumulative probability", y="Density")+
+  scale_x_continuous(expand = c(0, 0), limits = c(0,1.01)) + 
+  scale_y_continuous(expand = c(0, 0), limits = c(0, NA), breaks = c(.25, .5, .75, 1)) +
+    theme_bw(base_size = 14) +
+  theme(axis.title.y=element_text(colour="black"),
+        axis.title.x = element_text(colour="black"),
+        axis.text = element_text(colour = "black"),
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"),
+        plot.margin = margin(0, 0.5, 0, 0, "cm"))
+
+ajuste_modelo <- cbind.data.frame(x1.t, y.t) %>%
+   dplyr::mutate(
+    cores = ifelse(dplyr::row_number() %in% viz_v, "A", 
+                   ifelse(dplyr::row_number() %in% viz_a, "B", "C"))) %>%
+  dplyr::mutate(destaque=as.factor(ifelse(dplyr::row_number()==1, 1, 0))) %>%
+  ggplot(aes(x1.t, y.t))+
+  geom_point(aes(color = cores))+
+  scale_color_manual(values = c("#00822E", "#003365", "darkgrey", "red", "black"))+
+  #geom_function(fun = mu, size=1, alpha=0.8, aes(color="True Mean"), linetype="dotted")+
+  #geom_smooth(formula = "y~x", method = "lm", se=F, aes(color=rep("Estimated Mean", n.t)))+
+  geom_path(aes(x,y), data = path1_v, color = "red")+
+  geom_path(aes(x,y), data = path1_a, color = "red")+
+  geom_segment(aes(x=x,y=y,xend=xend,yend=yend), data = segment1_v)+
+  geom_segment(aes(x=x,y=y,xend=xend,yend=yend), data = segment1_a)+
+  labs(x="x", y="y")+
+  theme_bw(base_size = 14) +
+  theme(axis.title.y=element_text(colour="black"),
+        axis.title.x = element_text(colour="black"),
+        axis.text = element_text(colour = "black"),
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"), legend.position = "none",
+        plot.margin = margin(0, 0, 0, 0.2, "cm"))
+
+azul <- p[-obs_a][order((x1.t[obs_a] - x1.t[-obs_a])^2)][1:(n.t*0.1)]
+verde <- p[-obs_v][order((x1.t[obs_v] - x1.t[-obs_v])^2)][1:(n.t*0.1)]
+
+p_value_local <- ggplot(NULL)+
+  geom_histogram(aes(azul, after_stat(density)),
+                 breaks=seq(0, 1, 0.05), fill="#003366", color="white", alpha=0.6)+
+  geom_histogram(aes(verde, after_stat(density)),
+                 breaks=seq(0, 1, 0.05), fill="#006630", color="black", alpha=0.55)+
+  geom_hline(yintercept = 1, linetype="dashed")+
+  labs(x="Cumulative probability", y="Density")+
+  theme_bw(base_size = 14) +
+  theme(axis.title.y=element_text(colour="black"),
+        axis.title.x = element_text(colour="black"),
+        axis.text = element_text(colour = "black"),
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"),
+        plot.margin = margin(0, 0, 0, 0.4, "cm"))
+library(recalibratiNN)
+MSE_cal <- mean(((y_cal - y_hat_cal)^2))
+ajuste_modelo + p_value_local
+```
+
+
+## Recalibração
+
+**Pacotes disponíveis**
+
+-   R: [probably](https://probably.tidymodels.org)
+
+-   Python: [ml_insights](https://ml-insights.readthedocs.io/en/latest/index.html)
+
+- Apenas calibração global, focada em problemas de classificação e aplicável apenas no espaço de covariáveis.
+
+. . . 
+
+**Método:**
+
+  -   [Torres et al (2024)](https://doi.org/10.48550/arXiv.2403.05756): Calibração local para regressões e em diversas representações do espaço de covariáveis: útil para Redes Neurais Artificiais (RNAs).
+
+## Algoritmo
+
+![](imgs/algo.png){fig-align="center"}
+
+# O pacote está disponível
+
+-   No [GitHub](https://github.com/cmusso86/recalibratiNN.git) 
+
+- No [CRAN](https://doi.org/10.32614/CRAN.package.recalibratiNN)
+- por agora, apenas para modelos de regressão gaussiana.
+
+## The recalibratiNN package
+
+- Sete funções e 10 dependências
+
+. . . 
+
+```{r out.width="110%", echo = F}
+p_tab <- tibble(
+  Function = c("PIT_global", "PIT_local", "gg_PIT_global", "gg_PIT_local", "recalibrate"),
+  Description = c("Calculates PIT values for the entire dataset", "Calculates PIT values for each cluster", "Plots PIT values histogram", "Plots PIT values densities for kmeans clusters", "Recalibrates the model"),
+  Arguments = c("ycal, yhat, mse", "xcal, ycal, yhat, mse, clusters, p_neighbours, PIT", "pit, type, fill, alpha, print_p", "pit_local, alpha, linewidth, pal, facet", "yhat_new, space_new, space_cal, pit_values, mse, type, p_neighbours, epsilon")
+)
+  
+gt(p_tab) |> 
+     tab_options(
+    table.font.size = px(34), # Adjust font size
+    table.width = pct(100) # Adjust table width
+  )
+  
+  
+```
+
+
+# Visualizando a falta de calibração
+- With a Neural Network example
+- Com um exemplo de Rede Neural
+
+## 
+
+**Data**
+```{r}
+set.seed(42)   # The Answer to the Ultimate Question of Life, The Universe, and Everything
+
+n <- 10000
+
+x <- cbind(x1 = runif(n, -3, 3),
+           x2 = runif(n, -5, 5))
+
+mu_fun <- function(x) {
+  abs(x[,1]^3 - 50*sin(x[,2]) + 30)}
+
+mu <- mu_fun(x)
+y <- rnorm(n, 
+           mean = mu, 
+           sd=20*(abs(x[,2]/(x[,1]+ 10))))
+
+split1 <- 0.6
+split2 <- 0.8
+
+x_train <- x[1:(split1*n),]
+y_train <- y[1:(split1*n)]
+
+x_cal  <- x[(split1*n+1):(n*split2),]
+y_cal  <- y[(split1*n+1):(n*split2)]
+
+x_test <- x[(split2*n+1):n,]
+y_test  <- y[(split2*n+1):n]
+
+```
+
+
+
+## 
+
+**Keras**
+```{r, eval=F}
+model_nn <- keras_model_sequential()
+
+model_nn |> 
+  layer_dense(input_shape=2,
+              units=800,
+              use_bias=T,
+              activation = "relu",
+              kernel_initializer="random_normal",
+              bias_initializer = "zeros") %>%
+  layer_dropout(rate = 0.1) %>%
+  layer_dense(units=800,
+              use_bias=T,
+              activation = "relu",
+              kernel_initializer="random_normal",
+              bias_initializer = "zeros") |> 
+  layer_dropout(rate = 0.1) |> 
+  layer_dense(units=800,
+              use_bias=T,
+              activation = "relu",
+              kernel_initializer="random_normal",
+              bias_initializer = "zeros") |> 
+   layer_batch_normalization() |> 
+  layer_dense(units = 1,
+              activation = "linear",
+              kernel_initializer = "zeros",
+              bias_initializer = "zeros")
+
+model_nn |> 
+  compile(optimizer=optimizer_adam( ),
+    loss = "mse")
+
+model_nn |> 
+  fit(x = x_train, 
+      y = y_train,
+      validation_data = list(x_cal, y_cal),
+      callbacks = callback_early_stopping(
+        monitor = "val_loss",
+        patience = 20,
+        restore_best_weights = T),
+      batch_size = 128,
+      epochs = 1000)
+
+
+y_hat_cal <- predict(model_nn, x_cal)
+y_hat_test <- predict(model_nn, x_test)
+```
+
+```{r, echo = F}
+# carregar os vetores .rds
+
+file_path1 <- system.file("extdata", "mse_cal.rds", package = "recalibratiNN")
+MSE_cal <- readRDS(file_path1)|> as.numeric()
+
+file_path2 <- system.file("extdata", "y_hat_cal.rds", package = "recalibratiNN")
+y_hat_cal <- readRDS(file_path2)|> as.numeric()
+
+file_path3 <- system.file("extdata", "y_hat_test.rds", package = "recalibratiNN")
+y_hat_test <- readRDS(file_path3)|> as.numeric()
+
+```
+
+## Descalibração global
+
+```{r echo = T, eval = F}
+
+pit <- PIT_global(ycal = y_cal, # outcomes of calibration set
+                  yhat = y_hat_cal, # predictions of calibration
+                  mse = MSE_cal) # MSE of calibration set 
+                       
+gg_PIT_global(pit,
+              type = "histogram") # other customizations are available
+```
+
+. . . 
+
+<div style="text-align: center;">
+```{r echo = F, out.width="70%"}
+library(recalibratiNN)
+pit <- PIT_global(ycal = y_cal, # outcomes of calibration set
+                  yhat = y_hat_cal, # predictions of calibration
+                  mse = MSE_cal) # MSE of calibration set 
+
+gg_PIT_global(pit,
+              type = "histogram") +
+  theme_classic(base_size = 26)
+```
+</div>
+
+## Descalibração local
+
+```{r echo = T, eval = F}
+pit_local <- PIT_local(xcal = x_cal, # covariates of calibration set
+                       ycal = y_cal, # outcomes of calibration set
+                       yhat = y_hat_cal, # predictions of calibration set
+                       mse = MSE_cal) # MSE of calibration set
+
+gg_PIT_local(pit_local) # there are customizations available
+```
+
+. . . 
+
+<div style="text-align: center;">
+```{r echo = F, out.width="70%"}
+pit_local <- PIT_local(xcal = x_cal,
+                       ycal = y_cal, 
+                       yhat = y_hat_cal, 
+                       mse = MSE_cal
+                       )
+
+gg_PIT_local(pit_local)+
+  theme_classic(base_size = 24)
+```
+</div>
+
+## Cobertura
+<div style="text-align: center;">
+```{r echo = F, out.width="110%"}
+coverage_model <- tibble(
+  x1cal = x_test[,1], 
+  x2cal = x_test[,2],
+  y_real = y_test, 
+  y_hat = y_hat_test) |> 
+mutate(lwr = qnorm(0.05, y_hat, sqrt(MSE_cal)),
+       upr = qnorm(0.95, y_hat, sqrt(MSE_cal)),
+       CI = ifelse(y_real <= upr & y_real >= lwr, 
+                       "in",  "out" ),
+       coverage = round(mean(CI == "in")*100,1) 
+)
+
+coverage_model |> 
+  arrange(CI) |>   
+  ggplot() +
+  geom_point(aes(x1cal, 
+                 x2cal, 
+                 color = CI),
+             alpha = 0.9,
+             size = 4)+
+   labs(x="x1" , y="x2", 
+        title = glue("Original coverage: {coverage_model$coverage[1]} %"))+
+  scale_color_manual("Confidence Interval",
+                     values = c("in" = "aquamarine3", 
+                                "out" = "steelblue4"))+
+  theme_classic( base_size = 24)
+```
+</div>
+
+## Recalibração
+
+```{r}
+recalibrated <- 
+  recalibrate(
+    pit_values = pit,      # global pit values calculated earlier.
+    mse = MSE_cal,         # MSE from calibration set
+    yhat_new = y_hat_test, # predictions of test set
+    space_cal = x_cal,     # covariates or any representation of calibration set
+    space_new = x_test,    # covariates or any representation of test set
+    type = "local",        # type of calibration
+    p_neighbours = 0.08)   # proportion of calibration to use as nearest neighbors
+
+y_hat_rec <- recalibrated$y_samples_calibrated_wt
+
+```
+
+- Pronto!
+- Esses novos valores em `y_hat_rec` são mais calibrados que os originais.
+
+## Bora ver?
+
+. . . 
+
+<div style="text-align: center;">
+
+```{r echo = F, out.width= "110%"}
+
+n_clusters <- 6 
+n_neighbours <- length(y_hat_test)*0.08
+
+
+# calculating centroids
+cluster_means_cal <- kmeans(x_test, n_clusters)$centers
+
+cluster_means_cal <- cluster_means_cal[order(cluster_means_cal[,1]),]
+
+  
+# finding neighbours
+knn_cal <- nn2(x_test, 
+               cluster_means_cal, 
+               k = n_neighbours)$nn.idx
+
+
+# geting corresponding ys (real and estimated)
+y_real_local <- map(1:nrow(knn_cal),  ~y_test[knn_cal[.,]])
+
+y_hat_local <- map(1:nrow(knn_cal),  ~y_hat_rec[knn_cal[.,],])
+
+
+# calculate pit_local
+pits <- matrix(NA, 
+               nrow = 6, 
+               ncol = n_neighbours)
+
+for (i in 1:n_clusters) {
+    pits[i,] <- map_dbl(1:n_neighbours, ~{
+      mean(y_hat_local[[i]][.,] <= y_hat_local[[i]][.])
+    })
+}
+
+as.data.frame(t(pits)) |> 
+  pivot_longer(everything()) |> 
+  group_by(name) |>
+  mutate(p_value =ks.test(value,
+                          "punif")$p.value,
+         name = gsub("V", "part_", name)) |> 
+  ggplot()+
+  geom_density(aes(value,
+                   color = name,
+                   fill = name),
+               alpha = 0.5,
+               bounds = c(0, 1))+
+  geom_hline(yintercept = 1, 
+             linetype="dashed")+
+  theme_classic(base_size = 36)+
+  scale_color_brewer(palette = "Set2")+
+  scale_fill_brewer(palette = "Set2")+
+  theme_classic()+
+  geom_text(aes(x = 0.5, 
+                y = 0.5,
+                label = glue("p-value: {round(p_value, 3)}")),
+            color = "black",
+            size = 3)+
+  theme(legend.position = "none")+
+  labs(title = "After Local Calibration",
+       subtitle = "It looks so much better!!",
+       x = "PIT-values",
+       y = "Density")+
+  facet_wrap(~name, scales = "free_y")
+```
+</div>
+
+## Cobertura
+
+
+<div style="text-align: center;">
+```{r echo = F, out.width= "110%"}
+rm(list = ls())
+file_path1 <- system.file("extdata", "mse_cal.rds", package = "recalibratiNN")
+MSE_cal <- readRDS(file_path1)|> as.numeric()
+
+file_path2 <- system.file("extdata", "y_hat_cal.rds", package = "recalibratiNN")
+y_hat_cal <- readRDS(file_path2)|> as.numeric()
+
+file_path3 <- system.file("extdata", "y_hat_test.rds", package = "recalibratiNN")
+y_hat_test <- readRDS(file_path3)|> as.numeric()
+
+set.seed(42)   # The Answer to the Ultimate Question of Life, The Universe, and Everything
+
+n <- 10000
+
+x <- cbind(x1 = runif(n, -3, 3),
+           x2 = runif(n, -5, 5))
+
+mu_fun <- function(x) {
+  abs(x[,1]^3 - 50*sin(x[,2]) + 30)}
+
+mu <- mu_fun(x)
+y <- rnorm(n, 
+           mean = mu, 
+           sd=20*(abs(x[,2]/(x[,1]+ 10))))
+
+split1 <- 0.6
+split2 <- 0.8
+
+x_train <- x[1:(split1*n),]
+y_train <- y[1:(split1*n)]
+
+x_cal  <- x[(split1*n+1):(n*split2),]
+y_cal  <- y[(split1*n+1):(n*split2)]
+
+x_test <- x[(split2*n+1):n,]
+y_test  <- y[(split2*n+1):n]
+
+pit <- PIT_global(ycal = y_cal, 
+                  yhat = y_hat_cal, 
+                  mse = MSE_cal)
+recalibrated <- 
+  recalibrate(
+     pit_values = pit,      # global pit values calculated earlier.
+    mse = MSE_cal,         # MSE from calibration set
+    yhat_new = y_hat_test, # predictions of test set
+    space_cal = x_cal,     # covariates of calibration set,
+    space_new = x_test,    # covariates of test set
+    type = "local",        # type of calibration
+    p_neighbours = 0.08)   # proportion of calibration to use as nearest neighbors
+
+y_hat_rec <- recalibrated$y_samples_calibrated_wt
+
+ coverage_rec <- map_dfr( 1:nrow(x_test), ~ {
+  quantile(y_hat_rec[.,]
+           ,c(0.05, 0.95))}) |> 
+  mutate(
+    x1 = x_test[,1],
+    x2 = x_test[,2],
+    ytest = y_test,
+    CI = ifelse(ytest <= `95%`& ytest >= `5%`, 
+                "in", "out"),
+    coverage = round(mean(CI == "in")*100,1)) |> 
+  arrange(CI)
+
+ coverage_rec |> 
+   ggplot() +
+   geom_point(aes(x1, x2, color = CI),
+              alpha = 0.9,
+              size = 4)+
+   labs(x="x1" , y="x2", 
+        title = glue("Recalibrated coverage: {coverage_rec$coverage[1]} %"))+
+  scale_color_manual("Confidence Interval",
+                     values = c("in" = "aquamarine3", 
+                                "out" = "steelblue4"))+
+  theme_classic(base_size = 24)
+```
+</div>
+
+# Dados reais
+
+## Diamantes
+
+```{r echo = F, include = F}
+load("data/diamonds_example_gaussian.RData")
+
+
+y2.pit <- PIT_global(
+  ycal = y.val,
+  yhat = y2.val,
+  mse = y2.mse.val
+)
+
+graf1 <- gg_PIT_global(y2.pit, 
+  type = "histogram")
+
+pit_local <- PIT_local(
+  xcal = x.val,
+  ycal = y.val,
+  yhat = y2.val,
+  mse = y2.mse.val
+)
+
+graf2 <-gg_PIT_local(pit_local)
+
+
+y2.recal <- recalibrate(
+  yhat_new = y2.test,
+  pit_values = y2.pit,
+  mse = y2.mse.val,
+  space_cal = h2.val,
+  space_new = h2.test,
+  type = 'local'
+)
+
+
+
+y_hat_recalib <- y2.recal$y_samples_calibrated_wt
+
+# empirical p-value distribution
+pit_new <- purrr::map_dbl(
+  1:length(y.test), ~{
+    mean(y_hat_recalib[.,] <= y.test[.] )
+  })
+diamGlob <- gg_PIT_global(pit_new, print_p = F, type = "histogram")+
+  theme_classic(base_size = 20)
+
+
+## pit local
+
+n_neighbours <- 800
+clusters <- 6
+
+# calculating centroids
+cluster_means_cal <- stats::kmeans(x.test, clusters)$centers
+cluster_means_cal <- cluster_means_cal[order(cluster_means_cal[,1]),]
+
+
+# finding neighbours
+knn_cal <- RANN::nn2(x.test, cluster_means_cal,  k=n_neighbours)$nn.idx
+
+
+# geting corresponding ys (real and estimated)
+y_new_local <- purrr::map(1:nrow(knn_cal),  ~y.test[knn_cal[.,]])
+y_hat_local <-purrr::map(1:nrow(knn_cal),  ~y_hat_recalib[knn_cal[.,],])
+
+
+# calculate pit_local
+
+pits <- matrix(NA, nrow=6, ncol=800)
+for (i in 1:clusters) {
+  pits[i,] <- purrr::map_dbl(1:length(y_new_local[[1]]), ~{
+    mean(y_hat_local[[i]][.,] <= y_new_local[[i]][.])
+  })
+}
+
+
+diamLoc <- as.data.frame(t(pits)) %>%
+  pivot_longer(everything()) %>%
+  ggplot()+
+  geom_density(aes(value,
+                   color=name,
+                   fill=name),
+               alpha=0.5,
+               bounds = c(0, 1))+
+  geom_hline(yintercept=1, linetype="dashed")+
+  scale_color_brewer(palette="Set2")+
+  scale_fill_brewer(palette="Set2")+
+  theme_classic(base_size = 20)+
+  theme(legend.position = "none")+
+  labs(title = "Local Calibration",
+       x="PIT-values", y="Density")
+
+```
+
+```{r fig.align="center", echo = F}
+graf1 + graf2 
+```
+
+## Depois da Recalibração
+
+Calibrado usando uma segunda camada escondida.
+
+
+```{r echo = F}
+diamGlob + diamLoc 
+```
+
+## Conclusões e Trabalhos Futuros
+
+- Visualização eficaz da falta de calibração.
+- Vantagens em relação a outros pacotes disponíveis
+   - Focado em modelos de regressão
+   - Recalibração local
+   - Recalibração em camadas intermediárias.
+   
+. . . 
+
+**Desenvolvimentos Futuros:**
+
+- Integração com outros pacotes (tidymodels), tipos de entrada mais amplos, métodos de validação cruzada
+
+- Lidar com modelos com distribuições preditivas arbitrárias.
+
+# Obrigada!
+
+[GitHub](https://github.com/cmusso86/LatinR2024.git)

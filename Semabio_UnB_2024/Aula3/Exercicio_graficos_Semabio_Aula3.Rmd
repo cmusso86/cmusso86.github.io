@@ -37,7 +37,7 @@ penguins <- na.omit(penguins)  # Removendo observações com valores ausentes
 
 # Observe o gráfico abaixo. 
 
-Ele contem  a relação de duas variáveis quantitativas. 
+Ele contéma relação de duas variáveis quantitativas. 
 
 ```{r}
 ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm)) +
@@ -52,7 +52,11 @@ ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm)) +
 Modifique os eixos e títulos para que contenham as informações adequadas. (Bill significa Bico em inglês).
 
 ```{r}
-
+ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm)) +
+  geom_point() +
+  labs(title = "Relação entre o tamanho e a profundidade do bico dos pinguins",
+       x = "Tamanho do bico (mm)",
+       y = "Espessura do bico (mm)")
 ```
 
 
@@ -61,17 +65,45 @@ Modifique os eixos e títulos para que contenham as informações adequadas. (Bi
 Acrescente um argumento para que a cor corresponda as especies. 
 
 ```{r}
-
+ggplot(penguins, aes(x = bill_length_mm, 
+                     y = bill_depth_mm,
+                     color = species)) +
+  geom_point() +
+  labs(title = "Relação entre o tamanho e a profundidade do bico dos pinguins",
+       x = "Tamanho do bico (mm)",
+       y = "Espessura do bico (mm)")
 ```
 
 
 ## 3)
 
-Procure o parâmetro que dita a transparencia do ponto. Procure no Google, ou na documentacao da função geom_point(), e acrescente esse parametro para modificar o gráfico com uma transparência de sua escolha. 
+Procure o parâmetro que dita a transparencia do ponto (poder no google, chatgpt...). Procure no Google, ou na documentacao da função geom_point(), e acrescente esse parametro para modificar o gráfico com uma transparência de sua escolha. 
+
+```{r}
+ggplot(penguins, 
+       aes(x = bill_length_mm, 
+           y = bill_depth_mm,
+           color = species), 
+       alpha = 0.5 # transparencia
+       ) +
+  geom_point() +
+  labs(title = "Relação entre o tamanho e a profundidade do bico dos pinguins",
+       x = "Tamanho do bico (mm)",
+       y = "Espessura do bico (mm)")
+
+```
+
 
 ## 4) 
 Faça um gráfico de boxplot para o tamanho do bico para cada uma das espécies. Quem conseguir, acresncente ainda uma 4 variável (sexo), utilizando o parametro `fill`.
 
 ```{r}
+
+ggplot(penguins, aes(x = species, y = bill_length_mm, fill)) +
+  geom_boxplot() +
+  labs(title = "Tamanho do bico dos pinguins por espécie e sexo",
+       x = "Espécie",
+       y = "Tamanho do bico (mm)")
+
 ```
 

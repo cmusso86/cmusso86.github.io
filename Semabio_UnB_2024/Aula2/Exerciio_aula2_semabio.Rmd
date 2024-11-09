@@ -1,0 +1,65 @@
+---
+title: "Exercicio dplyr"
+author: "Carolina Musso"
+output:
+  word_document
+---
+
+```{r sets, include=F}
+rm(list=ls()) # limpa  o ambiente
+```
+
+```{r pacotes, echo=F, message=F, warning=F }
+# PACOTES ----
+
+if (!require(pacman)) install.packages("pacman")
+  pacman::p_load(tidyverse, palmerpenguins)
+```
+
+# Select
+
+Veja as primeiras linhas da base de dados abaixo. Você pode usar as setas para todas as colunas.
+
+
+```{r}
+penguins |> 
+  head()
+```
+
+Agora usando a função select para selecionar as três primeiras colunas. 
+
+```{r}
+
+```
+
+Agora tente usar as funções auxiliares do select para selecionar as colunas que começam com "bill".
+
+ 
+# Filtro
+
+Use a função filter para selecionar apenas as linhas onde a espécie é "Adelie".
+
+```{r}
+
+```
+
+Agora todas as diferentes de Adelie
+
+
+# Mutate 
+
+Crie uma coluna que é a soma das colunas bill_length_mm e bill_depth_mm.
+
+
+```{r}
+
+```
+
+# group_by e summarise
+
+Agrupe por duas variaveis, Espécie e Ilha e calcule o desvio padrão da largura do bico em cada um desses grupos.
+
+```{r}
+
+```
+

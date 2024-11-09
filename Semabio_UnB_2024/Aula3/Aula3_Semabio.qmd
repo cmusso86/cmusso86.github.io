@@ -240,7 +240,7 @@ ggplot(iris) +
 ## Customizações 
 
 ```{r}
-ggplot(iris) + 
+g <- ggplot(iris) + 
   aes(x = Petal.Length, y = Petal.Width,
       shape=Species, color=Species) +
   geom_point()+
@@ -248,6 +248,10 @@ ggplot(iris) +
                               "deeppink1",
                               "#684dcf"))+
   theme_classic()
+```
+
+```{r}
+g
 ```
 
 - ggthemes [ggplot extensions](https://exts.ggplot2.tidyverse.org/ggthemes.html)

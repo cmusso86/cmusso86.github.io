@@ -57,7 +57,7 @@ tab1
 
 ## 3) 
 
-Acrescente linhas a tabela
+Acrescente linhas de grade aa tabela
 
 ```{r}
 

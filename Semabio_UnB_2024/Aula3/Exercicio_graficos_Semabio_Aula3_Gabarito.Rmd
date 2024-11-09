@@ -1,0 +1,109 @@
+---
+title: "Gráficos com dados de Pinguins"
+author: "Carolina Musso"
+date: "2024-11-07"
+output:
+  html_document:
+    self-contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+```
+
+## Introdução
+
+Este relatório apresenta uma análise a da base de dados 'Palmer Penguins', um recurso emergente e instrutivo no domínio da ciência de dados e estatística. A base de dados foi coletada pela Dra. Kristen Gorman com o Programa de Pesquisa Polar Palmer Station, Antártica. Os dados abrangem três espécies de pinguins encontradas nas ilhas próximas à Estação Palmer: Adelie, Chinstrap e Gentoo.
+
+Com 344 observações, esta base de dados inclui medidas como o tamanho do bico, a profundidade do bico, o comprimento das nadadeiras, a massa corporal dos pinguins, além de informações sobre a espécie, sexo e local de coleta. 
+
+Este relatório não apenas serve como uma exploração aprofundada da base de dados biológicos realista e relevante, mas também como um exemplo prático da utilização do relatorios automatizados em Rmarkdown.
+
+# Material e métodos
+
+Neste relatório, utilizaremos métodos de análise exploratória de dados para explorar as características físicas dos pinguins e as diferenças entre as espécies. Nosso foco será em destacar padrões interessantes, identificar correlações potenciais e proporcionar insights visuais por meio de gráficos e análises estatísticas.
+
+```{r}
+# Carregando os pacotes necessários
+if (!require(pacman)) install.packages("pacman")
+pacman::p_load(palmerpenguins, tidyverse, 
+               ggstatsplot,gtsummary, ggpubr)
+
+# Carregando os dados
+data("penguins")
+penguins <- na.omit(penguins)  # Removendo observações com valores ausentes
+
+```
+
+# Observe o gráfico abaixo. 
+
+Ele contéma relação de duas variáveis quantitativas. 
+
+```{r}
+ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm)) +
+  geom_point() +
+  labs(title = "titulo",
+       x = "lala",
+       y = "lele")
+
+```
+
+## 1) 
+Modifique os eixos e títulos para que contenham as informações adequadas. (Bill significa Bico em inglês).
+
+```{r}
+ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm)) +
+  geom_point() +
+  labs(title = "Relação entre o tamanho e a profundidade do bico dos pinguins",
+       x = "Tamanho do bico (mm)",
+       y = "Espessura do bico (mm)")
+```
+
+
+## 2)
+
+Acrescente um argumento para que a cor corresponda as especies. 
+
+```{r}
+ggplot(penguins, aes(x = bill_length_mm, 
+                     y = bill_depth_mm,
+                     color = species)) +
+  geom_point() +
+  labs(title = "Relação entre o tamanho e a profundidade do bico dos pinguins",
+       x = "Tamanho do bico (mm)",
+       y = "Espessura do bico (mm)")
+```
+
+
+## 3)
+
+Procure o parâmetro que dita a transparencia do ponto (poder no google, chatgpt...). Procure no Google, ou na documentacao da função geom_point(), e acrescente esse parametro para modificar o gráfico com uma transparência de sua escolha. 
+
+```{r}
+ggplot(penguins, 
+       aes(x = bill_length_mm, 
+           y = bill_depth_mm,
+           color = species), 
+       alpha = 0.5 # transparencia
+       ) +
+  geom_point() +
+  labs(title = "Relação entre o tamanho e a profundidade do bico dos pinguins",
+       x = "Tamanho do bico (mm)",
+       y = "Espessura do bico (mm)")
+
+```
+
+
+## 4) 
+Faça um gráfico de boxplot para o tamanho do bico para cada uma das espécies. Quem conseguir, acresncente ainda uma 4 variável (sexo), utilizando o parametro `fill`.
+
+```{r}
+
+ggplot(penguins, aes(x = species, y = bill_length_mm, fill)) +
+  geom_boxplot() +
+  labs(title = "Tamanho do bico dos pinguins por espécie e sexo",
+       x = "Espécie",
+       y = "Tamanho do bico (mm)")
+
+```
+
