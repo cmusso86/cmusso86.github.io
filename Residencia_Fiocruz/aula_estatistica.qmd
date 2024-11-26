@@ -1,0 +1,785 @@
+---
+title: Estatística Básica
+subtitle: "(Muita Estatística pra pouco tempo)"
+author: "Carolina Musso"
+institute: "Programa de Residência Multiprofissional em Vigilância em Saúde (PRMVS)"
+date: "2024-11-26"
+format:
+  revealjs:
+    embed-resources: true
+    multiplex: true
+    incremental: true
+    logo: logo.png
+    scrollable: true
+    highlight-style: arrow
+    theme: style.scss
+    transition: fade
+editor: source
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE)
+pacman::p_load(tidyverse, medicaldata, rio, gtsummary)
+
+```
+
+# Probabilidade ...
+
+-   Uma coisa esquisita ...
+
+## Problema Monty Hall
+
+![](images/Monty_open_door.svg.png)
+
+## Probelma dos aniversários
+
+Quantas pessoas são necessárias em um *grupo* para que a probabilidade de *pelo menos duas* delas compartilharem o mesmo *aniversário* seja maior que *50%*?
+
+. . . 
+
+-   23 pessoas
+
+## Porque é esquisito?
+
+-   Probabilidades Viés de confirmação: focamos no que confirma nossas expectativas.
+-   Lógica anecdótica: eventos raros moldam nossa percepção de frequência.
+-   Pensamento de Curto Prazo Tendemos a exagerar eventos recentes e ignorar tendências de longo prazo.
+
+. . .
+
+::: callout-tip
+## Mas!
+
+Compreender probabilidades reduz erros ao tomar decisões informadas.
+:::
+
+## Introdução à Probabilidade
+
+- Uma função $\mathcal{P}$, definida na $\sigma$ $\mathcal{A}$ de subconjuntos de $\Omega$,e com valores entre [0,1], édis uma probabilidade se sasisfaz os axiomas de komolgorov:
+
+- P($\omega$) = 1;
+- Para todo subconjunto de A $\in \mathcal{A} \ge$;
+- Mara toda sequência de eventos disjuntos $A_1, A_2, A_3, ... \in \mathcal{A}$ temos que:
+
+. . . 
+
+$$
+P(\bigcup_{i=1}^\infty A_i  = \sum_{i=1}^\infty P(A_i)
+$$
+- A trinca ($\Omega$, $\mathcal{A}$, $\mathcal{P}$) é chamada de espaço de probabilidade.
+
+
+## Para nós aqui . . .
+
+A probabilidade de um evento ( A ) é definida como a frequência com que esse evento ocorre em relação ao total de possibilidades. Ela é sempre um valor entre 0 e 1, onde:
+
+$$
+P(A) = \frac{\text{número de vezes que } A \text{ ocorre}}{\text{número total de casos possíveis}}
+$$
+
+Por exemplo: 
+
+- P(A) = 0: o evento A nunca ocorre. 
+-  P(A) = 1: o evento A ocorre em todos os casos. 
+- P(A) = 0,5: o evento A ocorre 50% das vezes.
+
+## Exemplo
+
+-   Probabilidade de 0,1 de uma pessoa ser O-negativo.
+
+-   Se eu observar 10, espero encontrar uma pessoa O-negativo
+
+-   Isso não significa que eu vou encontrar uma pessoa O-negativo, mas a medida que eu observar mais pessoas, a probabilidade encontrarei cerca de 10% de pessoas O-negativo.
+
+- Não sabemos quais serão essas pessoas, mas temos a estimativa para o grupo.
+
+# Distribuições de Probabilidade
+
+-   Modela eventos
+
+## **Distribuição Normal**
+
+-   Modela eventos contínuos que tendem a se concentrar simetricamente ao redor de uma média (sino).
+
+- Exemplo: Altura, peso ...
+
+. . . 
+
+```{r}
+# Exemplo de distribuição normal
+set.seed(123)
+
+dados <- data.frame(x = seq(10, 30, length.out = 1000)) # Intervalo de x para cobrir a densidade
+
+# Usar geom_density com a função dnorm
+ggplot(dados, aes(x = x)) +
+  geom_density(aes(y = dnorm(x, mean = 20, sd = 3)), 
+               fill = "lightblue", alpha = 0.5, stat = "identity") +
+  labs(title = "Distribuição Normal",
+       x = "x",
+       y = "Densidade") +
+  theme_minimal(base_size = 24)
+```
+
+## Distribuição Binomial
+
+-  Modela eventos discretos com duas possíveis respostas (sucesso ou fracasso).
+
+-   Exemplo: Lançamento de uma moeda (cara ou coroa).
+
+. . . 
+
+```{r}
+# Exemplo de distribuição binomial
+dados_bin <- rbinom(10000, size = 50, prob = 0.1)
+barplot(table(dados_bin), col = "salmon", main = "Distribuição Binomial", xlab = "Número de sucessos", ylab = "Frequência")
+```
+
+## Outros tipos de distribuições
+
+::: nonincremental
+-   Poisson: Modela eventos em um intervalo de tempo
+-   Geométrica
+-   Hipergeométrica
+-   Exponencial
+-   Gama
+-   Beta
+-   Cauchy
+- ...
+:::
+
+. . .
+
+## População, Amostra e Métodos de Amostragem
+
+-   **População**: Conjunto total de indivíduos de interesse.
+-   **Amostra**: Subconjunto da população usado para realizar inferências.
+
+. . . 
+
+```{r echo = TRUE}
+# Exemplo: Criar uma amostra aleatória simples
+populacao <- rnorm(1000, 
+                   mean = 70, 
+                   sd = 10)
+
+
+amostra <- sample(populacao, size = 100)
+mean(amostra)
+```
+
+## Tipos de Amostragem
+
+-   **Amostragem Aleatória Simples**: Todos os indivíduos têm a mesma chance de serem selecionados.
+
+-   **Amostragem Estratificada**: Divide a população em grupos homogêneos e seleciona aleatoriamente indivíduos de cada grupo.
+
+-   **Amostragem por Conglomerados (Cluster)**: Divide a população em grupos não homogêneos e seleciona aleatoriamente alguns grupos.
+
+. . . 
+
+::: callout-tip
+## Inferência Estatística
+
+Extrair conclusões sobre uma população a partir de uma amostra.
+:::
+
+
+## Distribuição Amostral e Erro Padrão
+
+-   **Distribuição Amostral da média:** Distribuição das médias das amostras retiradas de uma população.
+
+-   **Erro Padrão:** Mede a variabilidade da média das amostras.
+
+-   Se sei a distribuição, consigo criar um intervalo de confiança.
+
+-   **Teorema do Limite Central:** A distribuição amostral da média se aproxima de uma distribuição normal à medida que o tamanho da amostra aumenta.
+
+## Exemplo Binomial
+
+
+
+```{r}
+# Exemplo de distribuição amostral
+# mostrar como a distribuicao da media de aostras de uma binomial tb é normal
+
+pop <- rbinom(10000, size = 10, prob = 0.1)
+medias <- map_dbl(1:10000, ~mean(sample(pop, 2)))
+  
+hist(medias, breaks = 30, 
+     col = "lightgreen", 
+     main = "Distribuição Amostral da Média", 
+     sub = "População Binomial, n = 10",
+     xlab = "Médias", ylab = "Frequência")
+                  
+                  
+```
+
+
+```{r}
+# Exemplo de distribuição amostral
+# mostrar como a distribuicao da media de aostras de uma poisson tb é normal
+
+set.seed(123)
+pop <- rbinom(10000, size = 100, prob = 0.1)
+medias <- map_dbl(1:10000, ~mean(sample(pop, 2)))
+  
+hist(medias, breaks = 30, 
+     col = "lightgreen", 
+     main = "Distribuição Amostral da Média", 
+     sub = "População Binomial, n = 100",
+     xlab = "Médias", ylab = "Frequência")
+                  
+```
+
+
+
+
+
+## Exemplo fictício
+
+-   Um censo no DF nos anos 90:
+
+    -   O nível de colesterol médio 190 mg/dL.
+
+    -   Ou seja $C_{DF} \sim N(\mu_{0} = 190, \sigma^2_{0} = 30)$
+
+. . . 
+
+**Motivação**
+
+-   **Desconfiamos** que esse nível de colesterol **aumentou**.
+
+    -   Em 2024, **amostra aleatória** de mil pessoas.
+
+-   $\bar{x}$ = **220 mg/dL**, e a variância *não mudou.*
+
+-   
+
+    -   Será que essa média é *mesmo* maior que meu valor de referência (média 190)?
+    - Ou será que foi por acaso?
+    
+## Exemplo fictício
+
+
+
+```{r echo=F}
+pacman::p_load(tidyverse, BSDA)
+
+
+# Set the seed
+set.seed(42)
+n <- 1000000
+dados <- data.frame(x = seq(10, 500, length.out = 1000)) #
+
+# Compute the 95th percentile value
+percentile_95 <- qnorm(0.95, mean = 220, sd = 30/sqrt(100))
+percentile_95_rounded <- round(percentile_95, 1)
+
+# Create the density plot
+graf0 <- ggplot(dados, aes(x=x)) + 
+  geom_density(aes(y = dnorm(x, mean = 190, sd = 30)) , fill = "lightblue", alpha = 0.5, stat = "identity") +
+  xlim(100, 300) + 
+  geom_density(aes(y = dnorm(x, mean = 220, sd = 30)) , fill = "lightgreen", alpha = 0.5, stat = "identity") +
+  xlim(100, 300) + 
+  theme_classic(base_size=24) + 
+  labs(x="Nível de colesterol", y = "Densidade")
+# 
+# Add vertical lines and text annotation with the 95th percentile value
+graf1 <- graf0 +
+  geom_vline(xintercept = 220, color="red3")
+
+
+
+
+# Print the plot
+graf1
+
+```
+
+## Distribuição Amostral da Média
+
+- Não sabemos a distribuição da população, mas sabemos que a distribuição amostral da média é normal.
+
+. . . 
+
+```{r}
+ggplot(dados, aes(x=x)) + 
+  geom_density(aes(y = dnorm(x, mean = 220, sd = 30/sqrt(100))) , fill = "lightblue", alpha = 0.5, stat = "identity") +
+  geom_vline(xintercept = 220, color="red3") +
+  xlim(210, 230) + 
+  theme_classic(base_size=24) + 
+  labs(x="Nível médio de colesterol", y = "Densidade")
+```
+
+## Intervalo de Confiança
+
+Expressa a incerteza em uma estimativa. Exemplo: "Estamos 95% confiantes de que a média populacional está entre os limites do intervalo."
+
+-   Não é o mesmo que a probabilidade de um evento ocorrer.
+
+. . . 
+
+```{r}
+
+percentile_05_rounded <- round(qnorm(0.05, mean = 220, sd = 30/sqrt(100)), 1)
+percentile_95_rounded <- round(qnorm(0.95, mean = 220, sd = 30/sqrt(100)), 1)
+
+amostra <- rnorm(100, mean = 220, sd = 30/sqrt(100))
+
+dados <- data.frame(x = seq(10, 500, length.out = 1000))
+
+graf2 <- ggplot(dados, aes(x=x)) + 
+  geom_density(aes(y = dnorm(x, mean = 220, sd = 30/sqrt(100))) , fill = "lightblue", alpha = 0.5, stat = "identity") +
+  geom_vline(xintercept = 220, color="red3") +
+  geom_vline(xintercept = percentile_05_rounded, color="red3", linetype="dotted") +
+  geom_vline(xintercept = percentile_95_rounded, color="red3", linetype="dotted") +
+  xlim(210, 230) + 
+  theme_classic(base_size=24) + 
+  labs(x="Nível médio de colesterol", y = "Densidade")
+
+graf2
+
+```
+
+## Intervalos de Confiança
+
+Se repetirmos o experimento infinitas vezes e calcularmos um IC para cada amostra, 95% desses intervalos incluirão a verdadeira média populacional ($\mu$) Ou seja:
+
+- O IC de 95% não diz que a média populacional tem 95% de probabilidade de estar no intervalo calculado a partir de UMA amostra específica.
+Pelo contrário, a média é fixa (determinística) no modelo frequentista, e o intervalo varia de experimento para experimento.
+A incerteza está no processo de amostragem, não no parâmetro
+
+## Conceito
+
+-   O **intervalo de confiança (IC)** fornece uma faixa de valores dentro da qual acreditamos que um parâmetro populacional está localizado, com uma certa confiança.
+-   Geralmente usamos um nível de confiança de **95%** ou **99%**.
+
+. . . 
+
+**Interpretação**
+
+```{r}
+a <- z.test(amostra, sigma.x=30, mu=190)
+a$conf.int[1:2]
+```
+
+-   Com 95% de confiança, acreditamos que a **média populacional** está entre **46,08 e 53,92**.
+-   O intervalo reflete a incerteza devido ao uso de uma amostra.
+
+
+## Qual a intuição do teste de hipótese
+
+-   Queremos tirar conclusões sem ter acesso a toda a informação.
+    -   Nunca terei ***certeza***
+    -   Qual a chance de, ao acaso, eu ter selecionado justamente as pessoas mais ansiosas?
+    -   Tirar uma conclusão sabendo essa "incerteza".
+    
+    
+## Formulação de um teste de hipótese
+
+-   **Hipótese Nula (**$H_0$): É a hipótese inicial, frequentemente assumindo que não há efeito ou diferença significativa.
+
+-   **Hipótese Alternativa (**$H_1$ ou $H_a$): É a hipótese que se quer testar, indicando a presença de um efeito ou diferença significativa.
+
+. . .
+
+$H_0: \mu_{1} = \mu_{0} = 190$
+
+$H_1: \mu_{1} > \mu_{0} = 190$
+
+## Como testamos essa hipótese?
+
+-   Temos que estabelecer um critério.
+
+-   O quanto estamos dispostos a "errar"?
+
+    -   *Dado que* $H_0$ é verdadeira.
+
+-   Nível de significância $\alpha$
+
+-   $\alpha=0.05$ é um dos mais comuns.
+
+## Nível de significância de 5%.
+
+-   Parece uma chance baixa o suficiente?
+
+. . . 
+
+```{r}
+graf2+
+  geom_vline(xintercept = 213,
+             color = "darkgreen",
+             linetype="solid") +
+  xlim(210,230)
+```
+
+
+## Tipos de Erro que posso cometer
+
+|          | Rejeita H0                       | Não-rejeita H0                    |
+|-------------------|--------------------------|---------------------------|
+| H0 verd. | [Erro tipo I]{style="color:red"} | Correto!                          |
+| H0 falsa | Correto!                         | [Erro tipo II]{style="color:red"} |
+
+. . .
+
+![](images/1-1.jpg){fig-align="center"} 
+
+# Na "mão" 
+
+- Precisaremos calcular algum valor
+- Normal não tem fórmula fechada.  
+- Temos que padronizar!
+- Calcular alguma estatística.
+
+. . .
+
+**O que já sabemos?**
+
+-   Distribuição amostral da média $\bar{x} \sim N(\mu, \frac{\sigma^2}{n})$
+
+. . .
+
+-   Uma amostra de uma distribuição normal, (ou grande o suficiente), e que eu conheço a variância populacional:
+
+## Para padronizar
+
+$$Z = \frac{(\bar{x} - \mu_{nula})}{\frac{\sigma}{\sqrt{n}}} \sim N(0,1)$$
+
+-   Para tirar a conclusão
+
+    -   Olhar na Tabela
+    -   Usar algum software
+
+
+## Execute o teste em algum software
+
+- R, STATA, SPSS, Excel , Python...
+
+- Interprete o resultado
+
+. . . 
+
+```{r}
+# crie um exemplo com z.test()
+
+x <- c(7.8, 6.6, 6.5, 7.4, 7.3, 7., 6.4, 7.1, 6.7, 7.6, 6.8)
+y <- c(4.5, 5.4, 6.1, 6.1, 5.4, 5., 4.1, 5.5)
+
+
+z.test(x, sigma.x=0.5, y, sigma.y=0.5)
+
+
+```
+
+
+
+# Intervalo ABC
+
+
+## Várias possibilidades ...
+
+::: nonincremental
+### Diferenças entre grupos (paramétrico)
+- Teste Z
+- Teste T
+- ANOVA
+
+### Diferenças entre grupos (não parametrica)
+
+- Wilcoxon
+- Kruskal-Wallis
+
+### Associação (qualitativas)
+- Qui-quadrado
+- Fisher
+
+### Associação (quantitativas)
+- Correlação
+- Regressão*
+:::
+. . . 
+
+- Muitos outros:
+
+  - [what-statistical-test-should-i-do/](https://statsandr.com/blog/what-statistical-test-should-i-do/)
+  - [tutorsquickguidetostatistics.pdf](https://www.statstutor.ac.uk/resources/uploaded/tutorsquickguidetostatistics.pdf)
+
+## Teste t de student
+
+- Geralmente não conhecemos a variância populacional (que o teste z pressupõe)
+- Paramétrico 
+
+. . . 
+
+**Comparação de médias entre dois grupos**
+
+- Vindos de uma distribuição normal OU
+- Amostras "grandes"
+- Robusto a desvios da normalidade
+
+## Exemplo Teste-t
+
+```{r}
+dado_raw <- rio::import("linelist_raw.csv")
+
+dado <- dado_raw |> 
+  mutate(age = ifelse(`age unit` == "months", `age`/12, `age`)) |> 
+  rowwise() |> 
+  mutate(
+         age = ifelse( sex == "f", age + abs(rnorm(1, mean =3.5, sd = 1)), age)) |> 
+  select(sex, Idade = age) |> 
+   filter(sex %in% c("f", "m")) 
+# teste T entre sex
+
+ggplot(dado, aes(x = sex, y = Idade)) +
+  geom_boxplot() +
+  theme_classic(base_size = 24)
+
+```
+
+## Exemplo Teste-t
+
+```{r}
+t.test(Idade ~ sex, data = dado)
+```
+
+## Exemplo Teste-t
+
+
+```{r}
+
+
+
+theme_gtsummary_language(
+  language = c("pt"))
+
+
+tab <- dado |> 
+  tbl_summary(
+    by = sex,
+    statistic = all_continuous() ~ "{mean} ({sd})",
+  ) |> 
+  #p-value
+  add_p(Idade ~ "t.test") 
+```
+
+```{r}
+tab
+```
+
+
+## Teste de Wilcoxon/Mann-Whitney 
+
+- Não paramétrico, usa o ranqueamento dos dados
+- Costuma ser mais conservador.
+
+## Resultado
+```{r}
+# wilcox test
+wilcox.test(Idade~sex, data = dado)
+```
+
+. . . 
+
+::: callout-tip
+## Bootsatrap
+Outra possibilidade de teste não paramétrico é [bootstrap](https://www.geeksforgeeks.org/t-test-with-bootstrap-in-r/)
+:::
+
+## ANOVA
+
+- Teste de comparação de médias entre 3 ou mais grupos
+- Testa se há ao menos uma diferença significativa entre os grupos
+- Paramétrico
+- Pressuponho normalidade,  homocedasticidade, amostas independentes
+
+. . . 
+
+::: callout-tip
+## Kruskal-Wallis
+Não paramétrico, se não atender os pressupostos do ANOVA
+:::
+
+## Exemplo ANOVA
+
+```{r}
+dado <- dado_raw |> 
+  mutate(hospital = case_when(
+   str_detect(hospital, "Port") ~ "Port Hospital",
+   str_detect(hospital, "Mil") ~ "Military Hospital",
+   TRUE ~ "Central Hospital"
+  )) |> 
+  mutate(age = ifelse(hospital == "Port Hospital", age + abs(rnorm(1, mean = 10, sd = 1)), age)) |> 
+  select(hospital, Idade = age) 
+
+ggplot(dado, aes(x = hospital, y = Idade)) +
+  geom_boxplot() +
+  theme_classic(base_size = 24)
+
+```
+
+## Exemplo ANOVA
+
+```{r}
+summary(aov(Idade ~ hospital, data = dado))
+```
+
+## Tipos de teste pos-hoc
+
+
+**Paramétrico**
+
+::: nonincremental
+- Teste t, com correção de bonferroni, ...
+  - Evitar aumento do risco de erro tipo I
+
+- Tukey
+- Scheffe
+- ...
+:::
+. . . 
+
+**Não - Paramétrico**
+
+::: nonincremental
+
+- Dunn
+- Ajuste de Bonferroni  
+- Nemenyi test
+- ...
+:::
+
+## Testes de associação
+
+- Duas variáveis qualitativas
+- Qui-quadrado
+  - Limitações quando n esperado < 5
+  
+- Fisher
+  - Alternativa ao qui-quadrado
+
+. . . 
+
+## Exemplo
+
+- Tabela de contigência
+
+. . . 
+
+```{r}
+dado <- dado_raw |> 
+  rowwise() |> 
+  mutate( fever = ifelse(sex == "f", sample(x = c("yes", "no"),
+                                            size = 1, prob =c(0.53, 0.47)),sample(x = c("yes", "no"),size = 1, prob =c(0.47, 0.53)))) |>
+  select(sex, fever) |> 
+  filter(sex %in% c("f", "m"),
+         fever %in% c("yes", "no")) |> 
+  mutate(fever = factor(fever, levels = c("yes", "no")))
+
+dado |> 
+  tbl_summary(
+    by = fever,
+    statistic = all_categorical() ~ "{n} ({p}%)"
+  ) 
+
+```
+
+## Exemplo 
+```{r}
+dado |> 
+  ggplot() +
+  geom_bar(aes(x = sex, fill = fever),
+           color = "black", size = 0.1) +
+  theme_classic(base_size = 24)+
+  scale_fill_brewer(palette = "Set1")
+```
+
+## Exemplo
+```{r}
+# chi-square test
+
+chisq.test(table(dado$sex, dado$fever))
+```
+
+. . . 
+
+```{r}
+dado |> 
+  tbl_summary(
+    by = fever,
+    statistic = all_categorical() ~ "{n} ({p}%)"
+  ) |> 
+  add_p()
+
+```
+
+## Correlação
+
+::: nonincremental
+- Duas variáveis quantitativas
+
+### Paramétrico
+- Correlação de Pearson
+
+### Não - paramétrico
+
+- Correlação de Spearman
+-  Correlação de Kendall
+:::
+
+
+## Exemplo Correlação
+```{r}
+dado_raw |> 
+  ggplot() +
+  geom_point(aes(x = age, y = `wt (kg)`)) +
+  theme_classic(base_size = 24)
+```
+
+## Exemplo Correlação
+```{r}
+cor.test(dado_raw$age, dado_raw$`wt (kg)`, method ="kendall")
+```
+
+
+## Você sabia?
+
+::: columns
+::: {.column width="50%"}
+"p-hacking"
+:::
+
+::: {.column width="50%"}
+![](imagens/sci.jpg){fig-align="center" width="280"}
+:::
+:::
+
+## Para aprofundamento
+
+**Bibliografia básica:**
+
+-   bussab Disponível: [USP](https://edisciplinas.usp.br/pluginfile.php/7552971/mod_resource/content/0/Bussab%20e%20Morettin%20%282010%29%20A%20estatística%20básica_Cap6e7.pdf)
+
+. . . 
+
+**Bibliografia mais "lúdica":**
+
+::: nonincremental
+-   [Fernanda Peres](https://www.youtube.com/@FernandaPeres)
+-   [Amour Learning](https://youtu.be/ChLO7wwt7h0?si=ubb6sZxPeNl0645C)
+-   [Statistics by Jim](https://statisticsbyjim.com/hypothesis-testing/t-tests-excel/)
+-   [Stat Quest](https://statquest.org)
+-   [Tom Faulkenberry](https://www.youtube.com/@TomFaulkenberry)
+-   [P-value](https://youtu.be/ukcFrzt6cHk?si=Soczzf-QL5oIuTF5)
+-   [Statistics with Mia](https://youtu.be/mLhzq9omhZ4?si=SZtQ3pAwBCdlX3i5)
+-   [Modern Statitics in Biology](https://web.stanford.edu/class/bios221/book/06-chap.html)
+-   [Estatistica Aplicada Psicologia](https://sites.google.com/site/araujolb/disciplinas/EstatApliPsico?pli=1)
+-   [Maricopa Comunity College](https://open.maricopa.edu/psy230mm/chapter/9-hypothesis-testing/)
+-   [Jason Delaney](https://youtu.be/E3AF3ebEsjY?si=KTMDYUn9pcmMvPNR)
+-   [Fernanda Maciel](https://www.youtube.com/watch?v=vK_FBEwDidE)
+:::
+
+# Obrigada !
