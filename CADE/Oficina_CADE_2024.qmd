@@ -1,0 +1,644 @@
+---
+title: Oficina
+subtitle: "Testes de Mercado e Metodologia Quantitativa"
+author: "Carolina Musso"
+institute: "Universidade de Brasília"
+date: '2024-12-12'
+format:
+  revealjs:
+    embed-resources: true
+    multiplex: true
+    incremental: true
+    logo: img/qrPergunta.jpeg
+    scrollable: true
+    highlight-style: arrow
+    theme: style.scss
+    transition: fade
+editor: source
+---
+
+## Agenda
+
+-   Probabilidade
+-   Amostragem
+-   Questionários
+-   Análise de Dados
+
+# Probabilidade ...
+
+-   Não é intuitivo.
+
+## Problema Monty Hall
+
+![](img/Monty_open_door.svg.png)
+
+. . .
+
+![](img/QR_monty.png){fig-align="center" width="700"}
+
+## Problema dos aniversários
+
+Quantas pessoas são necessárias em um *grupo* para que a probabilidade de *pelo menos duas* delas compartilharem o mesmo *aniversário* seja maior que *90%*?
+
+. . .
+
+-   60 pessoas
+
+## Porque é esquisito?
+
+-   **Viés de confirmação:** focamos no que confirma nossas expectativas.
+-   **Lógica anecdótica:** eventos raros moldam nossa percepção de frequência.
+-   **Pensamento de Curto Prazo:** Tendemos a exagerar eventos recentes e ignorar tendências de longo prazo.
+
+. . .
+
+::: callout-tip
+## Mas!
+
+Compreender probabilidades ajuda a tomar decisões informadas e a diminuir erros.
+:::
+
+## Introdução à Probabilidade
+
+-   Uma função $\mathcal{P}$, definida na $\sigma$-álgebra $\mathcal{A}$ de subconjuntos de $\Omega$,e com valores entre \[0,1\], é dita uma probabilidade se ela satisfaz aos axiomas de Komolgorov:
+
+-   P($\omega$) = 1;
+
+-   $\mathcal{P}(A) \geq 0, \quad \forall A \in \mathcal{A}$;
+
+-   Se $(A_1, A_2, A_3, \dots \in \mathcal{A})$ são eventos disjuntos dois a dois ($(A_i \cap A_j = \emptyset$) para $(i \neq j)$), então:
+
+. . .
+
+$$
+P(\bigcup_{i=1}^\infty A_i  = \sum_{i=1}^\infty P(A_i)
+$$
+
+-   A trinca ($\Omega$, $\mathcal{A}$, $\mathcal{P}$) é chamada de espaço de probabilidade.
+
+## Amostragem
+
+Amostragem é um processo estatístico de seleção de uma parte **representativa** de uma população para realizar uma **inferência** sobre esta população.
+
+![](img/sopa.webp){fig-align="center"}
+
+## PDAD
+
+**Pesquisa Distrital por Amostra de Domicílios**
+
+![](img/pdad-2021.png){fig-align="center"}
+
+-   33 (à época) Regiões Administrativas do Distrito Federal
+
+-   Foram [visitados]{style="color:red"} \~ 35 mil domicílios.
+
+-   O requisito central é que existe o [cadastro dos entrevistados potenciais]{style="color:red"} (domicílios), fornecido pelo IBGE
+
+<!-- Aqui acho que pode enfatizar que há visitas, distribuídos por estratos (RAs) que foram coletados a partir de amostragem sistemática e etc. Eventualmente, contar alguma história (mesmo que adaptada hehehe) -->
+
+## PDAD Ampliada 2023
+
+![](img/pdad-ampliada.png){fig-align="center" width="150"}
+
+-   12 municípios da Periferia Metropolitana de Brasília
+-   16 outras localidades inseridas no DF e na PMB
+
+## Inferencia estatística
+
+-   Extrair informações de uma **amostra** para fazer inferências sobre a **população**.
+
+-   A teoria e os estudos de probabilidade fornecem a base matemática em amostras *probabilísticas*.
+
+    -   Estimar os parâmetros e quantificar a incerteza.
+    -   Testar hipóteses e avaliar a significância.
+
+## O famigerado tamanho da amostra
+
+A fórmula para calcular o tamanho da amostra $n$ ao estimar uma média é dada por:
+
+$$
+n = \frac{z^2 \cdot \sigma^2}{e^2}
+$$
+
+-   $z$: ex.: $(z = 1,96)$ para 95% de confiança;
+-   $\sigma^2$: variância da população (ou uma estimativa);
+-   $e$: margem de erro aceita.
+
+## Depende
+
+-   **Tamanho da população:** Se a população é pequena, a amostra deve ser ajustada.
+-   **Distribuição da população:** Se a população não é normal, a amostra deve ser maior.
+-   **Variabilidade da população:** Se a variabilidade é alta, a amostra deve ser maior.
+
+## Número "mágico": 385-400
+
+Para estimar a uma proporção, podemos usar a variância máxima.
+
+$$
+n = \frac{z^2 \cdot p(1-p)}{e^2}
+$$
+
+-   variância máxima é $0,25$ (quando $p = 0,5$);
+
+. . .
+
+$$
+n = \frac{1.96^2 \cdot 0.5(1-0.5)}{0.05^2} =  \frac{0.0025}{0.9604} \approx 384.16
+$$
+
+## Se a população for pequena
+
+-   Se a população é pequena (ex: 200).
+
+. . .
+
+$$
+n_{ajustado} = \frac{n_0}{1 + \frac{n_0 - 1}{N}}= \frac{385}{1 + \frac{385 - 1}{200}} = 132
+$$
+
+-   Lembre-se de que estamos assumindo a variância máxima, então n não pode ser pequeno.
+
+## Se sei que a variância é pequena.
+
+-   População **homogênea**: Altura dos atletas de uma seleção de basquete.
+-   Variância pequena: $\sigma^2 = 4~ cm^2$.
+-   Margem de erro: $e = 2~ cm$.
+
+. . .
+
+$$
+n = \frac{1.96^2 \cdot 4}{2^2} = 3.8416 \approx 4
+$$
+
+-   Mais que tamanho da amostra
+
+    -   O importante é **como** a amostra é **coletada**.
+
+## Exemplo
+
+```{r}
+library(tidyverse)
+set.seed(125)
+
+
+populacao <- abs(c(rnorm(250, mean = 28, sd = 4),
+                   rnorm(300, mean = 60, sd = 1), 
+                   rnorm(450, mean = 98, sd = 3)))
+sd <- round(sd(populacao),1)
+```
+
+-   N = 1000 pessoas de consumidores de um novo streaming. **Quanto** estão dispostos a **pagar** em **média**.
+
+    -   DP padrão da população é de `r round(sd,0)` reais.
+    -   Estamos disposos a errar em apenas 2 reais.
+    -   Com uma confiança de 95%.
+
+```{r}
+n <- (1.96^2 * var(populacao)) / (2^2)
+
+n_adj <- n / (1 + (n - 1) / length(populacao))
+
+```
+
+. . .
+
+**Qual o tamanho da amostra necessário nesse caso**
+
+-   Pela **fórmula inicial**, precisaríamos de `r ceiling(n)` pessoas.
+
+-   Ajustando para **populações pequenas**, `r ceiling(n_adj)`.
+
+## Amostra com `r ceiling(n_adj)` pessoas.
+
+```{r}
+
+amostra <- sample(populacao, n_adj)
+media <- mean(amostra)
+
+media2 <- mean(populacao[1:n_adj])
+
+ic1 <- c(media - 1.96 * 27 / sqrt(n_adj), media + 1.96 * 27 / sqrt(n_adj))
+
+ic2 <- c(media2 - 1.96 * 27 / sqrt(n), media2 + 1.96 * 27 / sqrt(n))
+```
+
+**Amostra Aleatória Simples:**
+
+-   A média estimada é **`r round(media,1)`**.
+    -   Estimativa **pontual**
+-   IC 95% **(`r round(ic1[1],1)` , `r round(ic1[2],1)`)**.
+    -   Estimativa **intervalar**
+-   A média real é de **`r round(mean(populacao),1)`**.
+    -   A média pontual está próxima da real.
+    -   O IC contém a média real.
+
+## Amostra com `r ceiling(n_adj)` pessoas.
+
+-   **Não** aleatória: Coletada na ordem em que a população foi gerada.
+
+-   Média de **`r round(media2,1)`**
+
+    -   Estimativa pontual
+
+-   IC de 95%: **(`r round(ic2[1],1)` e `r round(ic2[2],1)`)**.
+
+    -   Estimativa intervalar
+
+. . .
+
+::: callout-tip
+## Lembre
+
+A média real é de **`r round(mean(populacao),1)`**.
+:::
+
+## E se n= `r ceiling(n)` ...
+
+-   `r ceiling(n)` primeiros valores da população.
+
+```{r}
+media3 <- mean(populacao[1:n])
+ic3 <- c(media3 - 1.96 * 27 / sqrt(n), media3 + 1.96 * 27 / sqrt(n))
+```
+
+-   A média de **`r round(media3,1)`**.
+    -   Estimativa pontual
+-   IC de 95%: **(`r round(ic3[1],1)` e `r round(ic3[2],1)`**).
+    -   Estimativa intervalar
+
+. . .
+
+::: callout-tip
+## Veja!
+
+Mesmo uma **amostra maior**, a média ainda está **distante** da média real (**round(mean(populacao),1)**) da população por **não ser aleatória**.
+:::
+
+## Na Prática
+
+**Limitações pesquisas amostrais probabilísticas**
+
+-   **Custo:** Amostragem probabilística é mais cara que a não probabilística.
+
+-   **Tempo:** Pode ser mais demorada.
+
+-   **Complexidade:** Requer conhecimento técnico.
+
+-   **Acesso**: População desconhecida ou não acessível.
+
+# E agora?
+
+## Por onde começar
+
+<!-- Possíveis porque não sabemos o que eles realmente conseguem fazer -->
+
+É preciso [**definir**]{style="color:red"} bem qual é a população de interesse. <!-- Pode reduzir custos e dificuldades na hora de encontrar as pessoas -->
+
+-   Em geral, valem esforços no sentido de conseguir a lista, com as partes interessadas ou órgãos públicos.
+    -   Ex: Melhorar bases de dados incompletas ou desatualizadas.
+
+. . .
+
+::: callout-tip
+## Amostragem estratificada
+
+Pode-se melhorar a representatividade na amostra com o uso de estratificação (por setor, tamanho da empresa, etc.)
+:::
+
+## Amostragem estratificada
+
+-   Dividir a população em subgrupos (estratos) com características semelhantes.
+
+-   Outra forma de calcular o **n**, com diferentes possibilidade de *alocação*.
+
+. . . 
+
+
+![](img/sopa.webp){fig-align="center" width="400"}
+
+## Voltando ao nosso exemplo...
+
+-   Na verdade, eram três grupos de consumidores:
+    -   Sol Nascente (250), Guará (350), Lago Sul (500).
+-   Agora com **n=150 pessoas**, dividido proporcionalmente e coletado **aleatoriamente**.
+
+```{r}
+df <- data.frame(valor = populacao, 
+                 grupo = c(rep("A",250), 
+                           rep("B", 300), 
+                           rep("C", 450)))
+
+df_amostra <- df |> 
+  group_by(grupo) |> 
+  dplyr::sample_frac(0.15)
+n <- nrow(df_amostra)
+
+
+
+media4 <- mean(df_amostra$valor)
+
+
+ic4 <- c(media4 - 1.96 * 27 / sqrt(n), media4 + 1.96 * 27 / sqrt(n))
+```
+
+-   Agora a média é **`r round(media4,1)`**. IC de 95%: **(`r round(ic4[1],1)` e `r round(ic4[2],1)`**).
+
+. . .
+
+::: callout-tip
+## Veja!
+
+O tamanho n **diminuiu** em relação à AAS, sem perda de precisão. 
+:::
+
+## E se não fosse aleatória.
+
+```{r}
+
+## na ordem 
+n_min <- 150
+n_gp1 <- round(0.25*n_min)
+n_gp2 <- round(0.3*n_min)
+n_gp3 <- round(0.45*n_min)
+
+
+amo1 <- sort(df[df$grupo == "A", "valor"])[1:n_gp1]
+amo2 <- sort(df[df$grupo == "B", "valor"])[1:n_gp2]
+amo3 <- sort(df[df$grupo == "C", "valor"])[1:n_gp3]
+
+amostra_strat2 <- c(amo1, amo2, amo3)
+media5 <- mean(amostra_strat2)
+ic5 <- c(media5 - 1.96 * 27 / sqrt(n_min), media5 + 1.96 * 27  / sqrt(n_min))
+```
+
+-   A média da amostra estratificada não-aleatória é de **`r round(media5,1)`**
+    -   Média pontual.
+-   IC de 95%: **(`r round(ic5[1],1)` e `r round(ic5[2],1)`)**
+
+. . .
+
+::: callout-tip
+## Veja!
+
+A média real da população é de **`r round(mean(populacao),1)`**. A estimativa já ficou bem melhor do que a coleta não aleatória de \~700 pessoas, mesmo também não sendo aleatória.
+:::
+
+## Outra possibilidade
+
+-   Amostragem sistemática.
+    -   Sorteia-se o primeiro elemento e cada $k$-ésimo elemento (baseado no tamanho da amostra).
+    -   Exemplo amostra de 200 pessoas, k = 5.
+
+```{r}
+sel <- rep(c(0,0,0,0,1), 200)
+df_sel <- df |> 
+  mutate(sel = sel) |> 
+  filter(sel == 1) |> 
+  pull(valor)
+
+ic6 <- c(mean(df_sel) - 1.96 * 27 / sqrt(length(df_sel)), mean(df_sel) + 1.96 * 27 / sqrt(length(df_sel)))
+```
+
+-   Dessa vez, a média da amostra é de **`r round(mean(df_sel),1)`**.
+-   IC de 95%: **(`r round(ic6[1],1)` e `r round(ic6[2],1)`)**.
+
+. . .
+
+::: callout-tip
+## Lembre!
+
+A média real da população é de **`r round(mean(populacao),1)`**.
+:::
+
+## Custo e Prazos
+
+-   Métodos digitais ou telefônicos são menos custosos que visitas.
+-   Questionários padrão ajudam na replicação e análise automatizáveis (relatórios estatísticos reprodutíveis);
+    -   Priorização de perguntas fechadas, facilita a análise.
+    -   Coleta de respostas por questionários eletrônicos, como **forms**, **surveymonkey**, [**redcap**](https://redcap.saude.gov.br) e etc.
+-   Uso de dados secundários.
+
+## Dados secundários: PDAD
+
+<!-- Como não há dados para 2023, usar a 2021. Nesse caso, esses dados sobre uso de serviços digitais podem ajudar a entender o tamanho da população de consumidores para um eventual caso de fusão de serviços de telefonia, internet ou streaming -->
+
+-   Pode ajudar a entender o tamanho da população de consumidores, por exemplo.
+
+-   Por exemplo, de acordo com a PDAD 2021 :
+
+    -   Em 61,6% dos domicílios, havia assinatura serviços on-line, como filmes, músicas, notícias, cursos, esportes etc.;
+    -   Em 40,4%, havia serviço de TV por assinatura; e
+    -   7% assinavam revistas ou jornais impressos
+
+## Não respostas
+
+**Possibilidades**
+
+-   **Callbacks:** Contatar novamente os respondentes
+    -   Aumentar número de respostas.
+    -   Utilize outros meios de contato.
+    -   Estabeleça um número máximo de tentativas de contato, considerando o custo-benefício.
+    -   Priorize subgrupos ou áreas com menores taxas de resposta inicial.
+
+## Callbacks
+
+```{r}
+# Simulando taxas de sucesso decrescentes
+tentativas <- c("Inicial", "Callback 1", "Callback 2", "Callback 3", "Callback 4")
+sucesso <- c(60, 25, 10, 3, 1) # Taxas fictícias de sucesso em cada tentativa
+acumulado <- cumsum(sucesso)
+
+# Criando o gráfico
+library(ggplot2)
+data <- data.frame(Tentativas = factor(tentativas, levels=tentativas), Respostas = acumulado)
+
+ggplot(data, aes(x = Tentativas, y = Respostas)) +
+  geom_line(group = 1, size = 1) +
+  geom_point(size = 3) +
+  labs(
+    title = "Estabilização das Respostas Acumuladas por Tentativa",
+    x = "Tentativa",
+    y = "Percentual Acumulado de Respostas"
+  ) +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, by = 10)) +
+  theme_minimal(base_size = 20) 
+
+
+```
+
+## Otimização do Questionário
+
+-   **Clareza e objetividade**: Ser o mais curto e simples possível.
+    -   Usar termos claros e acessíveis.
+    -   Não misturar perguntas.
+-   Dar preferência a **perguntas fechadas**.
+    -   Evitar medidas subjetivas.
+    -   Usar escalas padronizadas
+
+## Otimização do Questionário
+
+-   Manter **ordem lógica** no questionário.
+
+    -   Manter o engajamento do respondente.
+    -   Evitar fadiga do respondente.
+
+-   Evitar perguntas tendenciosas.
+
+-   **Piloto** para testar a compreensão e a eficácia.
+
+# Exemplos
+
+## Exemplo:
+
+**"Com que frequência você estuda para as provas das disciplinas?"**\
+( ) Nunca\
+( ) Raramente\
+( ) Algumas vezes\
+( ) Frequentemente\
+( ) Sempre
+
+. . .
+
+**"Quantos dias por semana, em média, você estuda para as provas das disciplinas?"**\
+( ) 0 dias\
+( ) 1-2 dias\
+( ) 3-4 dias\
+( ) 5-6 dias\
+( ) Todos os dias (7 dias)
+
+## Exemplo:
+
+**"Você está satisfeito com o ensino na sua faculdade?"**\
+( ) Sim\
+( ) Não
+
+-   A pergunta é ampla demais.
+
+-   Não capta nuances de opiniões.
+
+-   Não há informações sobre quais aspectos precisam de melhorias.
+
+. . .
+
+![](img/grade.png)
+
+## Exemplo:
+
+*"Há barreiras à livre circulação interestadual do produto X no Brasil? Explique, considerando fatores como custos de transporte, impostos etc."*
+
+-   Mistura uma questão fechada com explicações abertas.
+
+## Sugestão
+
+-   Existem barreiras à livre circulação interestadual do produto X no Brasil? (Sim/Não)
+
+-   Quais são os principais fatores que contribuem para essas barreiras? (Opções: Custos de transporte, impostos, regulamentações estaduais, outros).
+
+-   Se outros, por favor, especifique.
+
+## Exemplo:
+
+*"Informe se, caso as Requerentes deste Ato de Concentração viessem a aumentar o preço do produto X após a Operação (por exemplo, em um patamar entre 5% e 10%), sua empresa: (i) continuaria adquirindo os produtos desses fornecedores, ou (ii) substituiria os produtos das Requerentes por produtos de outro(s) fornecedor(es), conseguindo ter sua demanda integralmente atendida. Justifique."*
+
+-   Longa, múltiplos parênteses que podem confundir.
+
+-   Combina uma pergunta fechada aberta.
+
+## Solução Proposta
+
+-   Se os preços do produto X fornecido pelas requerentes aumentassem entre 5% e 10% após a operação, como sua empresa responderia? Selecione a alternativa mais provável.
+    -   Continuaríamos adquirindo os produtos das Requerentes, mesmo com o aumento de preço.
+    -   Reduziríamos parcialmente as compras desses fornecedores, complementando com outros fornecedores.
+    -   Substituiríamos completamente os produtos das Requerentes por outros fornecedores.
+    -   Não é possível atender nossa demanda integralmente com outros fornecedores.
+
+. . .
+
+**Pergunta Adicional** (Opcional): - "Por favor, explique os fatores que influenciariam essa decisão (ex.: disponibilidade de fornecedores alternativos, custo-benefício, impacto na qualidade do produto final)."
+
+## Não respostas
+
+-   Maneiras de minimizar impacto de não respostas:
+
+-   Se souber de antemão a taxa, aumenta-se **n**.
+
+    ![](img/naoresp.png)
+
+. . .
+
+**Exemplo**:
+
+-   Se todos responderem ($W_{2} = 0$), precisaríamos de n = 96 para um erro = 10%.
+-   Com 10% de não-resposta ($W_{2} = 10%$, precisamos de n = 166, para não aumentar o erro.
+
+## Ponderação por frequência de Resposta
+
+-   Ajuste os pesos das observações respondidas para refletir a representatividade no total da amostra.
+
+. . .
+
+**Exemplo**:
+
+-   Se um grupo (como jovens) tem uma baixa taxa de resposta, as respostas obtidas desse grupo terão maior peso.
+
+## Pós-Estratificação
+
+-   Divida a amostra em estratos de acordo com características relacionadas à probabilidade de resposta (idade, sexo, região, etc.).
+-   Ajuste as proporções para refletir a composição populacional conhecida.
+
+. . .
+
+**Exemplo**: Se um estrato deveria representar 30% da população, mas representa apenas 20% na amostra final, multiplique os pesos desse estrato por ( 1.5 ).
+
+## Estimando médias: Ajustar Viés
+
+-   **20% não responderam**, e a maioria deles é homem, que são mais altos (\~170cm).
+-   **80% responderam**, maioria são mulheres, que são mais baixas (\~164).
+
+. . .
+
+$$
+Viés = W_{nr} \cdot (Y_{r} - Y_{nr})
+$$
+
+. . .
+
+::: callout-note
+## Variáveis contínuas
+
+O intervalo é muito amplo, e as **suposições** sobre o comportamento dos não-respondentes são mais complexas.
+:::
+
+## Para estimativa de proporções
+
+-   Ex: proporção de pessoas que concordam com uma decisão.
+
+-   Mais fácil, pois está sempre entre \[0, 1\]
+
+-   Podemos fazer intervalos conservadores:
+
+    -   Limite inferior (p = 0): Todos responderam "não".
+    -   Limite superior (p = 1): Todos esponderam "sim". . . .
+
+## Para estimativa de proporções
+
+![](img/nr_p.png)
+
+## Imputação de Dados Faltantes
+
+Uma possibilidade é **Regressão**: Com base nos respondentes, preveja para os não-respondentes.
+
+![](img/input.png)
+
+## Análises
+
+-   Não basta fazer a análise descritiva da amostra. É preciso "expandir" a amostra para a população.
+-   Estimativas **intervalares** são mais robustas que estimativas pontuais.
+-   SAS
+-   R: pacote survey
+
+## Análise de dados não probabilísticos
+
+Rao, J.N.K. On Making Valid Inferences by Integrating Data from Surveys and Other Sources. Sankhya B 83, 242–272 (2021). https://doi.org/10.1007/s13571-020-00227-w
+
+# Obrigada!
