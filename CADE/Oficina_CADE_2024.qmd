@@ -19,10 +19,18 @@ editor: source
 
 ## Agenda
 
+::: columns
+::: {.column width="50%"}
 -   Probabilidade
 -   Amostragem
 -   Questionários
 -   Análise de Dados
+:::
+
+::: {.column width="50%"}
+![](img/slides_oficina.png){fig-align="center" width="366"}
+:::
+:::
 
 # Probabilidade ...
 
@@ -311,8 +319,7 @@ Pode-se melhorar a representatividade na amostra com o uso de estratificação (
 
 -   Outra forma de calcular o **n**, com diferentes possibilidade de *alocação*.
 
-. . . 
-
+. . .
 
 ![](img/sopa.webp){fig-align="center" width="400"}
 
@@ -348,7 +355,7 @@ ic4 <- c(media4 - 1.96 * 27 / sqrt(n), media4 + 1.96 * 27 / sqrt(n))
 ::: callout-tip
 ## Veja!
 
-O tamanho n **diminuiu** em relação à AAS, sem perda de precisão. 
+O tamanho n **diminuiu** em relação à AAS, sem perda de precisão.
 :::
 
 ## E se não fosse aleatória.
@@ -635,10 +642,10 @@ Uma possibilidade é **Regressão**: Com base nos respondentes, preveja para os 
 -   Não basta fazer a análise descritiva da amostra. É preciso "expandir" a amostra para a população.
 -   Estimativas **intervalares** são mais robustas que estimativas pontuais.
 -   SAS
--   R: pacote survey
+-   R: pacote [survey](https://tidy-survey-r.github.io/tidy-survey-book/)
 
 ## Análise de dados não probabilísticos
 
-Rao, J.N.K. On Making Valid Inferences by Integrating Data from Surveys and Other Sources. Sankhya B 83, 242–272 (2021). https://doi.org/10.1007/s13571-020-00227-w
+[Rao, J.N.K. On Making Valid Inferences by Integrating Data from Surveys and Other Sources. Sankhya B 83, 242–272 (2021)](https://doi.org/10.1007/s13571-020-00227-w)
 
 # Obrigada!
