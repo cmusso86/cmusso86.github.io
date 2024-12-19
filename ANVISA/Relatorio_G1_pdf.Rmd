@@ -1,0 +1,232 @@
+---
+title: "Noticias G1"
+author: "Carolina Musso"
+date: "2024-12-18"
+output: 
+  pdf_document:
+---
+
+```{r setup, include=FALSE}
+# garante que o código não será mostrado no documento final
+knitr::opts_chunk$set(echo = FALSE,
+                      warning = FALSE,
+                      message = FALSE)
+```
+
+## Introdução
+
+O monitoramento de eventos em saúde é uma atividade essencial para a vigilância epidemiológica. A partir da identificação de casos de doenças, é possível planejar ações de prevenção e controle, além de avaliar a eficácia de medidas já implementadas. No Brasil, o Ministério da Saúde é responsável por coordenar a vigilância epidemiológica e disponibilizar informações sobre a situação de saúde no país.
+
+```{r}
+# Limpar o ambiente e carregar pacotes
+# Limpar o ambiente
+rm(list = ls())
+
+# Instalar e carregar pacotes com pacman
+if (!require("pacman")) install.packages("pacman") 
+pacman::p_load(
+  tidyRSS,   # Para leitura e processamento de feeds RSS.
+  tidytext,  # Para manipulação e análise de texto de forma estruturada.
+  wordcloud2, # Para criar nuvens de palavras interativas.
+  ggplot2,   # Para visualização de dados com gráficos personalizáveis.
+  dplyr,     # Para manipulação de dados de forma eficiente e legível.
+  httr,      # Para realizar requisições HTTP, como acessar feeds RSS.
+  xml2,      # Para trabalhar com XML, útil no parseamento de dados RSS.
+  tidyverse, # Conjunto abrangente de pacotes para ciência de dados em R.
+  tm,        # Para pré-processamento de texto, como remoção de stopwords.
+  blastula,   # Para criar e enviar e-mails com relatórios ou alertas.
+  rio,        # Para importar e exportar dados de diferentes formatos.
+  webshot,
+  htmlwidgets
+)
+
+pacman::p_load_gh("gaospecial/wordcloud2")
+```
+
+
+Neste relatório, vamos acessar o feed do G1 e extrair notícias sobre saúde. Em seguida, vamos limpar o texto e gerar uma nuvem de palavras para identificar os temas mais frequentes nas notícias.
+
+```{r}
+# 1. URL do feed RSS que será acessado
+rss_url <- "https://g1.globo.com/dynamo/rss2.xml"  
+
+# 2. Fazer o download do conteúdo do feed RSS
+response <- GET(rss_url)  # Faz uma requisição HTTP para acessar o conteúdo do RSS
+
+# 3. Verificar se a requisição foi bem-sucedida
+# O código verifica se o código de status da resposta HTTP é igual a 200.
+# Em protocolos HTTP, 200 significa "OK", ou seja, o conteúdo foi acessado com sucesso.
+if (status_code(response) == 200) {   
+  
+  # Parsear (transformar) o conteúdo do feed RSS em texto
+  feed <- httr::content(response, as = "text", encoding = "UTF-8") 
+  
+  # Lê o texto XML e cria uma estrutura que pode ser manipulada
+  xml <- read_xml(feed)     
+  
+  # Extrair manualmente os títulos dos itens de notícias no XML usando XPath
+  titles <- xml_find_all(xml, "//item/title") %>% xml_text()
+  
+  # Extrair as descrições dos itens de notícias no XML usando XPath
+  descriptions <- xml_find_all(xml, "//item/description") %>% xml_text()
+  
+  # Combinar os títulos e descrições extraídos em um dataframe para fácil visualização
+  news <- data.frame(
+    title = titles,          # Coluna "title" contendo os títulos
+    description = descriptions, # Coluna "description" contendo as descrições
+    stringsAsFactors = FALSE # Garante que o dataframe não trate texto como fator
+  )}
+  
+
+
+```
+
+
+Após obter as notícias, vamos combinar os títulos e descrições em um único texto e realizar a limpeza dos dados para remover palavras irrelevantes e preparar os dados para análise.
+
+```{r}
+# 3. Preparar os textos: combinar títulos e descrições em uma única coluna
+# A ideia aqui é juntar o título e a descrição de cada notícia em uma única string de texto.
+# Isso facilita a análise e manipulação do conteúdo textual posteriormente.
+news$text <- paste(news$title, news$description)
+
+# 4. Limpar texto
+# Lista personalizada de palavras irrelevantes (stopwords) a serem removidas.
+# Essas palavras foram adicionadas para complementar as stopwords padrão em português.
+# Inclui termos genéricos, nomes comuns e palavras relacionadas ao site G1 e à formatação de notícias.
+custom_stopwords <- c(
+  stopwords("pt"), # Palavras irrelevantes padrão em português
+  "globo", "notícia", "g1", "glbimg.com", "com", "https", "http", "html",
+  "após", "img", "src", "auth_59edd422c0c84a879bd37670ae4f538a",
+  "i.s3", "internal_photos", "sobre", "ser", "segundo", "ser",
+  "ainda", "sobre", "anos", "segunda", "nesta", "desta", "disse", "dois", "três",
+  "dia", "mês", "meio", "além", "josé", "ano", "duas", "seis", "três", "quadro",
+  "bem", "sete", "disso", "cerca", "ter", "lucia", "aqui", "png", "antes", "toda",
+  "ler", "leia", "sob", "maria", "mil", "faz", "disso", "jpeg", "jpg"
+)
+
+# Pipeline de limpeza e tokenização do texto
+cleaned_words <- news %>%
+  # 1. Tokenizar o texto em palavras individuais
+  # A função `unnest_tokens()` divide o texto da coluna `text` em palavras individuais.
+  unnest_tokens(word, text) %>%
+  
+  # 2. Remover espaços extras no início e no final de cada palavra
+  mutate(word = str_trim(word, side = "both")) %>%
+  
+  # 3. Remover palavras da lista de stopwords personalizadas
+  filter(!word %in% custom_stopwords) %>%
+  
+  # 4. Remover palavras das stopwords padrão do idioma português
+  filter(!word %in% stopwords("pt")) %>%
+  
+  # 5. Remover números
+  # Isso exclui palavras compostas apenas por dígitos, como "2024" ou "123".
+  filter(!str_detect(word, "^[0-9]+$")) %>%
+  
+  # 6. Remover palavras curtas com menos de 3 letras
+  # Isso ajuda a eliminar palavras irrelevantes como "de", "em", etc.
+  filter(str_length(word) > 2) %>%
+  
+  # 7. Converter todas as palavras para letras minúsculas
+  # Garante que "Brasil" e "brasil" sejam tratados da mesma forma.
+  mutate(word = str_to_lower(word))
+  
+# 8. (Opcional) Aplicar stemming para reduzir palavras à sua raiz
+# Por exemplo, "correndo" e "correu" seriam reduzidas à mesma forma raiz "corr".
+# O código está comentado porque o stemming pode não ser necessário em todas as análises.
+# mutate(word = stemDocument(word)) 
+
+```
+
+Agora que os dados foram limpos e preparados, vamos visualizar as palavras mais frequentes nas notícias por meio de uma nuvem de palavras.
+
+```{r}
+# 1. Contar a frequência de cada palavra
+# O objetivo é calcular quantas vezes cada palavra aparece no texto já limpo.
+# A função `count()` cria um dataframe com duas colunas: 
+# - `word`: a palavra analisada.
+# - `n`: o número de ocorrências dessa palavra.
+# O parâmetro `sort = TRUE` organiza o resultado em ordem decrescente de frequência.
+word_counts <- cleaned_words %>%
+  count(word, sort = TRUE)
+
+# 2. Criar a nuvem de palavras
+# A função `wordcloud2()` gera uma nuvem de palavras interativa ou estática.
+# O tamanho das palavras é proporcional à sua frequência no texto.
+
+w1 <- wordcloud2(
+  word_counts,       # Dataframe contendo palavras e suas frequências
+  size = 0.7,        # Define o tamanho geral das palavras na nuvem
+  color = "random-light" # Escolhe um tema de cores. Neste caso, cores aleatórias com tom claro
+)
+saveWidget(w1, '1.html', selfcontained = F)
+webshot('1.html', '1.png', vwidth=700,vheight=500, delay = 5)
+```
+
+Visualizar palavras de interesse.
+
+```{r}
+# Definir palavras-chave relacionadas à saúde
+# Aqui, estamos criando uma lista de palavras que consideramos importantes ou relacionadas ao tema "saúde".
+# Essas palavras servirão como filtro para analisar apenas os termos de interesse no texto.
+health_keywords <- c(
+  "saúde", "doença", "epidemia", "surto", "vírus", "contágio", "tratamento", 
+  "cura", "prevenção", "vacina", "sintoma", "infecção", "pandemia", "hospitais", 
+  "mortalidade", "transmissão", "COVID", "vacinação", "brote", "assistência",
+  "hospital", "médico", "isolamento", "monitoramento"
+)
+
+# Contar as palavras de interesse
+# Filtramos as palavras do dataframe `cleaned_words` para manter apenas aquelas que estão na lista `health_keywords`.
+# Em seguida, usamos `count()` para calcular a frequência de cada palavra relacionada à saúde.
+health_word_counts <- cleaned_words %>%
+  filter(word %in% health_keywords) %>% # Filtrar palavras relacionadas à saúde
+  count(word, sort = TRUE)              # Contar as ocorrências e ordenar pela frequência
+
+# Plotar gráfico de barras
+# Utilizamos o ggplot2 para criar um gráfico de barras que mostra as palavras mais frequentes.
+ggplot(health_word_counts, aes(x = reorder(word, n), y = n)) +
+  geom_col() +                       # Adiciona as barras verticais representando as frequências
+  coord_flip() +                     # Inverte os eixos para que as palavras apareçam na vertical
+  theme_minimal() +                  # Aplica um tema mais limpo e moderno
+  labs(
+    title = "Palavras Relacionadas à Saúde mais Frequentes", # Título do gráfico
+    x = "Palavra",                                          # Rótulo do eixo X
+    y = "Contagem"                                          # Rótulo do eixo Y
+  )
+
+```
+
+Exportar os títulos das notícias que contêm palavras-chave relacionadas à saúde.
+
+```{r}
+# Obter palavras únicas relacionadas à saúde
+# Extraímos a lista de palavras únicas do dataframe health_word_counts
+palavras <- unique(health_word_counts$word)
+
+# Filtrar palavras relacionadas à saúde por título
+# 1. Desconstruímos o texto em palavras.
+# 2. Filtramos palavras relacionadas à saúde usando a lista `health_keywords`.
+# 3. Agrupamos por título de notícia.
+# 4. Contamos as ocorrências de cada palavra.
+# 5. Filtramos apenas palavras presentes na lista `palavras`.
+# 6. Selecionamos os títulos e removemos duplicatas.
+# 7. Ordenamos os títulos em ordem alfabética.
+health_words <- news %>%
+  unnest_tokens(word, text) %>%       # Quebra o texto em palavras
+  filter(word %in% health_keywords) %>% # Filtra palavras relacionadas à saúde
+  group_by(title) %>%                 # Agrupa por título da notícia
+  count(word, sort = TRUE) %>%        # Conta as ocorrências de palavras por título
+  filter(word %in% palavras) %>%      # Filtra palavras únicas relacionadas à saúde
+  arrange(desc(n)) %>%                # Ordena pela contagem decrescente
+  select(Titulo = title) %>%          # Renomeia a coluna do título
+  distinct() %>%                      # Remove duplicatas
+  arrange(Titulo)                     # Ordena os títulos em ordem alfabética
+
+# Exportar para Excel
+# Usamos o pacote `rio` para exportar os dados para um arquivo Excel.
+export(health_words, "headlines.xlsx")
+
+```
+

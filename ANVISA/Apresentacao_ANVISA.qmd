@@ -2,268 +2,93 @@
 title: Oficina
 subtitle: "Linguagem R aplicada às emergências"
 author: "Carolina Musso"
-institute: "Secretaria "
-date: '2024-12-12'
+date: '2024-12-19'
 format:
   revealjs:
+    scrollable: true
+    incremental: true 
     embed-resources: true
     multiplex: true
-    incremental: true
-    scrollable: true
     highlight-style: arrow
     theme: style.scss
     transition: fade
+filters:
+  - roughnotation
 editor: source
 ---
 
-## Agenda
+## Hoje
 
-::: columns
-::: {.column width="50%"}
--   Probabilidade
--   Amostragem
--   Questionários
--   Análise de Dados
-:::
+-   Uma conversa sobre o **R**
 
+-   Apresentar as **potencialidades**
 
+-   Tentar manipular um código de forma **intuitiva**
 
-## Vigilância a Saúde
+-   Ensinar a "o caminho das pedras" para **dominar o R**
 
-*"Processo contínuo e sistemático de coleta, consolidação, análise de dados e disseminação de informações sobre eventos relacionados à saúde, visando o planejamento e a implementação de medidas de saúde pública, incluindo a regulação, intervenção e atuação em condicionantes e e determinantes da saúde, para a proteção e promoção da saúde da população, prevenção e controle de riscos, agravos e doenças"*
+## Vigilância
 
-## Muitas analises
+Análises demais e tempo de menos
 
-### Pouco tempo de analisalas
+. . .
 
-<center><img src="img/ciclo.png" width="760px" /></center>
-
-* Muito tempo + softwares + profissionais
-
-  - Maior possibilidade de erro
-  
-# Hello World!
-
-<center><img src="img/5SNC.gif" height=350px" /></center>
-
-# Jornada do Heroi
-
-<center><img src="img/heroi.jpeg" height=450px" /></center>
-
-## Bibliografia Principal
-
-  + [The Epi-R Handbook](<https://epirhandbook.com/en/>)  
-  
-  
-  + [R4DS](<https://r4ds.had.co.nz/data-visualisation.html>)  
-  
-  
-  + [Curso-R](<https://livro.curso-r.com>)
-## IDEIA DO CURSO
-
-* **De Trás-prá-frente**
-
-  - Apresentar as **potencialidades**
-  
-  - Manipular o código de forma mais **intuitiva**
-  
-  - Apresentar os conceitos formalmente **posteriormente**
-  
-  - Ensinar a "se virar"
-  
-  - Foco na resolução do problema, e não em ser um programador
-  
--   RMarkdown foi criado sob o paradigma da Programação literária
-
--   Liguagem para humanos x liguagem para máquina
-
--   Resumo: Rmardown tem o melhor dos dois mundos 🌍 🌎
-
--   Vejamos um exemplo!
-
--   **Curiosidade**: Quem inventou foi o [Yihui](https://yihui.org/en/) engenheiro do RStudio pra fazer o dever de casa quando tava na faculdade ... 😑)
-## Muitas análises
-
-
-
-### Pouco tempo de analisa-las
-
-<center><img src="img/ciclo.png" width="760px"/></center>
+![](img/ciclo.png){fig-align="center"}
 
 -   Muito tempo + softwares + profissionais
 
     -   Maior possibilidade de erro
 
+## Bibliografia Principal
+
+-   [The Epi-R Handbook](https://epirhandbook.com/pt/)
+
+-   [R4DS](https://pt.r4ds.hadley.nz)
+
+-   [Curso-R](https://livro.curso-r.com)
+
 ## Documentos reprodutíveis
 
 -   Economia de tempo
 
--   Não ficam atreladas a uma pessoa
+-   O processo não ficam atreladas a uma pessoa específica.
 
-    ![](img/repro.jpeg){width="528"}
+. . .
 
-## Vamos ver algo especial do R
+![](img/repro.jpeg){fig-align="center"}
 
--   Bem diferente de como foi criado nos anos 90
+## Mas o que é o R?
 
--   Rmarkdown ![](img/rmarkdown.png){width="164"}
+-   **a** Um programa de análise Estatística.
 
--   Quarto ![](img/quarto.png){width="330" height="92"}
+-   **b** Uma linguagem de programação.
 
-## Agora faça como eu!
+-   **c** Um ambiente de programação.
 
-## O que é o R
-
-
-
--   Um programa de análise Estatística?
-
--   Uma linguagem de programação?
-
--   Um ambiente de programação?
-
--   Uma comunidade?
+-   **d** Uma comunidade.
 
 -   **TODAS AS ALTERNATIVAS!**
 
 ## O que é uma linguagem de programação?
 
+-   Instruções que damos às máquinas resolver problemas.
+
+    -   É mais flexível e poderoso do que operar somente uma interface mais amigável.
+
+. . . 
 
 
--   Instruções que damos para a máquina resolver problemas.
-
--   Mais flexível e poderoso do que operar somente a interface
-
-. . .
-
-![](img/pseudocodigo.png){fig-align="center" width="473"}
-
-
-## Quem criou o R
-
-![](img/logo2.png){.absolute bottom="0" right="0" width="80" height="80"}
-
--   Criado / Lançado em [1993/1995](https://www.stat.auckland.ac.nz/~ihaka/downloads/Interface98.pdf "R: Past and Future History") e mantido pela [R-Foundation](https://www.r-project.org/foundation/ "R Foundation")
-
--   Estatísticos da Universidade de Aukland, NZ
-
--   [Robert Gentleman](https://computationalbiomed.hms.harvard.edu/about/people/robert-gentleman-phd/), [Ross Ihaka](https://www.stat.auckland.ac.nz/~ihaka/), S Language
-
-. . .
-
-![](img/rlogo.jpg){fig-align="center" width="314"}
-
-## E o R-Studio?
-
-![](img/logo2.png){.absolute bottom="0" right="0" width="80" height="80"}
-
--   Criado pela empresa RStudio, atualmente [Posit](https://posit.co)
-
-. . .
-
-![](img/posit_logo.jpg){fig-align="center" width="356"}
-
--   [Hadley Wickham](https://hadley.nz): Cientista de dados chefe
-
--   Esforços atualmente para integrar com outras linguagem além do R
+![](img/pseudocodigo.png){fig-align="center"}
 
 ## Dois softwares
-
 
 -   Um é a linguagem em si o cérebro: **R**
 
 -   O outro é a interface: O **RStudio**
 
-    -   Existem outras formas de usar o R, mas a mais intuitiva e a que vamos nos familirizar aqui é por meio do RStudio.
-
-. . .
-
-![](img/rstudio_logo.png){fig-align="center" width="395"}
-
-## E os pacotes o que são?
-
-![](img/logo2.png){.absolute bottom="0" right="0" width="80" height="80"}
-
--   Extensões do R
-
--   Teremos uma aula só sobre o uso de pacotes
-
-    -   [CRAN](https://cran.r-project.org)
-
-    -   Vamos usar muito o [tidyverse](https://r4ds.had.co.nz)
-
-## Instalando o R
-
-# Instalando o R
-
-
-
--   Vamos seguir as istruções da mantenedora do RStudio, que é a Posit:
-
-    -   [Instalar](https://posit.co). www.posit.co
-
-    -   Canto superior direito
-
--   [Tutorial](https://www.youtube.com/watch?v=A8A-OU_nlsw)
-
--   Resumindo: Baixe tanto o R quanto o RStudio e instale ambos seguindo a configuração padrão
-
-## Os Quatro Paineis do R-Studio
-
-
-
-![](img/paineis.png)
-
-## (Mais) Material para aprofundamento
-
-
--   [EpiR-Handbook, 1. Porque usar o R.](https://epirhandbook.com/en/r-basics.html)
-
--   [Instalação do R](https://livro.curso-r.com/1-1-instalacao-do-r.html)
-
--   Aulas na SDS, Unb: [1](https://youtu.be/AgmOlK0ABx8) e [2](https://youtu.be/LkAzLDEgGgk)
-
-## Motivação: A revolução dos dados
-### Lidar com um volume grande e constante de dados!
-
--   "Houve cinco exabytes de informação criados entre o alvorecer da civilização até 2003, mas essa quantidade de informação agora é criada a cada dois dias, e o ritmo vem aumentando". - Eric Schmidt, CEO Google
-
-## A vida é uma jornada
-
-
-
--   Ou melhor, uma jornada atrás da outra. [Jornada do Herói](https://www.ted.com/talks/matthew_winkler_what_makes_a_hero?utm_campaign=tedspread&utm_medium=referral&utm_source=tedcomshare)
-
-. . .
-
-![](img/heroi.jpeg){fig-align="center"}
-
-## Falamos em Excel mas...
-
-![](img/logo2.png){.absolute bottom="0" right="0" width="80" height="80"}
-
--   O R vai muito além!
--   O poder de dominar uma linguagem de programação.
-
-. . .
-
-![](img/canivete.jpg){
-
-## Exemplos
-
-
-
--   Esta apresentação.
--   [Livros](https://r4ds.had.co.nz)
--   [Dashboards](https://psim.shinyapps.io/business_game/?_ga=2.140054067.1043151216.1676939547-1137527662.1676939547)
--   Uma infinidade de gráficos: [R gallery](https://r-graph-gallery.com), [Data-to-Viz](https://www.data-to-viz.com)
--   [Blogs](https://beamilz.com)
--   [Relatórios automatizados](https://www.saude.df.gov.br/documents/37101/0/Boletim_Covid_932.pdf)
+    -   Existem outras formas de usar o R, mas a que considero mais intuitiva é o RStudio.
 
 ## Outras vantagens
-
-## Outras vantagens
-
 
 -   **Gratuito e open source:**
     -   Vai conseguir usar sempre!
@@ -276,9 +101,6 @@ editor: source
 
 ## Cursos
 
-## Cursos
-
-
 -   [DataCamp](https://app.datacamp.com/learn/courses/free-introduction-to-r)
 -   [Coursera](https://www.coursera.org/learn/data-analysis-r)
 -   [Udemy](https://www.udemy.com/course/introducao-a-programacao-para-biologosbiologicas-com-r/)
@@ -288,7 +110,6 @@ editor: source
 
 ## Outras recomendações
 
-
 -   Muitos livros gratuitos online:
     -   [R para usuários de Excel](https://rstudio-conf-2020.github.io/r-for-excel/)
     -   [RMarkdown: The Defenitive Guide](https://bookdown.org/yihui/rmarkdown/)
@@ -296,27 +117,45 @@ editor: source
     -   [Marcel Santos](https://www.youtube.com/channel/UCO6x7sQurFTw0Su0vsexE5g)
     -   [Beatriz Milz](https://beamilz.com)
     -   [RLadies](https://www.rladies.org),[StatQuest](https://www.youtube.com/watch?v=pYxNSUDSFH4),[CheatSheets](https://posit.co/resources/cheatsheets/), [Reproducible Analysis with R](https://nceas.github.io/sasap-training/materials/reproducible_research_in_r_fairbanks/), [Esse Post](https://marcoarmello.wordpress.com/2019/06/03/rstats/), [Statistics By Jim](https://marcoarmello.wordpress.com/2019/06/03/rstats/)
-## Muitas análises
 
 
+## Pacotes que usaremos hoje
 
-### Pouco tempo de analisa-las
+-   Analisar e visualizar da dos:[tidyverse](https://www.tidyverse.org), [ggplot2](https://ggplot2.tidyverse.org)
 
-<center><img src="img/ciclo.png" width="760px"/></center>
+-   Extrair informações de páginas web e análise de texto: [httr](https://httr.r-lib.org), [tm](https://tm.r-forge.r-project.org), [wordcloud2](https://cran.r-project.org/web/packages/wordcloud2/wordcloud2.pdf)
 
--   Muito tempo + softwares + profissionais
+-   Enviar e-mails: [blastula](https://blastula.r-lib.org)
 
-    -   Maior possibilidade de erro
+## Instalando o R
 
-## Documentos reprodutíveis
+-   Sugiro seguir as instruções da mantenedora do RStudio, que é a Posit:
 
--   Economia de tempo
+    -   [Instalar](https://posit.co). www.posit.co
 
--   Não ficam atreladas a uma pessoa
+    -   Canto superior direito
 
-    ![](img/repro.jpeg){width="528"}
+-   [Tutorial](https://www.youtube.com/watch?v=A8A-OU_nlsw)
 
-## Vamos ver algo especial do R
+-   Resumindo: Baixe tanto o R quanto o RStudio e instale ambos seguindo a configuração padrão
+
+## Mais sobre a instalação
+
+-   [EpiR-Handbook, 1. Porque usar o R.](https://epirhandbook.com/en/r-basics.html)
+
+-   [Instalação do R](https://livro.curso-r.com/1-1-instalacao-do-r.html)
+
+-   Aulas na SDS, Unb: [1](https://youtu.be/AgmOlK0ABx8) e [2](https://youtu.be/LkAzLDEgGgk)
+
+## Pacotes
+
+-   Extensões do R
+
+    -   [CRAN](https://cran.r-project.org)
+
+    -   [GitHub](https://github.com)
+
+## Não vamos falar do R "raiz" hoje.
 
 -   Bem diferente de como foi criado nos anos 90
 
@@ -324,9 +163,26 @@ editor: source
 
 -   Quarto ![](img/quarto.png){width="330" height="92"}
 
-## Agora faça como eu!
+## Rmarkdown e Quarto
 
-![](img/meg.webp){fig-align="center" width="384"}
+-   Liguagem para humanos x liguagem para máquina
+
+-   RMarkdown foi desenvolvido com base nos princípios da **Programação Literária**, permitindo a **integração** de texto narrativo e código executável para documentar análises de forma clara e reprodutível.
+
+-   **Curiosidade**: Quem inventou foi o [Yihui](https://yihui.org/en/) engenheiro do RStudio pra fazer o dever de casa quando estava na faculdade ...
+
+## Exemplos
+
+-   Esta apresentação.
+-   [Livros](https://r4ds.had.co.nz)
+-   [Dashboards](https://psim.shinyapps.io/business_game/?_ga=2.140054067.1043151216.1676939547-1137527662.1676939547)
+-   Uma infinidade de gráficos: [R gallery](https://r-graph-gallery.com), [Data-to-Viz](https://www.data-to-viz.com)
+-   [Blogs](https://beamilz.com)
+-   [Relatórios automatizados](https://www.saude.df.gov.br/documents/37101/0/Boletim_Covid_932.pdf)
+
+# Vamos ao RStudio!
+
+-   Notícias g1
 
 ## Você conseguiu diferenciar essas partes?
 
@@ -341,54 +197,132 @@ editor: source
 
 ::: {.column width="80%"}
 ![](img/tela_markdown.png){fig-align="center" width="859"}
-
 :::
 :::
 
-## Cabeçalho
+## Rmarkdown
 
--   Metadados
+-   **Cabeçalho**: Metadados, Linguagem YAML
 
--   Linguagem YAML
+-   **Texto**: Markdown
 
--   É MUITO sensível (qualquer coisa atrapalha)
+-   **Código**: R propriamente dito (chunks e inline)
 
-    ![](img/Captura%20de%20Tela%202022-10-24%20a%CC%80s%2017.41.50.png){width="455"}
+. . .
 
-## Texto
+### Leituras
 
--   Markdown
+-   [EpiR-Handbook, Cap 40, Reports with Rmarkdown](https://epirhandbook.com/en/reports-with-r-markdown.html)
 
-    ![](img/texto.png)
+-   [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/) e [R Markdown Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/),
 
-## Código
+-   [Livro Curso-R: Capítulo 9 Relatórios](https://livro.curso-r.com/9-relatorios.html)
 
--   É o coração do R mesmo
+-   [Quarto](https://quarto.org)
 
-    -   Linguagem de programação
+## Tipos de documentos
 
-    -   Como que difere de Excel (apontar e clicar?)
+-   HTML, PDF, Power Point, ...
 
-        ![](img/chunk.png)
+. . .
 
-# Recapitulando
+**Exemplo PPT**
 
-## O Rmarkdwon tem três partes.
+```{r, echo=T, eval = F}
+---
+title: "Título"
+subtitle: "Subtitle"
+date: "22/10"
+output:
+  powerpoint_presentation:
+    reference_doc: template.pptx
+---
+```
 
-### Cabeçalho:
+. . .
 
--   **Características:**
+**Exemplo: HTML**
 
-    -   Linguagel YAML
+```{r, echo=T, eval = F}
+---
+title: "Untitled"
+author: "Carolina Musso"
+date: "2023-08-19"
+output: html_document
+---
+```
 
-    -   Bizarro
+## Exemplo PDF
 
-    -   Sensível a indentação
+```{r, echo=T, eval = F}
+---
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_file=paste0("Boletins/Boletim_Covid_View",
+  format(as.Date(Sys.time()),'%d.%m.%y'), ".pdf"))})
+output:
+  pdf_document:
+    fig_crop: false
+    includes:
+      in_header: Arquivos_auxiliares/preamble.tex
+  word_document: default
+mainfont: Arial
+geometry: "left=3cm,right=3cm,top=2.5cm,bottom=2cm, headsep=1.5cm"
+header-includes: |
+  \usepackage{booktabs}
+  \usepackage{float}
+  \usepackage{newfloat}
+  \usepackage{framed}
+  \usepackage{color}
+  \usepackage{float}
+  \usepackage{fancyhdr}
+  \usepackage[format=hang,font=small,labelfont=bf]{caption}
+  \captionsetup{width=150mm}
+  \usepackage{tabularx}
+  \usepackage{array}
+  \usepackage[brazil]{babel}
+  \pagestyle{fancy}
+  \fancyhead{}
+  \fancyfoot{}
+  \usepackage{graphicx}
+  \usepackage{fancyhdr}
+  \pagestyle{fancy}
+  \setlength\headheight{25pt}
+  \fancyhead[L]{\textbf{Gerência de Epidemiologia de Campo \\ Diretoria de Vigilância Epidemiológica }}
+  \fancyhead[C]{\includegraphics[width = .2\textwidth]{Arquivos_auxiliares/gdf.png}} 
+  \fancyhead[R]{\textbf{ Subsecretaria de Vigilância em Saúde\\ Secretaria de Saúde do Distrito Federal}}
+  \lfoot{\today}\rfoot{Pag \thepage}
+  \usepackage[default]{sourcesanspro}
+  \usepackage[T1]{fontenc}
+  \DeclareFloatingEnvironment[listname=loq, listname={Lisra de Quadros}]{quadro}
+  \newenvironment{ctable}{\comicfont }{}
+  \usepackage{enumitem,booktabs,cfr-lm}
+  \usepackage[referable]{threeparttablex}
+  \renewlist{tablenotes}{enumerate}{1}
+  \makeatletter
+  \setlist[tablenotes]{label=\tnote{\alph*},ref=\alph*,align=left,before={\footnotesize}}
+  \makeatother
+  \setlength\parindent{24pt}
+  \usepackage{setspace}\doublespacing
+  \usepackage{indentfirst}
+  \usepackage{pdflscape}
+  \newcommand{\blandscape}{\begin{landscape}}
+  \newcommand{\elandscape}{\end{landscape}}
+---
+```
 
-    -   É onde estão os metadados
+[Boletim COVID GDF](https://www.saude.df.gov.br/documents/37101/0/SEM_Boletim_Covid_n972+DF+2023.pdf)
 
-    -   Vamos mexer pouco nele, mas vamos mexer...
+## Outras formas de apresentação
 
--   **COM CUIDADO!**
+-   Aula de [Xaringan Beatriz Milz](https://beatrizmilz.github.io/slidesR/xaringan/09-2021-rday.html#9)
 
--   pra não dar ruim
+-   [A palestra Quarto](https://www.youtube.com/watch?v=7nnZGIQEy7E)
+
+-   [Apresentações](https://thomasmock.quarto.pub/reports-presentations/#/title-slide)
+
+- Extensões **Rmd**: [Bookdown](https://bookdown.org), [Pagedown](https://pagedown.rbind.io)
+
+
+# Enviar e-mails
+
+# Obrigada!
