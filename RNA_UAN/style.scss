@@ -1,0 +1,37 @@
+/*-- scss:defaults --*/
+
+// fonts
+$font-family-sans-serif: "Arial";
+  
+$font-size-root: 12px; 
+
+// colors
+$body-bg: #FFFFFF !default;
+$body-color: #000000 !default;
+$link-color: #FCFC30 !default;
+$selection-bg: #000000 !default;
+$presentation-heading-color: #465EFF;
+$code-color: #465EFF;
+
+.reveal .slide-logo {
+  display: block;
+  position: left;
+  bottom: 5px;
+  right: 10px;
+  top: unset !important;
+  left: unset !important;
+  height: 120px !important;
+  width: 500x !important;
+  max-width: unset !important;
+  max-height: unset !important;
+}
+
+// headings
+$presentation-heading-font: "Arial";
+$presentation-heading-color: #383d3d !default;
+
+/*-- scss:rules --*/
+
+.reveal a {
+  line-height: 1.1em;
+}

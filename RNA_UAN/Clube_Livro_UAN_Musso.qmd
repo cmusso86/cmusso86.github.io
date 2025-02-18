@@ -1,0 +1,565 @@
+---
+title: "Costurando um perceptron à mão"
+subtitle: '🧵🪡✂'
+author: "Carolina Musso"
+institution: "Clube do Livro UAN"
+format:
+  revealjs:
+    scrollable: true
+    incremental: true 
+    embed-resources: true
+    multiplex: true
+    highlight-style: arrow
+    theme: style.scss
+    transition: fade
+editor: source
+echo: true
+message: false
+warnings: false
+---
+
+```{r}
+#| echo: false
+rm(list=ls())
+if(!require("pacman")) install.packages("pacman")
+pacman::p_load("neuralnet", "tidyverse", "latex2exp", "knitr", "NeuralNetTools", "hexbin", "tictoc", "microbenchmark", "data.table")
+
+```
+
+## Introdução
+
+-   linkforms
+- [Referencia](https://www.deeplearningbook.org)
+
+## Modelos
+
+**Representação simplificada da realidade**
+
+. . .
+
+*"Todos os modelos estão errados, mas alguns são úteis."*
+
+-   Modelos matemáticos, físicos, conceituais, estatísticos, computacionais, etc...
+
+## Regressao linear
+
+Mapeia entrada -\> saída
+
+. . .
+
+$y = w x + b$
+
+-   [Função média](https://mlu-explain.github.io/linear-regression/)
+
+    -   Multiplicação de matrizes
+    -   Limitação: Não captura relações complexas
+
+## Logistic regression
+
+-   Incorpora uma função de ligação.
+
+-   Mapeia a entrada para uma probabilidade
+
+-   Função de ligação logit $\phi(x) = \frac{1}{1+e^{-x}}$
+
+. . . 
+
+![](figs/logistic.png)
+
+## RNA e não linearidade
+
+-   Superar as limitações de funções lineares
+
+-   Mapeia as covariáveis em resultados por meio de multiplicação de matrizes e funções de ativação não lineares.
+
+    -   (Multilayer) perceptron
+    -   Feedforward
+
+-   Aproximar uma função $y = f(x)$ com $y = f(x, \theta)$
+
+-   Aprende o valor dos parâmetros $\theta$ que resultam na melhor aproximação da função
+
+-   Requer esquelher a forma de otimização, função de custo, e função de saída
+
+## Teorema da Aproximação Universal.
+
+Ele afirma que uma rede neural com uma única camada oculta contendo neurônios suficientes pode aproximar qualquer função contínua em um intervalo fechado, desde que tenha uma função de ativação adequada (como a sigmoide ou ReLU
+-   Se usarmos uma rede neural suficientemente poderosa, podemos pensar nela como sendo capaz de representar qualquer função ff dentro de uma ampla classe de funções, sendo essa classe limitada apenas por características como continuidade e delimitabilidade.
+
+## Representation Learning
+
+```{r}
+#| echo: false
+knitr::include_graphics("figs/representation.png")
+```
+
+## Representar uma função
+
+-   Rede composta de funções $f(x) =f^{(3)}(f^{(2)}(f^{(1)}(x)))$.
+
+-   Supervisionado, tenta aproximar do rótulo. o comportamento das outras camadas nao é ditado exatamente pelos dados e o algoritmo precisa decidir como usar essas camadas, com representações e como nao sao todas que bem o output sao chamadas de ocultas,
+
+## Superficie que vamos representar
+
+```{=tex}
+\begin{align*}
+X_j & \sim \text{Uniforme}(-3, 3), \quad j=1, 2.\\
+Y & \sim N(\mu, \sigma=1) \\
+\mu & = |X_1^3 - 30 \text{ sen} (X_2) + 10| \\
+
+\end{align*}
+```
+```{r }
+#| echo: true
+#| message: false
+
+
+set.seed(1.2025)
+m.obs <- 100000
+dados <- tibble(x1.obs=runif(m.obs, -3, 3), 
+                x2.obs=runif(m.obs, -3, 3)) %>%
+  mutate(mu=abs(x1.obs^3 - 30*sin(x2.obs) + 10), 
+         y=rnorm(m.obs, mean=mu, sd=1))
+```
+
+## Arquitetura da rede
+
+```{r}
+#| echo: false
+knitr::include_graphics("figs/arq.png")
+```
+
+## Matematicamente
+
+```{=tex}
+\begin{align*}
+h_1 & = \phi(x_1  w_1 + x_2 w_3 + b_1) = \phi(a_1) \\
+h_2 & = \phi(x_1  w_2 + x_2 w_4 + b_2) = \phi(a_2) \\
+\hat{y} & = h_1  w_5 + h_2 w_6 + b_3,  
+\end{align*}
+```
+onde $\phi(x) = \frac{1}{1+e^{-x}}$ representa a função de ativação logística (sigmoide).
+
+$f(x_{1i}, x_{2i}; \mathbf{\theta})=\hat{y}_i=\phi(x_{1i}  w_1 + x_{2i} w_3 + b_1) w_5 + \phi(x_{1i}  w_2 + x_{2i} w_4 + b_2) w_6 + b_3.$
+
+## Matricialmente
+
+```{=tex}
+\begin{align*}
+\mathbf{a} & = \mathbf{W}^{(1)\top} \mathbf{x} + \mathbf{b}^{(1)} \\
+\mathbf{h} & = \phi(\mathbf{a})  \\
+\hat{y} & = \mathbf{W}^{(2)\top} \mathbf{h} + b_3,  
+\end{align*}
+```
+onde
+
+$\mathbf{W}^{(1)}=$
+
+```{=tex}
+\begin{pmatrix}
+w_1 & w_2 \\
+w_3 & w_4 
+\end{pmatrix}
+```
+$\mathbf{W}^{(2)}=$
+
+```{=tex}
+\begin{pmatrix}
+w_5  \\
+w_6  
+\end{pmatrix}
+```
+$\mathbf{b}^{(1)}=$
+
+```{=tex}
+\begin{pmatrix}
+b_1  \\
+b_2  
+\end{pmatrix}
+```
+$\mathbf{x}=$
+
+```{=tex}
+\begin{pmatrix}
+x_1  \\
+x_2  
+\end{pmatrix}
+```
+$\mathbf{h}=$
+
+```{=tex}
+\begin{pmatrix}
+h_1  \\
+h_2  
+\end{pmatrix}
+```
+$\mathbf{a}=$
+
+```{=tex}
+\begin{pmatrix}
+a_1  \\
+a_2  
+\end{pmatrix}
+```
+.
+
+## Feed forward
+
+![](images/feed.png)
+
+$\hat{y} = f(x;θ)$ em função de x e θ. Use a função para calcular$\hat{y}$ = para $\theta = (0.1,...,0.1)$ e $x = (1,1)$
+
+```{r}
+## sigmoide
+phi <- function(x){
+  1/(1 + exp (-x))
+}
+
+foward_prop <- function(theta, x){
+  
+W1 <- matrix(c(teta[1], teta[2], teta[3], teta[4]), 2, 2, byrow=T) 
+
+W2 <- matrix(c(teta[5],teta[6]), 2, 1, byrow=T)
+
+b <- c(teta[7], teta[8])
+
+a <- t(W1)%*%x + b 
+h <- phi(a)
+y_hat <-t(W2)%*%h + teta[9]
+y_hat }
+
+```
+
+```{r}
+teta <- rep(0.1,9)
+obs <- c(1,1) # o vetor assim já é tratado como coluna
+
+foward_prop(teta,obs)
+```
+
+## Função de perda
+
+b)  Crie uma rotina computacional para calcular a função de custo J(θ). Em seguida, divida o conjunto de dados observados de modo que as primeiras 80.000 amostras componham o banco de treinamento e as últimas 20.000 o de teste. Qual é o custo da rede no banco de teste quando θ = (0.1, . . . , 0.1)?
+
+$$
+J(\mathbf{\theta}) = \frac{1}{m} \sum_{i=1}^m L(f(x_{1i}, x_{2i}; \mathbf{\theta}), y_i) = \frac{1}{m} \sum_{i=1}^m (y_i - \hat{y}_i)^2,
+$$ onde $x_{ji}$ representa a $j$-ésima covariável (*feature*) da $i$-ésima observação, $\bftheta = (w_1, \ldots, w_6, b_1, b_2, b_3)$ é o vetor de pesos (parâmetros) e, pela definição da rede,
+
+## Mean squared error
+
+```{r}
+custo <- function(y, y_hat){
+  mean((y-y_hat)^2)
+}
+
+```
+
+## Split
+
+```{r}
+n_treino <- 0.8*m.obs # proporcao da base que é treino
+
+covariaveis_treino <- as.matrix(dados[1:n_treino,1:2])
+covariaveis_teste <- as.matrix(dados[(n_treino+1):m.obs,1:2])
+
+observacao_treino <- pull(dados[,4])[1:n_treino]
+observacao_teste<- pull(dados[,4])[(n_treino+1):m.obs]
+
+```
+
+```{r}
+previsoes_teste <- foward_prop(teta, 
+                            t(covariaveis_teste)) # tem q transpor 
+
+
+custo1 <- custo(observacao_teste, previsoes_teste)
+```
+
+## Gradiente descendente
+
+-   Não tem convergência garantida quando aplicada a funções não ocnvexas.
+
+-   Sensível aos valores de inicialização
+
+-   Esta sempre usando o descendente de uma forma ou de outra
+
+-   Treinar pelo MSE equivale a maxima verossimilhança
+
+-   negative log-likelihood helps toavoid this problem for many models. \\
+
+-   Rela;cão output e tipo de funcao de custo
+
+## Mínimos locais e globais
+```{r}
+# n<- 1000
+# x1 <- runif(n, -6,6)
+# x2 <- runif(n, -6,6)
+# x <- tibble(x1=x1, x2=x2) %>% 
+#   mutate(f=x1^4 + x2^4 + (x1^2)*x2 + x1*(x2^2) - 20*x1^2 - 15* x2^2)
+
+
+n <- 1000
+x1 <- seq(-5, 5, length.out=n)
+x2 <- seq(-5, 5, length.out=n)
+dados.grid <- as_tibble(expand.grid(x1, x2)) %>%
+  rename_all(~ c("x1", "x2")) %>%
+  mutate(f=x1^4 + x2^4 + (x1^2)*x2 + x1*(x2^2) - 20*x1^2 - 15* x2^2)
+
+library(RColorBrewer)
+nb.cols <- 15
+mycolors <- colorRampPalette(rev(brewer.pal(10,  "Blues")))(nb.cols)
+
+
+
+```
+
+. . . 
+
+```{r}
+ggplot(dados.grid , aes(x=x1, y=x2, z=f)) +
+  geom_contour_filled()+
+  scale_fill_manual(values = mycolors)+
+  theme_classic()
+```
+
+## Inicialização
+
+```{r}
+library(data.table)
+f_linha_x1 <- function(x,y){4*x^3 + 2*x*y + y^2 -40*x}
+f_linha_x2 <- function(x, y){4*y^3 + 2*x*y + x^2 - 30* y}
+
+gradiente <- function(lr, partida, passos ){
+
+  
+ponto <- matrix(NA,  passos, length(partida ))
+ponto[1,] <- partida
+  
+for (i in 1:(passos-1)){
+  d1 <- f_linha_x1(ponto[i, 1], ponto[i,2])
+  d2 <- f_linha_x2(ponto[i, 1], ponto[i,2])
+  grad <- c(d1,d2)
+  ponto[(i+1),] <- ponto[i,] - lr*grad
+  
+}
+return( ponto)
+}
+  
+otim_sgd <- gradiente(lr=0.01, partida=c(0,5), passos=100)
+
+
+
+set.seed(123)
+caminhos <- map(1:20, ~{
+   inicio <- runif(2, -5,5)
+  gradiente(lr=0.01, partida=inicio, passos=100)
+  })
+
+
+```
+. . . 
+
+```{r}
+ggplot() +
+  geom_contour_filled( aes(x=dados.grid$x1, y=dados.grid$x2, z=dados.grid$f))+
+  scale_fill_manual(values = mycolors)+
+  geom_path(aes(x=caminhos[[1]][,1], y=caminhos[[1]][,2]))+
+  geom_path(aes(x=caminhos[[2]][,1], y=caminhos[[2]][,2]))+
+  geom_path(aes(x=caminhos[[3]][,1], y=caminhos[[3]][,2]))+
+  geom_path(aes(x=caminhos[[4]][,1], y=caminhos[[4]][,2]))+
+  geom_path(aes(x=caminhos[[5]][,1], y=caminhos[[5]][,2]))+
+  geom_path(aes(x=caminhos[[6]][,1], y=caminhos[[6]][,2]))+
+  geom_path(aes(x=caminhos[[7]][,1], y=caminhos[[7]][,2]))+
+  geom_path(aes(x=caminhos[[8]][,1], y=caminhos[[8]][,2]))+
+  geom_path(aes(x=caminhos[[9]][,1], y=caminhos[[9]][,2]), color="red", size=1.2)+
+  geom_path(aes(x=caminhos[[10]][,1], y=caminhos[[10]][,2]))+
+  geom_path(aes(x=caminhos[[11]][,1], y=caminhos[[11]][,2]))+
+  geom_path(aes(x=caminhos[[12]][,1], y=caminhos[[12]][,2]))+
+  geom_path(aes(x=caminhos[[13]][,1], y=caminhos[[13]][,2]))+
+  geom_path(aes(x=caminhos[[14]][,1], y=caminhos[[14]][,2]))+
+  geom_path(aes(x=caminhos[[15]][,1], y=caminhos[[15]][,2]), color= "pink")+
+  geom_path(aes(x=caminhos[[16]][,1], y=caminhos[[16]][,2]))+
+  geom_path(aes(x=caminhos[[17]][,1], y=caminhos[[17]][,2]))+
+  geom_path(aes(x=caminhos[[18]][,1], y=caminhos[[18]][,2]), color="yellow")+
+  geom_path(aes(x=caminhos[[19]][,1], y=caminhos[[19]][,2]))+
+  geom_path(aes(x=caminhos[[20]][,1], y=caminhos[[20]][,2]),  color="green")+
+  theme_classic()+
+  labs(x="x1", y="x2")
+```
+
+
+## Momentum
+
+```{r}
+
+
+gradiente_mom <- function(lr, partida, passos, v, alfa ){
+
+  ponto <- matrix(NA,  passos, length(partida ))
+  ponto[1,] <- partida
+
+
+for (i in 1:(passos-1)){
+  d1 <- f_linha_x1(ponto[i, 1], ponto[i,2])
+  d2 <- f_linha_x2(ponto[i, 1], ponto[i,2])
+  grad <- c(d1,d2)
+  
+  v <- alfa*v - lr*grad
+  ponto[(i+1),] <- ponto[i,] + v
+}
+return( ponto)
+}
+
+
+partida <- c(0,5)
+v <- 0
+lr <- 0.01
+alfa <- 0.9
+passos <- 100
+
+otim_mom <- gradiente_mom(lr=lr, partida=partida, alfa=alfa, v=v, passos=100)
+
+otim_mom[100,]
+
+ ggplot() +
+  geom_contour_filled( aes(x=dados.grid$x1, y=dados.grid$x2, z=dados.grid$f))+
+  scale_fill_manual(values = mycolors)+
+  geom_path(aes(x=otim_mom[,1] , y=otim_mom[,2]))+
+  theme_classic()
+```
+
+
+## Back propagatio0n
+
+- Durante o treinamento, a **propagação direta** continua até produzir um escalar de custo \( J(\theta) \).  
+- Esse custo representa o erro da rede ao comparar a previsão com o valor real.  
+
+- O **algoritmo de retropropagação** (**backprop**, Rumelhart et al., 1986) permite que a informação do custo **flua para trás** pela rede.  
+- O objetivo é calcular o **gradiente** da função de custo em relação aos parâmetros da rede.  
+- A equação analítica do gradiente é simples, mas sua avaliação numérica pode ser **computacionalmente cara**.  
+- O **backpropagation** oferece um procedimento **simples e eficiente** para esse cálculo.  
+- **Não é um algoritmo de aprendizado completo:** Ele apenas **calcula o gradiente**, enquanto outro algoritmo (ex.: **descida do gradiente estocástica**) usa esse gradiente para atualizar os pesos.  
+- **Não é exclusivo de redes neurais profundas:** Ele pode ser aplicado para calcular derivadas de qualquer função, desde que a derivada seja bem definida.  
+- Nos algoritmos de aprendizado, o gradiente mais relevante é **\( \nabla_\theta J(\theta) \)**, ou seja, a derivada da função de custo em relação aos parâmetros da rede. 🚀
+
+## Regra da cadeia
+
+- A regra da cadeia no cálculo é usada para calcular derivadas de funções compostas.
+- Não deve ser confundida com a regra da cadeia da probabilidade.
+- O backpropagation aplica a regra da cadeia para calcular gradientes.
+- Segue uma ordem específica de operações para garantir eficiência computacional. 🚀
+
+## Back propagation 
+
+- O algoritmo de **retropropagação** (backpropagation) é projetado para reduzir o número de **subexpressões repetidas**, sem priorizar o uso de memória.  
+- Ele realiza aproximadamente **um produto Jacobiano por nó** no grafo computacional.  
+
+- No **algoritmo 6.2**, cada aresta do grafo (de \( u(j) \) para \( u(i) \)) é visitada **apenas uma vez** para calcular a derivada parcial \( \frac{\partial u(i)}{\partial u(j)} \).  
+- Isso evita a explosão exponencial de cálculos redundantes.  
+
+- Outros métodos podem melhorar ainda mais a eficiência:  
+  - **Otimizações no grafo computacional** para eliminar mais subexpressões redundantes.  
+  - **Técnicas para economizar memória**, recomputando certas expressões ao invés de armazená-las.  
+- Essas ideias serão retomadas após a explicação detalhada do **backpropagation**. 🚀  
+
+
+## Back - propagation
+
+**Use a regra da cadeia para encontrar expressões algébricas para o vetor gradiente.**$$\nabla_\theta J(\theta) = \left(\frac{\partial J}{\partial w_1}, \ldots, \frac{\partial J}{\partial b_3} \right)$$
+
+$$\nabla J_\theta = \sum_{i=1}^m(\frac{\partial J}{\partial \hat{y}_i} \nabla_\theta \hat{y}_i)$$
+
+Então, para *cada observação*, temos que o primeiro elemento desse produto é o escalar:
+
+$$\frac{\partial J}{\partial \hat{y}_i} = -2 ( y_i - \hat{y_i})$$ Já o segundo elemento desse produto é, no caso dessa rede, um vetor de tamanho 9 onde:
+
+**Para o nono elemento (terceiro viés):**
+
+$$\frac{\partial \hat{y_i}}{\partial b_3} = 1$$
+
+**Para os pesos da cama de saída**: $$\frac{\partial \hat{y_i}}{\partial w_6} = \frac{1}{1+e^{-a_2}}$$ $$\frac{\partial \hat{y_i}}{\partial w_5} = \frac{1}{1+e^{-a_1}}$$
+
+Onde $a_1 = x_1w_1 + x_2w_3 + b_1$ e $a_2 = x_1w_2 + x_2w_4 + b_2$
+
+Poderia eu escrever matricialmente assim?
+
+$$\frac{\partial \hat{y_i}}{\partial W^{(2)}} = \frac{1}{1+e^{-a}}$$ **Para os vieses da camada intermediária**
+
+$$ \frac{\partial \hat{y_i}}{\partial b_2} = w_6\frac{e^{-a_2}}{(1+e^{-a_2})^2} $$
+
+$$ \frac{\partial \hat{y_i}}{\partial b_1} = w_5\frac{e^{-a_1}}{(1+e^{-a_1})^2} $$
+
+Poderia escrever matricialmente assim? Talvez tenha que transpor alguma coisa...
+
+$$ \frac{\partial \hat{y_i}}{\partial b} = W^{(2)}\frac{e^{-a}}{(1+e^{-a})^2} $$
+
+**Para os pesos entre a camada de entrada e a intermediária:**
+
+$$\frac{\partial \hat{y_i}}{\partial w_4} = w_6\frac{e^{-a_2}}{(1+e^{-a_2})^2}x_{2i}$$ $$\frac{\partial \hat{y_i}}{\partial w_3} = w_5\frac{e^{-a_1}}{(1+e^{-a_1})^2}x_{2i}$$ $$\frac{\partial \hat{y_i}}{\partial w_2} = w_6\frac{e^{-a_2}}{(1+e^{-a_2})^2}x_{1i}$$ $$\frac{\partial \hat{y_i}}{\partial w_1} = w_5\frac{e^{-a_1}}{(1+e^{-a_1})^2}x_{1i}$$
+
+Poderia ser escrito matricialmente assim?:
+
+$$\frac{\partial \hat{y_i}}{\partial W^{(1)}} = W_{(2)}\frac{e^{-a}}{(1+e^{-a})^2}x$$
+
+## Back-propagation
+
+![](images/back.png)
+
+```{r}
+phi_linha <- function(x){
+  exp(-x)/(1+exp(-x))^2}
+  
+
+gradiente <- function (teta, x, y ){
+  
+  n <- length(y)  
+  W1 <- matrix(c(teta[1:4]), 2, 2, byrow=T) 
+  W2 <- matrix(c(teta[5:6]), 2, 1, byrow=T)
+  b <- c(teta[7], teta[8])
+
+  a <- t(W1)%*%t(x) + b 
+  h <- phi(a)
+  y_hat <- t(W2)%*%h + teta[9]
+  y_hat <- as.numeric(y_hat)
+
+  # Jacobiano perda
+  d_Jota<- -2*(y-y_hat)
+
+  # vies 2 camada (saida)
+  grad_b3 <- mean(d_Jota *1)
+
+  # pesos 2 camada
+  grad_W2camada <- d_Jota * t(h)
+  grad_w6 <-  mean(grad_W2camada[,2] )
+  grad_w5<- mean(grad_W2camada[,1])
+
+  # primeira camada
+  hlinha <- t(phi_linha(a))
+  W_2camada_vetorial <- cbind(rep(W2[1], n ),rep(W2[2], n ) )
+
+  # vieses 1 camada
+  grad_b <- d_Jota * W_2camada_vetorial * hlinha
+  grad_b2 <- mean(grad_b[,2])
+  grad_b1 <- mean(grad_b[,1])
+
+  # pesos primeira camada
+  grad_W4_3 <- grad_b * x[,2]
+  grad_W2_1 <- grad_b * x[,1]
+
+  grad_w4 <- mean(grad_W4_3[,2])
+  grad_w3 <- mean(grad_W4_3[,1])
+  grad_w2 <- mean(grad_W2_1[,2])
+  grad_w1 <- mean(grad_W2_1[,1])
+
+
+  c(grad_w1, grad_w2, grad_w3,
+    grad_w4, grad_w5, grad_w6,
+    grad_b1, grad_b2, grad_b3 )
+}
+```
+
+
+## Obrigada!
+
+
+
