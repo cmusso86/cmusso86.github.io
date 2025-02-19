@@ -1,0 +1,810 @@
+---
+title: "Costurando um perceptron à mão"
+subtitle: '🧵🪡✂'
+author: "Carolina Musso"
+institute: "Clube do Livro UAN"
+date: '2025-02-20'
+format:
+  revealjs:
+    scrollable: true
+    incremental: true 
+    embed-resources: true
+    multiplex: true
+    highlight-style: arrow
+    theme: style.scss
+    transition: fade
+editor: source
+echo: true
+message: false
+warnings: false
+---
+
+```{r}
+#| echo: false
+rm(list=ls())
+if(!require("pacman")) install.packages("pacman")
+pacman::p_load("neuralnet", "tidyverse", "latex2exp", "knitr", "NeuralNetTools", "hexbin", "tictoc", "microbenchmark", "data.table", "geomtextpath", "glue")
+
+```
+
+## Para aquecer ...
+
+-   Vocês leram ... 🤭
+    -   GOODFELLOW, Ian; BENGIO, Yoshua; COURVILLE, Aaron. Deep Learning. Cambridge: MIT Press, 2016. Disponível em: [http://www.deeplearningbook.org.](https://www.deeplearningbook.org)
+
+- [GitLab](https://analytics.fontes.intranet.bb.com.br/t99/f1916088/clube_livro_rna.git)
+
+- [Todo mundo gosta de quiz..](https://forms.office.com/r/v7n6Mr35MW)
+
+## Modelos
+
+**Representação simplificada da realidade**
+
+. . .
+
+*"Todos os modelos estão errados, mas alguns são úteis."*
+
+-   Modelos matemáticos, físicos, conceituais, estatísticos, computacionais, etc...
+
+. . .
+
+![](figs/modelo.webp){fig-align="center" width="350"}
+
+## Regressão linear
+
+Mapeia entrada -\> saída
+
+. . .
+
+$y = w x + b$
+
+-   [Função média](https://mlu-explain.github.io/linear-regression/)
+
+    -   Multiplicação de matrizes
+    -   Limitação: Não captura relações complexas
+
+## Regressão linear
+
+![](figs/rick.jpg){fig-align="center"}
+
+## E a regressão logística?
+
+-   Já incorpora uma *função de ligação*.
+
+-   Mapeia a entrada para uma probabilidade
+
+-   Função de ligação logit $\phi(x) = \frac{1}{1+e^{-x}}$
+
+. . .
+
+![](figs/logistic.png){fig-align="center"}
+
+## RNA e não linearidade
+
+-   Superar as limitações de funções lineares
+
+-   Também usa multiplicação de matrizes + funções de ativação não lineares.
+
+    -   (Multilayer) perceptron
+    -   Feedforward
+
+-   Aproximar uma função $y = f(x)$ com $y = f(x, \theta)$ aprendendo $\theta$ que melhor aproximação da função
+
+-   Requer escolher a forma de otimização, função de custo, e função de saída
+
+## Teorema Aproximação Universal
+
+Uma rede neural com uma ***única camada oculta*** contendo ***neurônios suficientes*** pode aproximar qualquer função contínua em um intervalo fechado, com uma função de ativação adequada.
+
+![](figs/grid.webp){fig-align="center" width="304"}
+
+## *Representation Learning*
+
+```{r}
+#| echo: false
+knitr::include_graphics("figs/representation.png")
+```
+
+-   Rede composta de funções $f(x) =f^{(3)}(f^{(2)}(f^{(1)}(x)))$.
+
+## O que vamos representar hoje...
+
+```{=tex}
+\begin{align*}
+X_j & \sim \text{Uniforme}(-3, 3), \quad j=1, 2.\\
+Y & \sim N(\mu, \sigma=1) \\
+\mu & = |X_1^3 - 30 \text{ sen} (X_2) + 10| \\
+
+\end{align*}
+```
+```{r }
+#| echo: true
+#| message: false
+
+
+set.seed(1.2025)
+m.obs <- 100000
+dados <- tibble(x1.obs=runif(m.obs, -3, 3), 
+                x2.obs=runif(m.obs, -3, 3)) %>%
+  mutate(mu =abs(x1.obs^3 - 30*sin(x2.obs) + 10), 
+         y=rnorm(m.obs, mean=mu, sd=1))
+```
+
+## Superfície
+
+```{r }
+#| echo: false
+### Figura 1: Gerando o gráfico da superfície
+n <- 100
+x1 <- seq(-3, 3, length.out=n)
+x2 <- seq(-3, 3, length.out=n)
+dados.grid <- as_tibble(expand.grid(x1, x2)) %>%
+  rename_all(~ c("x1", "x2")) %>%
+  mutate(mu=abs(x1^3 - 30*sin(x2) + 10))
+
+g <- ggplot(dados.grid, aes(x=x1, y=x2)) +
+  geom_point(aes(colour=mu), size=2, shape=15) +
+  coord_cartesian(expand=F) +
+  scale_colour_gradient(low="white", 
+                        high="black",
+                        name=TeX("$E(Y|X_1, X_2)$")) + 
+  xlab(TeX("$X_1$")) + ylab(TeX("$X_2$"))
+
+ggsave('figs/superficie.png', plot = g)
+```
+
+```{r}
+#| fig.align: center
+#| echo: false
+knitr::include_graphics("figs/superficie.png")
+```
+
+## Arquitetura da rede
+
+```{r}
+#| echo: false
+knitr::include_graphics("figs/arq.png")
+```
+
+## Matematicamente
+
+```{=tex}
+\begin{align*}
+h_1 & = \phi(x_1  w_1 + x_2 w_3 + b_1) = \phi(a_1) \\
+h_2 & = \phi(x_1  w_2 + x_2 w_4 + b_2) = \phi(a_2) \\
+\hat{y} & = h_1  w_5 + h_2 w_6 + b_3,  
+\end{align*}
+```
+onde $\phi(x) = \frac{1}{1+e^{-x}}$ representa a função de ativação logística (sigmoide).
+
+$f(x_{1i}, x_{2i}; \mathbf{\theta})=\hat{y}_i=\phi(x_{1i}  w_1 + x_{2i} w_3 + b_1) w_5 + \phi(x_{1i}  w_2 + x_{2i} w_4 + b_2) w_6 + b_3.$
+
+## Matricialmente
+
+```{=tex}
+\begin{align*}
+\mathbf{a} & = \mathbf{W}^{(1)\top} \mathbf{x} + \mathbf{b}^{(1)} \\
+\mathbf{h} & = \phi(\mathbf{a})  \\
+\hat{y} & = \mathbf{W}^{(2)\top} \mathbf{h} + b_3,  
+\end{align*}
+```
+onde
+
+$\mathbf{W}^{(1)}=$
+
+```{=tex}
+\begin{pmatrix}
+w_1 & w_2 \\
+w_3 & w_4 
+\end{pmatrix}
+```
+$\mathbf{W}^{(2)}=$
+
+```{=tex}
+\begin{pmatrix}
+w_5  \\
+w_6  
+\end{pmatrix}
+```
+$\mathbf{b}^{(1)}=$
+
+```{=tex}
+\begin{pmatrix}
+b_1  \\
+b_2  
+\end{pmatrix}
+```
+$\mathbf{x}=$
+
+```{=tex}
+\begin{pmatrix}
+x_1  \\
+x_2  
+\end{pmatrix}
+```
+$\mathbf{h}=$
+
+```{=tex}
+\begin{pmatrix}
+h_1  \\
+h_2  
+\end{pmatrix}
+```
+$\mathbf{a}=$
+
+```{=tex}
+\begin{pmatrix}
+a_1  \\
+a_2  
+\end{pmatrix}
+```
+
+## Feed forward
+
+![](images/feed.png)
+
+## Feed forward
+
+```{r}
+## sigmoide
+phi <- function(x){
+  1/(1 + exp (-x))
+}
+
+foward_prop <- function(theta, x){
+  
+W1 <- matrix(c(theta[1], theta[2], theta[3], theta[4]), 2, 2, byrow=T) 
+
+W2 <- matrix(c(theta[5],theta[6]), 2, 1, byrow=T)
+
+b <- c(theta[7], theta[8])
+
+a <- t(W1)%*%x + b 
+h <- phi(a)
+y_hat <-t(W2)%*%h + theta[9]
+return(as.numeric(y_hat)) }
+
+```
+
+```{r}
+theta_inicial <- rep(0.1,9)
+obs <- c(1,1) # o vetor assim já é tratado como coluna
+
+foward_prop(theta_inicial,obs)
+```
+
+## Função de perda
+
+$$
+J(\mathbf{\theta}) = \frac{1}{m} \sum_{i=1}^m L(f(x_{1i}, x_{2i}; \mathbf{\theta}), y_i) = \frac{1}{m} \sum_{i=1}^m (y_i - \hat{y}_i)^2,
+$$ onde $x_{ji}$ representa a $j$-ésima covariável (*feature*) da $i$-ésima observação, $\mathbf{\theta} = (w_1, \ldots, w_6, b_1, b_2, b_3)$ é o vetor de pesos (parâmetros).
+
+. . .
+
+```{r}
+custo <- function(y, y_hat){
+  mean((y-y_hat)^2)
+}
+
+```
+
+## Função de perda
+
+![](figs/loss.png){fig-align="center"}
+
+## Split
+
+```{r}
+n_treino <- 0.8*m.obs # proporcao da base que é treino
+
+covariaveis_treino <- as.matrix(dados[1:n_treino,1:2])
+covariaveis_teste <- as.matrix(dados[(n_treino+1):m.obs,1:2])
+
+observacao_treino <- pull(dados[,4])[1:n_treino]
+observacao_teste<- pull(dados[,4])[(n_treino+1):m.obs]
+
+```
+
+. . .
+
+```{r}
+previsoes_teste <- foward_prop(theta_inicial, 
+                            t(covariaveis_teste)) # tem q transpor 
+
+
+custo1 <- custo(observacao_teste, previsoes_teste)
+custo1
+```
+
+## Gradiente descendente
+
+-   Não tem convergência garantida quando aplicada a funções não convexas.
+
+-   Sensível aos valores de inicialização
+
+-   Nas redes, estamos sempre usando o descendente de uma forma ou de outra ...
+
+-   Treinar pelo MSE para distribuições Gaussianas, equivale à máxima verossimilhança
+
+## Gradiente descendente
+
+![](figs/rate.png){fig-align="center"}
+
+## Mínimos locais e globais
+
+```{r echo = F}
+
+
+n <- 1000
+x1 <- seq(-5, 5, length.out=n)
+x2 <- seq(-5, 5, length.out=n)
+dados.grid <- as_tibble(expand.grid(x1, x2)) %>%
+  rename_all(~ c("x1", "x2")) %>%
+  mutate(f=x1^4 + x2^4 + (x1^2)*x2 + x1*(x2^2) - 20*x1^2 - 15* x2^2)
+
+library(RColorBrewer)
+nb.cols <- 15
+mycolors <- colorRampPalette(rev(brewer.pal(10,  "Blues")))(nb.cols)
+
+
+
+
+ggplot(dados.grid , aes(x=x1, y=x2, z=f)) +
+  geom_contour_filled()+
+  scale_fill_manual(values = mycolors)+
+  theme_classic()
+```
+
+## Inicialização
+
+```{r echo = F}
+library(data.table)
+f_linha_x1 <- function(x,y){4*x^3 + 2*x*y + y^2 -40*x}
+f_linha_x2 <- function(x, y){4*y^3 + 2*x*y + x^2 - 30* y}
+
+gradiente <- function(lr, partida, passos ){
+
+  
+ponto <- matrix(NA,  passos, length(partida ))
+ponto[1,] <- partida
+  
+for (i in 1:(passos-1)){
+  d1 <- f_linha_x1(ponto[i, 1], ponto[i,2])
+  d2 <- f_linha_x2(ponto[i, 1], ponto[i,2])
+  grad <- c(d1,d2)
+  ponto[(i+1),] <- ponto[i,] - lr*grad
+  
+}
+return( ponto)
+}
+  
+otim_sgd <- gradiente(lr=0.01, partida=c(0,5), passos=100)
+
+
+
+set.seed(123)
+caminhos <- map(1:20, ~{
+   inicio <- runif(2, -5,5)
+  gradiente(lr=0.01, partida=inicio, passos=100)
+  })
+
+
+ggplot() +
+  geom_contour_filled( aes(x=dados.grid$x1, y=dados.grid$x2, z=dados.grid$f))+
+  scale_fill_manual(values = mycolors)+
+  geom_path(aes(x=caminhos[[1]][,1], y=caminhos[[1]][,2]))+
+  geom_path(aes(x=caminhos[[2]][,1], y=caminhos[[2]][,2]))+
+  geom_path(aes(x=caminhos[[3]][,1], y=caminhos[[3]][,2]))+
+  geom_path(aes(x=caminhos[[4]][,1], y=caminhos[[4]][,2]))+
+  geom_path(aes(x=caminhos[[5]][,1], y=caminhos[[5]][,2]))+
+  geom_path(aes(x=caminhos[[6]][,1], y=caminhos[[6]][,2]))+
+  geom_path(aes(x=caminhos[[7]][,1], y=caminhos[[7]][,2]))+
+  geom_path(aes(x=caminhos[[8]][,1], y=caminhos[[8]][,2]))+
+  geom_path(aes(x=caminhos[[9]][,1], y=caminhos[[9]][,2]), color="red", size=1.2)+
+  geom_path(aes(x=caminhos[[10]][,1], y=caminhos[[10]][,2]))+
+  geom_path(aes(x=caminhos[[11]][,1], y=caminhos[[11]][,2]))+
+  geom_path(aes(x=caminhos[[12]][,1], y=caminhos[[12]][,2]))+
+  geom_path(aes(x=caminhos[[13]][,1], y=caminhos[[13]][,2]))+
+  geom_path(aes(x=caminhos[[14]][,1], y=caminhos[[14]][,2]))+
+  geom_path(aes(x=caminhos[[15]][,1], y=caminhos[[15]][,2]), color= "pink")+
+  geom_path(aes(x=caminhos[[16]][,1], y=caminhos[[16]][,2]))+
+  geom_path(aes(x=caminhos[[17]][,1], y=caminhos[[17]][,2]))+
+  geom_path(aes(x=caminhos[[18]][,1], y=caminhos[[18]][,2]), color="yellow")+
+  geom_path(aes(x=caminhos[[19]][,1], y=caminhos[[19]][,2]))+
+  geom_path(aes(x=caminhos[[20]][,1], y=caminhos[[20]][,2]),  color="green")+
+  theme_classic()+
+  labs(x="x1", y="x2")
+```
+
+## Momentum
+
+```{r echo = F}
+
+
+gradiente_mom <- function(lr, partida, passos, v, alfa ){
+
+  ponto <- matrix(NA,  passos, length(partida ))
+  ponto[1,] <- partida
+
+
+for (i in 1:(passos-1)){
+  d1 <- f_linha_x1(ponto[i, 1], ponto[i,2])
+  d2 <- f_linha_x2(ponto[i, 1], ponto[i,2])
+  grad <- c(d1,d2)
+  
+  v <- alfa*v - lr*grad
+  ponto[(i+1),] <- ponto[i,] + v
+}
+return( ponto)
+}
+
+
+partida <- c(0,5)
+v <- 0
+lr <- 0.01
+alfa <- 0.9
+passos <- 100
+
+otim_mom <- gradiente_mom(lr=lr, partida=partida, alfa=alfa, v=v, passos=100)
+
+ ggplot() +
+  geom_contour_filled( aes(x=dados.grid$x1, y=dados.grid$x2, z=dados.grid$f))+
+  scale_fill_manual(values = mycolors)+
+  geom_path(aes(x=otim_mom[,1] , y=otim_mom[,2]))+
+  theme_classic()
+```
+
+## Back propagation
+
+-   Durante o treinamento, a **propagação direta** continua até produzir um escalar de custo ( $J(\theta)$ ).\
+
+-   Esse custo representa o erro da rede ao comparar a previsão com o valor real.
+
+-   O **algoritmo de retropropagação** (**backprop**, Rumelhart et al., 1986) permite que a informação do custo **flua para trás** pela rede.\
+
+-   O objetivo é calcular o **gradiente** da função de custo em relação aos parâmetros da rede.\
+
+## Back propagation
+
+-   A equação analítica do gradiente é simples, mas sua avaliação numérica pode ser **computacionalmente cara**.\
+
+-   O **backpropagation** oferece um procedimento **simples e eficiente** para esse cálculo.\
+
+-   Nos algoritmos de aprendizado, o gradiente mais relevante é $\nabla_{\theta} J(\theta)$, ou seja, a derivada da função de custo em relação aos parâmetros da rede.
+
+## Back propagation: mitos
+
+-   **Não é um algoritmo de aprendizado completo:** Ele apenas **calcula o gradiente**, enquanto outro algoritmo (ex.: **descida do gradiente estocástica**) usa esse gradiente para atualizar os pesos.\
+
+-   **Não é exclusivo de redes neurais profundas:** Ele pode ser aplicado para calcular derivadas de qualquer função, desde que a derivada seja bem definida.\
+
+## Regra da cadeia
+
+-   A regra da cadeia no cálculo é usada para calcular derivadas de funções compostas.
+    -   O backpropagation a aplica para calcular o gradientes.
+-   Segue uma ordem específica de operações para garantir eficiência computacional e evitar a explosão exponencial de cálculos redundantes.
+-   O algoritmo de backpropagation é projetado para reduzir o número de **subexpressões repetidas**, sem priorizar o uso de memória.
+
+
+
+## Back - propagation
+
+**Use a regra da cadeia para encontrar expressões algébricas para o vetor gradiente.**$$\nabla_\theta J(\theta) = \left(\frac{\partial J}{\partial w_1}, \ldots, \frac{\partial J}{\partial b_3} \right)$$
+
+$$\nabla J_\theta = \sum_{i=1}^m(\frac{\partial J}{\partial \hat{y}_i} \nabla_\theta \hat{y}_i)$$
+
+Então, para *cada observação*, temos que o primeiro elemento desse produto é o escalar:
+
+$$\frac{\partial J}{\partial \hat{y}_i} = -2 ( y_i - \hat{y_i})$$ Já o segundo elemento desse produto é, no caso dessa rede, um vetor de tamanho 9 onde:
+
+**Para o nono elemento (terceiro viés):**
+
+$$\frac{\partial \hat{y_i}}{\partial b_3} = 1$$
+
+**Para os pesos da cama de saída**: $$\frac{\partial \hat{y_i}}{\partial w_6} = \frac{1}{1+e^{-a_2}}$$ $$\frac{\partial \hat{y_i}}{\partial w_5} = \frac{1}{1+e^{-a_1}}$$
+
+Onde $a_1 = x_1w_1 + x_2w_3 + b_1$ e $a_2 = x_1w_2 + x_2w_4 + b_2$
+
+**Para os vieses da camada intermediária**
+
+$$ \frac{\partial \hat{y_i}}{\partial b_2} = w_6\frac{e^{-a_2}}{(1+e^{-a_2})^2} $$
+
+$$ \frac{\partial \hat{y_i}}{\partial b_1} = w_5\frac{e^{-a_1}}{(1+e^{-a_1})^2} $$
+
+**Para os pesos entre a camada de entrada e a intermediária:**
+
+$$\frac{\partial \hat{y_i}}{\partial w_4} = w_6\frac{e^{-a_2}}{(1+e^{-a_2})^2}x_{2i}$$ $$\frac{\partial \hat{y_i}}{\partial w_3} = w_5\frac{e^{-a_1}}{(1+e^{-a_1})^2}x_{2i}$$ $$\frac{\partial \hat{y_i}}{\partial w_2} = w_6\frac{e^{-a_2}}{(1+e^{-a_2})^2}x_{1i}$$ $$\frac{\partial \hat{y_i}}{\partial w_1} = w_5\frac{e^{-a_1}}{(1+e^{-a_1})^2}x_{1i}$$
+
+
+## Regra da Cadeia no Back propagation
+
+![](figs/cadeia.png){fig-align="center" width="500"}
+
+
+
+
+## Algoritmo
+
+![](images/back.png)
+
+## No R
+
+```{r}
+phi_linha <- function(x){
+  exp(-x)/(1+exp(-x))^2}
+  
+
+gradiente <- function (theta, x, y ){
+  
+  n <- length(y)  
+  W1 <- matrix(c(theta[1:4]), 2, 2, byrow=T) 
+  W2 <- matrix(c(theta[5:6]), 2, 1, byrow=T)
+  b <- c(theta[7], theta[8])
+
+  a <- t(W1)%*%t(x) + b 
+  h <- phi(a)
+  y_hat <- t(W2)%*%h + theta[9]
+  y_hat <- as.numeric(y_hat)
+
+  # derivada da perda
+  d_Jota<- -2*(y-y_hat)
+
+  # vies 2 camada (saida)
+  grad_b3 <- mean(d_Jota *1)
+
+  # pesos 2 camada
+  grad_W2camada <- d_Jota * t(h)
+  grad_w6 <-  mean(grad_W2camada[,2] )
+  grad_w5<- mean(grad_W2camada[,1])
+
+  # primeira camada
+  hlinha <- t(phi_linha(a))
+  W_2camada_vetorial <- cbind(rep(W2[1], n ),rep(W2[2], n ) )
+
+  # vieses 1 camada
+  grad_b <- d_Jota * W_2camada_vetorial * hlinha
+  grad_b2 <- mean(grad_b[,2])
+  grad_b1 <- mean(grad_b[,1])
+
+  # pesos primeira camada
+  grad_W4_3 <- grad_b * x[,2]
+  grad_W2_1 <- grad_b * x[,1]
+
+  grad_w4 <- mean(grad_W4_3[,2])
+  grad_w3 <- mean(grad_W4_3[,1])
+  grad_w2 <- mean(grad_W2_1[,2])
+  grad_w1 <- mean(grad_W2_1[,1])
+
+
+  c(grad_w1, grad_w2, grad_w3,
+    grad_w4, grad_w5, grad_w6,
+    grad_b1, grad_b2, grad_b3 )
+}
+```
+
+## Cáculo
+```{r}
+theta <- rep(0.1,9)
+
+gradiente1 <- gradiente(theta, covariaveis_treino, observacao_treino)
+
+gradiente1
+```
+
+
+## Fitting
+
+```{r}
+otimizacao <- function(iteracoes=100, # default assim, mas pode mudar
+                       theta_inicial=rep(0,9), 
+                       x_treino, y_treino, 
+                       x_teste=x_treino, 
+                       y_teste=y_treino,
+                       LR = 0.1){
+  
+  # não sei se precisava disso, mas achei melhor ir salvando os resultados
+  # intermediários em uma lista 
+  Perdas_treino<- numeric()
+  Perdas_teste <- numeric()
+  Perdas <- list()
+  Gradientes <- list()
+  Previsoes <- list()
+  Parametros <- list()
+  Parametros[[1]] <- theta_inicial
+
+
+for (i in 2:(iteracoes+1)){
+
+Gradientes[[i-1]] <- gradiente(Parametros[[i-1]], x_treino , y_treino)
+Parametros[[i]] <- Parametros[[i-1]] - LR*(Gradientes[[i-1]])
+previsoes_treino <-foward_prop(Parametros[[i-1]], t(x_treino))
+previsoes_teste <- foward_prop(Parametros[[i-1]], t(x_teste))
+Perdas_treino[i-1] <- custo(y_treino, previsoes_treino)
+Perdas_teste[i-1] <- custo(y_teste, previsoes_teste)
+#i <- i+1
+}
+Perdas <- tibble(Perdas_treino,Perdas_teste)
+list(Gradientes=Gradientes,theta=Parametros,
+     J_treino=Perdas_treino, J_teste=Perdas_teste,
+     J= Perdas)
+}
+
+
+## ESSA PARTE É SE QUISER FAZER SÓ EM UM DOS GRUPOS
+
+so_treino <- otimizacao(x_treino=covariaveis_treino,
+                        y_treino=observacao_treino )
+
+so_teste <-  otimizacao(x_treino=covariaveis_teste,
+                        y_treino=observacao_teste)
+
+
+
+# GRADIENTE CALCULADO NO TREINO, MAS PERDA NO TESTE TAMBÉM
+
+
+treino_teste <- otimizacao(x_treino=covariaveis_treino,
+                           y_treino=observacao_treino, 
+                           x_teste=covariaveis_teste, 
+                           y_teste=observacao_teste  )
+minimo <- which(treino_teste$J$Perdas_teste==min(treino_teste$J$Perdas_teste))
+theta_ajustado <- treino_teste$theta[[minimo]]
+
+```
+
+## Ao final ...
+```{r echo=F}
+dados_graf1 <-treino_teste$J %>% 
+  mutate(iter=row_number(), 
+         min=Perdas_teste==min(Perdas_teste))%>% 
+  pivot_longer(-c("iter", "min")) 
+
+# para marcar a interacao do mínimo no gráfico 
+minimo <- which(treino_teste$J$Perdas_teste==min(treino_teste$J$Perdas_teste))
+J <- treino_teste$J$Perdas_teste[[minimo]]
+ 
+dados_graf1 %>% 
+ggplot(aes(x=iter))+
+  geom_line(aes(y=value, color=name), size=1.0)+
+  theme_classic(base_size = 16) +
+  scale_colour_manual("", values=c("#465EFF", "#FCFC30"), 
+                      labels = c("Teste", "Treino"))+
+  geom_text(aes(80, 120, label="toin-nhoin-nhoin..."), 
+            size=2 )+
+  geom_curve(aes(x = 30, y = 200, xend = minimo, 
+                 yend = 145),
+  arrow = arrow(length = unit(0.03, "npc")))+
+  geom_text(aes(45, 200, label=glue("MSE mínimo = {round(J,2)}"), size=4 ))+
+  labs(x="Iteração", y= expression("J ("*theta*")"))+
+  theme(panel.background = element_rect("lightgrey"))
+```
+
+## Previsões
+
+```{r echo = F}
+# Fazendo a previsão com os gradientes calculados
+
+previsoes_teste_ajustado <- foward_prop(theta_ajustado, t(covariaveis_teste))
+
+
+# Só juntando em um data.frame
+
+base_teste <- tibble(covariaveis_teste[,1],
+                     covariaveis_teste[,2], 
+                     observacao_teste)
+
+names(base_teste) <- c("x1", "x2", "y")
+
+base_previsao_teste_RN <- base_teste %>% 
+  mutate( y_hat =  previsoes_teste_ajustado) %>% 
+  mutate(residuo=y_hat-y)
+
+
+
+base_previsao_teste_RN %>% 
+  ggplot() +
+  geom_point(aes(x=y_hat, y=y), size=2, color="#FCFC30")+
+  geom_textline(aes(x=y_hat, y=y_hat), 
+                label = "Se fosse bom, estaria tudo perto dessa linha aqui",
+                fontface= "bold",
+                size = 6, vjust = -0.5,
+                linewidth = 1, linecolor = "#465EFF", 
+                linetype = 2, 
+                color = "black")+
+  theme_classic(base_size = 14)+
+  labs(x= "Y Esperado", y = "Y observado")+
+  theme(panel.background = element_rect("lightgrey"))
+```
+
+
+## Gradiente descendente estocástico
+
+```{r echo = F}
+theta <- rep(0.1,9)
+
+# loop para tamanhos diferentes de amostras
+grads <- map_dfc(1:300, ~{
+gradiente(theta, matrix(covariaveis_treino[1:.,],.,2 ), observacao_treino[1:.])
+})
+
+grads[1,] %>% 
+  pivot_longer(everything()) %>% 
+  mutate(k=row_number()) %>% 
+  ggplot(aes(k, value))+
+  
+  geom_line(color="#FCFC30", size=0.7, alpha=0.7,)+
+  geom_point( size=1,color="#465EFF" )+
+  theme_classic(base_size = 14)+
+  geom_hline(yintercept = gradiente1[1], linetype="dotted")+
+  labs(y=expression(paste(partialdiff,"J","/",partialdiff,"w_1")),
+       x= "Tamanho da amostra")+
+  theme(panel.background = element_rect("lightgrey"))
+
+
+```
+
+## Gradiente descendente estocástico
+
+```{r}
+rapidez <- microbenchmark(
+ gradiente(theta, matrix(covariaveis_treino[1:300,],300,2 ), observacao_treino[1:300]),
+ gradiente(theta,matrix(covariaveis_treino[1:n_treino,],n_treino,2 ), observacao_treino[1:n_treino])
+  )
+
+
+rapidez
+```
+
+## Regressão Linear
+
+$Y_i = N(\beta_0 + \beta_{1}x_{1i}+ \beta_3x_{2i}, \sigma) $
+
+- incluíndo mais covariáveis
+
+$E(Y|x_1, x_2) = \beta_0 + \beta_1x_1 + \beta_2x_2+\beta_3x_1^2 + \beta_4x_2^2 + \beta_5x_1x_2$
+
+```{r echo = F}
+base_treino <- tibble(x1=covariaveis_treino[,1],
+                      x2=covariaveis_treino[,2], 
+                      y=observacao_treino)
+
+
+modelo_linear1 <- lm (data=base_treino , y ~ x1 + x2)
+
+```
+
+
+```{r}
+# vendo quem está dentro ou fora
+cores_LM <- predict(modelo_linear1,newdata = base_teste,
+                 interval="prediction") %>%
+  as_tibble() %>% 
+  mutate(y_teste=observacao_teste,
+         contem = y_teste>=lwr &y_teste<=upr) %>% 
+  pull(contem)
+
+base_previsao_teste_RN %>% 
+  mutate(ic=cores_LM) %>% 
+  ggplot(aes(x1, x2, color=ic))+
+  geom_point( size=0.8, alpha=0.7)+
+  scale_color_manual("Está no IC", values=c("#FCFC30", "#465EFF"), labels=c("Sim", "Não"))+
+  theme_classic()+
+  ggtitle(glue("Cobertura = {round(mean(cores_LM),2)}%\n MSE = {round(summary(modelo_linear1)$sigma^2, 2)}"))
+
+
+cores_RN <- base_previsao_teste_RN %>% 
+  mutate(normal=(y-y_hat)/sqrt(J),
+         contem = normal>=-1.96 & normal <=1.96) %>% 
+  pull(contem)
+  
+base_previsao_teste_RN %>% 
+  mutate(ic=cores_RN) %>% 
+  ggplot(aes(x1, x2, color=ic))+
+  geom_point( size=0.8, alpha=0.7)+
+  scale_color_manual("Está no IC", values=c("#FCFC30", "#465EFF"), labels=c("Sim", "Não"))+
+  theme_classic()+
+  ggtitle(glue("Cobertura = {round(mean(cores_RN),2)}%\n MSE = {J}"))
+```
+
+
+## Obrigada!
