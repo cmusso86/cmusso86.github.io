@@ -29,12 +29,13 @@ pacman::p_load("neuralnet", "tidyverse", "latex2exp", "knitr", "NeuralNetTools",
 
 ## Para aquecer ...
 
--   Vocês leram ... 🤭
-    -   GOODFELLOW, Ian; BENGIO, Yoshua; COURVILLE, Aaron. Deep Learning. Cambridge: MIT Press, 2016. Disponível em: [http://www.deeplearningbook.org.](https://www.deeplearningbook.org)
+- GOODFELLOW, Ian; BENGIO, Yoshua; COURVILLE, Aaron. Deep Learning. Cambridge: MIT Press, 2016. Disponível em: [http://www.deeplearningbook.org.](https://www.deeplearningbook.org)
 
-- [GitLab](https://analytics.fontes.intranet.bb.com.br/t99/f1916088/clube_livro_rna.git)
+    - Vocês leram, né? 🤭
 
-- [Todo mundo gosta de quiz..](https://forms.office.com/r/v7n6Mr35MW)
+-   [GitLab](https://analytics.fontes.intranet.bb.com.br/t99/f1916088/clube_livro_rna.git)
+
+-   [Todo mundo gosta de quiz..](https://forms.office.com/r/v7n6Mr35MW)
 
 ## Modelos
 
@@ -46,9 +47,9 @@ pacman::p_load("neuralnet", "tidyverse", "latex2exp", "knitr", "NeuralNetTools",
 
 -   Modelos matemáticos, físicos, conceituais, estatísticos, computacionais, etc...
 
-. . .
+. . . 
 
-![](figs/modelo.webp){fig-align="center" width="350"}
+![](figs/modelo.webp){fig-align="center" width="600"}
 
 ## Regressão linear
 
@@ -166,7 +167,7 @@ knitr::include_graphics("figs/superficie.png")
 knitr::include_graphics("figs/arq.png")
 ```
 
-## Matematicamente
+## Algebricamente
 
 ```{=tex}
 \begin{align*}
@@ -238,7 +239,6 @@ a_1  \\
 a_2  
 \end{pmatrix}
 ```
-
 ## Feed forward
 
 ![](images/feed.png)
@@ -288,10 +288,6 @@ custo <- function(y, y_hat){
 
 ```
 
-## Função de perda
-
-![](figs/loss.png){fig-align="center"}
-
 ## Split
 
 ```{r}
@@ -316,15 +312,14 @@ custo1 <- custo(observacao_teste, previsoes_teste)
 custo1
 ```
 
+
 ## Gradiente descendente
 
--   Não tem convergência garantida quando aplicada a funções não convexas.
+-   Otimizar pelo MSE equivale à máxima verossimilhança para distribuições Gaussianas.
+
+-  Não tem convergência garantida como com funções não convexas.
 
 -   Sensível aos valores de inicialização
-
--   Nas redes, estamos sempre usando o descendente de uma forma ou de outra ...
-
--   Treinar pelo MSE para distribuições Gaussianas, equivale à máxima verossimilhança
 
 ## Gradiente descendente
 
@@ -352,7 +347,8 @@ mycolors <- colorRampPalette(rev(brewer.pal(10,  "Blues")))(nb.cols)
 ggplot(dados.grid , aes(x=x1, y=x2, z=f)) +
   geom_contour_filled()+
   scale_fill_manual(values = mycolors)+
-  theme_classic()
+  theme_classic()+
+  labs(x="w1", y="w2")
 ```
 
 ## Inicialização
@@ -413,64 +409,18 @@ ggplot() +
   geom_path(aes(x=caminhos[[19]][,1], y=caminhos[[19]][,2]))+
   geom_path(aes(x=caminhos[[20]][,1], y=caminhos[[20]][,2]),  color="green")+
   theme_classic()+
-  labs(x="x1", y="x2")
-```
-
-## Momentum
-
-```{r echo = F}
-
-
-gradiente_mom <- function(lr, partida, passos, v, alfa ){
-
-  ponto <- matrix(NA,  passos, length(partida ))
-  ponto[1,] <- partida
-
-
-for (i in 1:(passos-1)){
-  d1 <- f_linha_x1(ponto[i, 1], ponto[i,2])
-  d2 <- f_linha_x2(ponto[i, 1], ponto[i,2])
-  grad <- c(d1,d2)
-  
-  v <- alfa*v - lr*grad
-  ponto[(i+1),] <- ponto[i,] + v
-}
-return( ponto)
-}
-
-
-partida <- c(0,5)
-v <- 0
-lr <- 0.01
-alfa <- 0.9
-passos <- 100
-
-otim_mom <- gradiente_mom(lr=lr, partida=partida, alfa=alfa, v=v, passos=100)
-
- ggplot() +
-  geom_contour_filled( aes(x=dados.grid$x1, y=dados.grid$x2, z=dados.grid$f))+
-  scale_fill_manual(values = mycolors)+
-  geom_path(aes(x=otim_mom[,1] , y=otim_mom[,2]))+
-  theme_classic()
+  labs(x="w1", y="w2")
 ```
 
 ## Back propagation
 
 -   Durante o treinamento, a **propagação direta** continua até produzir um escalar de custo ( $J(\theta)$ ).\
 
--   Esse custo representa o erro da rede ao comparar a previsão com o valor real.
-
--   O **algoritmo de retropropagação** (**backprop**, Rumelhart et al., 1986) permite que a informação do custo **flua para trás** pela rede.\
-
--   O objetivo é calcular o **gradiente** da função de custo em relação aos parâmetros da rede.\
-
-## Back propagation
+-   O objetivo é calcular o **gradiente** da função de custo em relação aos parâmetros da rede. $\nabla_{\theta} J(\theta)$
 
 -   A equação analítica do gradiente é simples, mas sua avaliação numérica pode ser **computacionalmente cara**.\
 
 -   O **backpropagation** oferece um procedimento **simples e eficiente** para esse cálculo.\
-
--   Nos algoritmos de aprendizado, o gradiente mais relevante é $\nabla_{\theta} J(\theta)$, ou seja, a derivada da função de custo em relação aos parâmetros da rede.
 
 ## Back propagation: mitos
 
@@ -485,11 +435,13 @@ otim_mom <- gradiente_mom(lr=lr, partida=partida, alfa=alfa, v=v, passos=100)
 -   Segue uma ordem específica de operações para garantir eficiência computacional e evitar a explosão exponencial de cálculos redundantes.
 -   O algoritmo de backpropagation é projetado para reduzir o número de **subexpressões repetidas**, sem priorizar o uso de memória.
 
+## Regra da Cadeia no Back propagation
 
+![](figs/cadeia.png){fig-align="center" width="500"}
 
 ## Back - propagation
 
-**Use a regra da cadeia para encontrar expressões algébricas para o vetor gradiente.**$$\nabla_\theta J(\theta) = \left(\frac{\partial J}{\partial w_1}, \ldots, \frac{\partial J}{\partial b_3} \right)$$
+**Use a regra da cadeia para encontrar expressões algébricas para o vetor gradiente**$$\nabla_\theta J(\theta) = \left(\frac{\partial J}{\partial w_1}, \ldots, \frac{\partial J}{\partial b_3} \right)$$
 
 $$\nabla J_\theta = \sum_{i=1}^m(\frac{\partial J}{\partial \hat{y}_i} \nabla_\theta \hat{y}_i)$$
 
@@ -498,6 +450,8 @@ Então, para *cada observação*, temos que o primeiro elemento desse produto é
 $$\frac{\partial J}{\partial \hat{y}_i} = -2 ( y_i - \hat{y_i})$$ Já o segundo elemento desse produto é, no caso dessa rede, um vetor de tamanho 9 onde:
 
 **Para o nono elemento (terceiro viés):**
+
+$f(x_{1i}, x_{2i}; \mathbf{\theta})=\hat{y}_i=\phi(x_{1i}  w_1 + x_{2i} w_3 + b_1) w_5 + \phi(x_{1i}  w_2 + x_{2i} w_4 + b_2) w_6 + b_3.$
 
 $$\frac{\partial \hat{y_i}}{\partial b_3} = 1$$
 
@@ -515,19 +469,11 @@ $$ \frac{\partial \hat{y_i}}{\partial b_1} = w_5\frac{e^{-a_1}}{(1+e^{-a_1})^2} 
 
 $$\frac{\partial \hat{y_i}}{\partial w_4} = w_6\frac{e^{-a_2}}{(1+e^{-a_2})^2}x_{2i}$$ $$\frac{\partial \hat{y_i}}{\partial w_3} = w_5\frac{e^{-a_1}}{(1+e^{-a_1})^2}x_{2i}$$ $$\frac{\partial \hat{y_i}}{\partial w_2} = w_6\frac{e^{-a_2}}{(1+e^{-a_2})^2}x_{1i}$$ $$\frac{\partial \hat{y_i}}{\partial w_1} = w_5\frac{e^{-a_1}}{(1+e^{-a_1})^2}x_{1i}$$
 
-
-## Regra da Cadeia no Back propagation
-
-![](figs/cadeia.png){fig-align="center" width="500"}
-
-
-
-
 ## Algoritmo
 
 ![](images/back.png)
 
-## No R
+## Back - propagation
 
 ```{r}
 phi_linha <- function(x){
@@ -583,6 +529,7 @@ gradiente <- function (theta, x, y ){
 ```
 
 ## Cáculo
+
 ```{r}
 theta <- rep(0.1,9)
 
@@ -590,7 +537,6 @@ gradiente1 <- gradiente(theta, covariaveis_treino, observacao_treino)
 
 gradiente1
 ```
-
 
 ## Fitting
 
@@ -653,6 +599,7 @@ theta_ajustado <- treino_teste$theta[[minimo]]
 ```
 
 ## Ao final ...
+
 ```{r echo=F}
 dados_graf1 <-treino_teste$J %>% 
   mutate(iter=row_number(), 
@@ -716,7 +663,6 @@ base_previsao_teste_RN %>%
   theme(panel.background = element_rect("lightgrey"))
 ```
 
-
 ## Gradiente descendente estocástico
 
 ```{r echo = F}
@@ -757,9 +703,11 @@ rapidez
 
 ## Regressão Linear
 
-$Y_i = N(\beta_0 + \beta_{1}x_{1i}+ \beta_3x_{2i}, \sigma) $
+$Y_i = N(\beta_0 + \beta_{1}x_{1i}+ \beta_3x_{2i}, \sigma)$
 
-- incluíndo mais covariáveis
+-   incluíndo mais covariáveis
+
+. . . 
 
 $E(Y|x_1, x_2) = \beta_0 + \beta_1x_1 + \beta_2x_2+\beta_3x_1^2 + \beta_4x_2^2 + \beta_5x_1x_2$
 
@@ -773,8 +721,7 @@ modelo_linear1 <- lm (data=base_treino , y ~ x1 + x2)
 
 ```
 
-
-```{r}
+```{r echo = F}
 # vendo quem está dentro ou fora
 cores_LM <- predict(modelo_linear1,newdata = base_teste,
                  interval="prediction") %>%
@@ -783,28 +730,57 @@ cores_LM <- predict(modelo_linear1,newdata = base_teste,
          contem = y_teste>=lwr &y_teste<=upr) %>% 
   pull(contem)
 
-base_previsao_teste_RN %>% 
+g1 <- base_previsao_teste_RN %>% 
   mutate(ic=cores_LM) %>% 
   ggplot(aes(x1, x2, color=ic))+
   geom_point( size=0.8, alpha=0.7)+
-  scale_color_manual("Está no IC", values=c("#FCFC30", "#465EFF"), labels=c("Sim", "Não"))+
+  scale_color_manual("Está no IC", values=c( "#465EFF", "#FCFC30"), labels=c("Sim", "Não"))+
   theme_classic()+
-  ggtitle(glue("Cobertura = {round(mean(cores_LM),2)}%\n MSE = {round(summary(modelo_linear1)$sigma^2, 2)}"))
-
+  labs(title="Regressão Linear\n",
+  subtitle = glue("Cobertura = {round(mean(cores_LM),2)}%\nMSE = {round(summary(modelo_linear1)$sigma^2, 2)}"))
+ggsave("figs/linear.png", plot = g1, width=6, height=4)
 
 cores_RN <- base_previsao_teste_RN %>% 
   mutate(normal=(y-y_hat)/sqrt(J),
          contem = normal>=-1.96 & normal <=1.96) %>% 
   pull(contem)
   
-base_previsao_teste_RN %>% 
+g2 <- base_previsao_teste_RN %>% 
   mutate(ic=cores_RN) %>% 
   ggplot(aes(x1, x2, color=ic))+
   geom_point( size=0.8, alpha=0.7)+
-  scale_color_manual("Está no IC", values=c("#FCFC30", "#465EFF"), labels=c("Sim", "Não"))+
+  scale_color_manual("Está no IC", values=c( "#465EFF", "#FCFC30"), labels=c("Sim", "Não"))+
   theme_classic()+
-  ggtitle(glue("Cobertura = {round(mean(cores_RN),2)}%\n MSE = {J}"))
+  labs(title = "NN 2 neurônios, 1 camada oculta\n",
+  subtitle = glue("Cobertura = {round(mean(cores_RN),2)}%\nMSE = {round(J,2)}"))
+
+ggsave("figs/redezinha.png", plot = g2, width=6, height=4)
 ```
 
+## Avaliando os modelos ...
 
-## Obrigada!
+### Regressão linear
+
+```{r echo = F}
+knitr::include_graphics("figs/linear.png")
+```
+
+`
+
+## Avaliando os modelos ...
+
+### "Redezinha"
+
+```{r echo = F}
+knitr::include_graphics("figs/redezinha.png")
+```
+
+## Avaliando os modelos ...
+
+### "Redezona"
+
+```{r echo = F}
+knitr::include_graphics("figs/redezona.png")
+```
+
+# Obrigada!
