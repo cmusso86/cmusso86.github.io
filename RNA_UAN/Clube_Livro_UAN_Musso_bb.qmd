@@ -765,7 +765,6 @@ ggsave("figs/redezinha.png", plot = g2, width=6, height=4)
 knitr::include_graphics("figs/linear.png")
 ```
 
-`
 
 ## Avaliando os modelos ...
 
