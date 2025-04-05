@@ -1,0 +1,43 @@
+---
+title: "Lista 1"
+subtitle: "Geração de NPA’s (Números Pseudo-Aleatórios)"
+author: 
+  Carolina Musso
+  251103768
+date: today
+institute: "Mestrado acadêmico em Estatística - UnB"
+lang: pt
+format: html
+editor: source
+---
+
+
+## Exercício 1) 
+A distribuição Laplace padrão tem densidade
+$f(x) = 12e^-{\lvert x \lvert}~x \in \mathbb{R}$
+use o método da transformada inversa para gerar uma amostra aleatória de tamanho 1000 dessa distribuição (plote um histograma).
+
+## Exercício 2) 
+
+Dado a densidade $f(x|\theta)$ e a densidade a priori $\pi(\theta)$, se observamos $\textbf{x} = x_1, ..., x_n$, a distribuição a posteriori de $\theta$ é $\pi(\theta|\textbf{x}) = \pi(\theta|x_1, ..., x_n) \propto \prod f(x|\pi)\pi(\theta)$
+em que $\prod f(x_i|\theta) = L(\theta|x_1,..., x_n)$ é a função de verossimilhança.
+
+Para estimar uma média normal, uma priori robusta é a Cauchy. Para $X_i \sim N(\theta,1), \theta \sim Ca(0,1)$, a distribuição a posteriori é $\pi(\theta|\textbf{x})\propto\frac{1}{\pi}\frac{1}{1 + \theta^2}\frac{1}{(2\pi)^{n/2}}\prod_{i = 1}^ne^{-(x_i-\theta)^2/2}$
+Seja $\theta = 3, n = 10$𝜃, e gere $X_1, ..., X_n ~N(\theta_0,1)$. Use o algoritmo da Aceitação-Rejeição com uma candidata Cauchy Ca(0,1)) para gerar uma amostra da distribuição a posteriori. Avalie quão bem o valor $\theta_0$é recuperado. Extenda o código de maneira que n = 10,25,50,100. Assuma que $M = L(\hat{\theta}|x_1, ..., x_n)$𝑀=𝐿(𝜃ˆ|𝑥1,…,𝑥𝑛), ou seja 𝑀 é a função de verossimilhança avaliada no estimador de máxima verossimilhança.
+
+## Exercício 3) 
+Gere 200 observações aleatórias de uma distribuição normal multivariada de dimensão 3 com vetor de médias $\mu = (0,1,2)^\top$ e matriz de covariância
+$$
+\Sigma = \begin{bmatrix}
+    1.0 & -0.5 & 0.5 \\
+    -0.5 & 1.0 & -0.5 \\
+    0.5 & -0.5 & 1.0
+\end{bmatrix}
+$$
+
+
+Use o método de decomposição de Cholesky.
+
+## Exercício 4) 
+
+Considere o artigo “Bivariate Birnbaum–Saunders distribution and associated inference” (Kundu et al., 2010), disponível em PDF, onde os autores apresentam uma formulação para a distribuição bivariada de Birnbaum–Saunders (BVBS). A geração de dados desta distribuição é descrita na equação (8) do artigo. Utilize a parametrização apresentada no artigo para simular 1.000 observações de um vetor aleatório bivariado $(T_1, T_2)$ com distribuição BVBS($\alpha_1 = 0.5, \alpha_2 = 0.5, \beta_1 = 1.0, \beta_2 = 2.0, \rho = 0.7$ 𝛽. Apresente um gráfico de dispersão dos dados gerados.
