@@ -181,7 +181,7 @@ Tendo definido essas funções, a função geradora de amostras pode ser escrita
 # Função para gerar amostras por aceitação-rejeição
 gerar_amostras <- function(
     n, # observações de x
-    N_amostras = 1000 # tamanho da amostra da posteriori) {
+    N_amostras = 1000){ # tamanho da amostra da posteriori) {
   
   # geramos os dados observados
   xi <- rnorm(n, mean = theta0, sd = 1)
