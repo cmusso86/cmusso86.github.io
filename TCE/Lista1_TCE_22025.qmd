@@ -153,81 +153,7 @@ Neste exercício, vamos usar o algoritmo de aceitação-rejeição para gerar am
 
 Abaixo, vemos o código comentado para criação da função a ser estimada f(x) - posteriori proporcional, a candidata g(x) - Cauchy, a função de verossimilhança L(theta|x) para calcular a constante M.
 
-
 ```{r}
-set.seed(42)  # Para garantir a reprodutibilidade
-amostras <- list() 
-n_values <- c(10, 25, 50, 100)
-
-## Definição de funções
-# log-verossimilhança para calcular a constante M
-log_likelihood <- function(theta, x) {
-  sum(dnorm(x, mean = theta, 
-            sd = 1, 
-            log = TRUE))
-}
-
-# Função a ser estimada: posteriori
-posteriori <- function(theta, xi) {
- (1/pi)*(1/(1 + theta^2)) * 
-    (1/(2*pi)^(length(xi)/2)) * 
-    exp(-sum((xi - theta)^2)/2)
-}
-
-# candidata Cauchy
-g <- function(x) dcauchy(x, 
-                         location = 0,
-                         scale = 1)
-```
-Tendo definido essas funções, função geradora de amostras pode ser escrita dessa forma, já levando em consideração a expensão para observações n=10 até 100. 
-
-```{r}
-amostras <- map_dfr(n_values, ~{
-# Parametros
-theta <- 3
-n <- .
-nome_lista <- paste0("n = ", n)
-
-# Xs para gerar a posteriori
-xi <- rnorm(n, mean = theta, sd = 1) 
-
-# Estimador de máxima verossimilhança
-theta_hat <- mean(xi)  
-
-# Constante M: verossimilhança avaliada em theta_hat
-M <- exp(log_likelihood(theta_hat, xi))
-
-# ACEITAÇÃO-REJEIÇÃO
-
-## 1) gerar amostras candidatas de theta
-thetas_cand <-rcauchy(n, location = 0, scale = 1)
-
-# 2) gerar amostras da uniforme para se acaitar/reiejtar
-u <- rnorm(n, mean = theta, sd = 1)
-
-# 3) gera f com as candidatas
-f_theta <- posteriori(thetas_cand, xi)
-
-# 4) gera g com as candidatas
-g_theta <- g(thetas_cand)
-
-# 5) Testa u < f/g*M
-
-aceitas <- u < (f_theta / g_theta * M)
-
-# 6) Seleciona as amostras aceitas
-
-tibble(n = nome_lista, amostra =g_theta[aceitas])
-
-})
-
-```
-
-Agora, podemos avaliar a recuperação do paramêtro $\theta_0$ com os histogramas das amostras geradas. Vemos que a distribuição apriori (com caudas pesadas) domina para n pequeno, mas conforme o tamanho da amostra aumenta, a distribuição a posteriori se aproxima mais da normal, com um pico mais acentuado em torno do valor verdadeiro do parâmetro. 
-
-```{r}
-
-
 set.seed(42)  # Para garantir a reprodutibilidade
 theta0 <- 3
 n_values <- c(10, 25, 50, 100)
@@ -247,8 +173,15 @@ posteriori <- function(theta, xi) {
 # Candidata Cauchy
 g <- function(x) dcauchy(x, location = 0, scale = 1)
 
+```
+Tendo definido essas funções, a função geradora de amostras pode ser escrita da seguinte forma, já levando em consideração a expansão para observações de $n = 10$ até $n = 100$.
+
+```{r}
+
 # Função para gerar amostras por aceitação-rejeição
-gerar_amostras <- function(n, N_amostras = 1000) {
+gerar_amostras <- function(
+    n, # observações de x
+    N_amostras = 1000 # tamanho da amostra da posteriori) {
   
   # geramos os dados observados
   xi <- rnorm(n, mean = theta0, sd = 1)
@@ -286,10 +219,9 @@ gerar_amostras <- function(n, N_amostras = 1000) {
 amostras_lista <- map(n_values, gerar_amostras)
 names(amostras_lista) <- paste0("n = ", n_values)
 
-
-
-
 ```
+
+Agora, podemos avaliar a recuperação do parâmetro $\theta_0$ com os histogramas das amostras geradas. Vemos que a distribuição a priori (com caudas pesadas) domina para $n$ pequeno, mas, conforme o tamanho da amostra aumenta, a distribuição a posteriori se aproxima mais da normal, com um pico mais acentuado em torno do valor verdadeiro do parâmetro.
 
 ```{r}
 df_amostras <- map2_dfr(amostras_lista, names(amostras_lista), 
@@ -326,7 +258,9 @@ ggplot( aes(x = amostra)) +
 
 
 ## Exercício 3) 
+
 Gere 200 observações aleatórias de uma distribuição normal multivariada de dimensão 3 com vetor de médias $\mu = (0,1,2)^\top$ e matriz de covariância
+
 $$
 \Sigma = \begin{bmatrix}
     1.0 & -0.5 & 0.5 \\
@@ -338,11 +272,14 @@ $$
 
 Use o método de decomposição de Cholesky.
 
+### Solução
+
 A distribuição conjunta de variáveis aleatórias contínuas X1,X2, X3 é normal multivariada , denotada por $N_3 \sim (\mu, \Sigma)$ e a função densidade de probabilidade conjunta é dada por:
 
 $$
 f(x_1, x_2, x_3) = \frac{1}{(2\pi)^{3/2} |\Sigma|^{1/2}} \exp\left( -\frac{1}{2} (x-\mu)^T \Sigma^{-1} (x-\mu) \right)
 $$
+
 Defininindo esses parâmetros no R, temos:
 ```{r}
 
@@ -363,8 +300,9 @@ mat_cov <- matrix(c(1, -0.5, 0.5,
                   byrow = TRUE)
 ```
 
-Sabemos que se temos $X \sim N(\mu, \Sigma)$, podemos gerar uma amostra de $X$ gerando uma amostra de $Z \sim N(0, I)$ e aplicando a transformação $X = CZ + \mu$, onde $C$ é a matriz de Cholesky de $\Sigma$ e $I$ é a matriz identidade.
-A matriz de Cholesky é uma matriz triangular inferior $C$ tal que $LL^T = \Sigma$. Para obter a matriz de Cholesky, podemos usar a função `chol()` do R. 
+Sabemos que, se temos $X \sim \mathcal{N}(\mu, \Sigma)$, podemos gerar uma amostra de $X$ a partir de uma amostra de $Z \sim \mathcal{N}(0, I)$, aplicando a transformação $X = CZ + \mu$, onde $C$ é a matriz de Cholesky de $\Sigma$ e $I$ é a matriz identidade.
+
+A matriz de Cholesky é uma matriz triangular inferior $C$ tal que $CC^\top = \Sigma$. Para obter essa matriz no R, podemos usar a função chol(). 
 
 ```{r}
 
