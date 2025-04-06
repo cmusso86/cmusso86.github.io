@@ -7,7 +7,14 @@ author:
 date: today
 institute: "Mestrado Acadêmico em Estatística - UnB"
 lang: pt
-format: html
+format: 
+  html:
+    toc: true
+    toc-location: left
+    toc-depth: 2
+    number-sections: true
+    self-contained: true
+    embed-resources: true
 editor: source
 execute:
   echo: true
@@ -16,7 +23,7 @@ execute:
 ---
 
 
-## Exercício 1) 
+## Exercício 
 A distribuição Laplace padrão tem densidade
 $f(x) = \frac{1}{2}e^{-\lvert x \lvert}~,x \in \mathbb{R}$
 use o método da transformada inversa para gerar uma amostra aleatória de tamanho 1000 dessa distribuição (plote um histograma).
@@ -85,7 +92,7 @@ Criemos agora a função para gerar a amostra aleatória.
 
 # PACOTES USADOS NA LISTA -----
 if(!require("pacman")){ install.packages("pacman")}
-pacman::p_load(tidyverse, extraDistr, MASS, rmutil)
+pacman::p_load(tidyverse, extraDistr, MASS, rmutil, GGally)
 ```
 
 ```{r}
@@ -107,34 +114,44 @@ O exercício pede que se gere uma amostra de tamanho 1000, para efeito de compar
 
 ## Gerei com tamanhos de amostras diferentes para comparação
 set.seed(42)
-a <- data.frame(amostra = "n = 10^2", lap = gerador_laplace(100))
-b <- data.frame(amostra = "n = 10^3", lap = gerador_laplace(1000))
-c <- data.frame(amostra = "n = 10^4", lap = gerador_laplace(10000))
-d <- data.frame(amostra = "n = 10^5", lap = gerador_laplace(100000))
+a <- data.frame(amostra = "n = 10^2", 
+                lap = gerador_laplace(100))
+
+b <- data.frame(amostra = "n = 10^3", 
+                lap = gerador_laplace(1000))
+
+c <- data.frame(amostra = "n = 10^4", 
+                lap = gerador_laplace(10000))
+
+d <- data.frame(amostra = "n = 10^5", 
+                lap = gerador_laplace(100000))
 
 amostras <- rbind(a, b, c, d) |> 
-  mutate(amostra = factor(amostra, levels = c("n = 10^2", 
-                                              "n = 10^3", 
-                                              "n = 10^4", 
-                                              "n = 10^5")))
+  mutate(amostra = factor(amostra, 
+                          levels = c("n = 10^2",
+                                     "n = 10^3", 
+                                     "n = 10^4", 
+                                     "n = 10^5")))
 amostras %>% 
   ggplot(aes(x = lap)) +
-  geom_histogram(aes(y = ..density..), bins = 300, 
-                 fill = "blue", alpha = 0.5) +
+  geom_histogram(aes(y = ..density..),
+                 bins = 300, 
+                 fill = "blue", 
+                 alpha = 0.5) +
   geom_function(fun = function(x) rmutil::dlaplace(x, m = 0, s = 1)) + 
   labs(title = "Histograma da amostra gerada\n com a distribuição Laplace",
        x = "",
        y = "Densidade") +
   theme_minimal() +
-  facet_wrap(~amostra) +
-  xlim(c(-10, 10))  # Aju
+  xlim(c(-10, 10))  +
+  facet_wrap(~amostra) 
 
 
 ```
 
 Podemos observar que de fato o gerador que criamos partindo do teorema da transformada inversa gera uma amostra que se aproxima da distribuição Laplace padrão. O histograma mostra um comportamento de uma função simétrica, centrada no zero com um pico abrupto em zero, sendo que para n=100000, o histograma se aproxima mais da função densidade de probabilidade.
 
-## Exercício 2) 
+## Exercício 
 
 Dado a densidade $f(x|\theta)$ e a densidade a priori $\pi(\theta)$, se observamos $\textbf{x} = x_1, ..., x_n$, a distribuição a posteriori de $\theta$ é $\pi(\theta|\textbf{x}) = \pi(\theta|x_1, ..., x_n) \propto \prod f(x|\pi)\pi(\theta)$
 em que $\prod f(x_i|\theta) = L(\theta|x_1,..., x_n)$ é a função de verossimilhança.
@@ -160,7 +177,10 @@ n_values <- c(10, 25, 50, 100)
 
 # log-verossimilhança
 log_likelihood <- function(theta, x) {
-  sum(dnorm(x, mean = theta, sd = 1, log = TRUE))
+  sum(dnorm(x, # log-verossimilhança podemos somar
+            mean = theta, 
+            sd = 1, 
+            log = TRUE))
 }
 
 # Posteriori explícita (não-normalizada)
@@ -171,7 +191,9 @@ posteriori <- function(theta, xi) {
 }
 
 # Candidata Cauchy
-g <- function(x) dcauchy(x, location = 0, scale = 1)
+g <- function(x) dcauchy(x, 
+                         location = 0, 
+                         scale = 1)
 
 ```
 Tendo definido essas funções, a função geradora de amostras pode ser escrita da seguinte forma, já levando em consideração a expansão para observações de $n = 10$ até $n = 100$.
@@ -242,22 +264,32 @@ df_amostras|>
                                   "n = 50", 
                                   "n = 100"))) |>  
 ggplot( aes(x = amostra)) +
-  geom_histogram(aes(y = ..density..), bins = 50, fill = "gray80", color = "black") +
-  geom_vline(data = stats, aes(xintercept = media_posterior), color = "blue", size = 1) +
-  geom_vline(xintercept = theta0, color = "red", linetype = "dashed", size = 1) +
-  facet_wrap(~n, scales = "free", ncol = 2) +
+  geom_histogram(aes(y = ..density..), 
+                 bins = 50, 
+                 fill = "gray80", 
+                 color = "black") +
+  geom_vline(data = stats, 
+             aes(xintercept = media_posterior), 
+             color = "blue", size = 1) +
+  geom_vline(xintercept = theta0, 
+             color = "red", 
+             linetype = "dashed", 
+             size = 1) +
+  facet_wrap(~n, 
+             scales = "free", 
+             ncol = 2) +
   labs(title = "Amostras da posterioris para diferentes\n tamanhos n de observações de X ",
        x = expression(theta),
        y = "Densidade") +
   xlim(2,4.5)+
   theme_minimal() +
   theme(strip.text = element_text(size = 12),
-        plot.title = element_text(face = "bold", hjust = 0.5)) 
-  #scale_x_continuous(expand = expansion(mult = c(0.02, 0.02)))
+        plot.title = element_text(face = "bold", 
+                                  hjust = 0.5)) 
 ```
 
 
-## Exercício 3) 
+## Exercício  
 
 Gere 200 observações aleatórias de uma distribuição normal multivariada de dimensão 3 com vetor de médias $\mu = (0,1,2)^\top$ e matriz de covariância
 
@@ -311,7 +343,9 @@ norm1 <- rnorm(200)
 norm2 <- rnorm(200)
 norm3 <- rnorm(200)
 
-Z <- rbind(norm1, norm2, norm3) #cria uma matriz com 3 linhas e 200 colunas              
+Z <- rbind(norm1, 
+           norm2, 
+           norm3) #cria uma matriz com 3 linhas e 200 colunas              
 
 ## Fazendo a decomposição de Cholesky
 C <- chol(mat_cov) 
@@ -320,40 +354,28 @@ X <- C %*% Z + mu
 
 ```
 
+Podemos observar a com os gráficos de dispersão par a par e os histogramas marginais. As variáveis geradas que possuem uma correlação negativa (V1 x V2 e V2 x V3) apresentam uma novem de pontos na diagonal descendente, enquanro V1 x V3 apresenta uma correlação positiva, com a nuvem de pontos na diagonal ascendente. Vemos também os histogramas marginais centrados nas médias definidas, com uma leve assimetria à direita.
 
-## Exercício 4) 
+```{r}
+
+# Suponha que df seja seu dataframe com as colunas V1, V2, V3
+df <- as.data.frame(t(X))
+colnames(df) <- c("V1", "V2", "V3")
+
+# Criar o gráfico de pares com histogramas como marginais
+ggpairs(df, 
+        upper = list(continuous = "points", combo = "box_no_facet"), 
+        lower = list(continuous = "points", combo = "facetdensity"), 
+        diag = list(continuous = "barDiag"))
+
+```
+
+## Exercício 
 
 Considere o artigo “Bivariate Birnbaum–Saunders distribution and associated inference” (Kundu et al., 2010), disponível em PDF, onde os autores apresentam uma formulação para a distribuição bivariada de Birnbaum–Saunders (BVBS). A geração de dados desta distribuição é descrita na equação (8) do artigo. Utilize a parametrização apresentada no artigo para simular 1.000 observações de um vetor aleatório bivariado $(T_1, T_2)$ com distribuição BVBS($\alpha_1 = 0.5, \alpha_2 = 0.5, \beta_1 = 1.0, \beta_2 = 2.0, \rho = 0.7$ 𝛽. Apresente um gráfico de dispersão dos dados gerados.
 
 ### Solução
-
-O Algoritmo para a geração desses números, segundo o artigo é:
-
-```{ = tex}
-\begin{itemize}
-  \item \textbf{Step 1:} Generate independent $U_1$ and $U_2$ from $\mathcal{N}(0, 1)$.
-
-  \item \textbf{Step 2:} Compute
-  \[
-  Z_1 = \frac{\sqrt{1+\rho} + \sqrt{1-\rho}}{2} U_1 + \frac{\sqrt{1+\rho} - \sqrt{1-\rho}}{2} U_2
-  \]
-  \[
-  Z_2 = \frac{\sqrt{1+\rho} - \sqrt{1-\rho}}{2} U_1 + \frac{\sqrt{1+\rho} + \sqrt{1-\rho}}{2} U_2
-  \]
-
-  \item \textbf{Step 3:} Obtain
-  \[
-  T_i = \beta_i \left[ \frac{1}{2} \alpha_i Z_i + \sqrt{\left( \frac{1}{2} \alpha_i Z_i \right)^2 + 1} \right]^2, \quad \text{for } i = 1, 2.
-  \]
-\end{itemize}
-
-```
-
-
-
-
 ```{r}
-
 # Parâmetros
 alpha1 <- 0.5
 alpha2 <- 0.5
@@ -361,20 +383,96 @@ beta1 <- 1.0
 beta2 <- 2.0
 rho <- 0.7
 n <- 1000
+```
 
-# Matriz de covariância para Z1 e Z2
-Sigma <- matrix(c(1, rho, rho, 1), ncol = 2)
+A matriz de covariância da distribuição bivariada de Birnbaum-Saunders, onde $\sigma_1 = \sigma_2 = 1$ e a covariança é dada por $\rho = 0.7$, será:
 
-# Gerar dados normais correlacionados
-set.seed(123)  # para reprodutibilidade
-Z <- mvrnorm(n, mu = c(0, 0), Sigma = Sigma)
+$$
+\Sigma = \begin{bmatrix}
+1.0 & 0.7 \\
+0.7 & 1.0
+\end{bmatrix}
+$$
 
+O Algoritmo para a geração desses números, segundo o artigo é:
+
+- **1:** Gere $U_1$ e $U_2$ independentes $\mathcal{N}(0, 1)$.
+
+```{r}
+# Gerar U1 e U2 independentes
+set.seed(123)  # Para reprodutibilidade
+U1 <- rnorm(n)
+U2 <- rnorm(n)
+
+
+```
+
+- **Step 2:** Calcule:
+
+$$
+Z_1 = \frac{\sqrt{1+\rho} + \sqrt{1-\rho}}{2} U_1 + \frac{\sqrt{1+\rho} - \sqrt{1-\rho}}{2} U_2
+$$
+```{r}
+# Calcular Z1 e Z2
+Z1 = (sqrt(1 + rho) + sqrt(1 - rho)) / 2 * 
+  U1 + (sqrt(1 + rho) - sqrt(1 - rho)) / 2 * U2
+```
+
+$$
+Z_2 = \frac{\sqrt{1+\rho} - \sqrt{1-\rho}}{2} U_1 + \frac{\sqrt{1+\rho} + \sqrt{1-\rho}}{2} U_2
+$$
+
+```{r}
+# Calcular Z1 e Z2
+Z2 = (sqrt(1 + rho) - sqrt(1 - rho)) / 2 * 
+  U1 + (sqrt(1 + rho) + sqrt(1 - rho)) / 2 * U2
+
+
+```
+
+
+- **Step 3:** Obtenha:
+
+$$
+T_i = \beta_i \left[ \frac{1}{2} \alpha_i Z_i + \sqrt{\left( \frac{1}{2} \alpha_i Z_i \right)^2 + 1} \right]^2,\quad \text{for } i = 1, 2.
+$$
+```{r}
 # Transformação para T1 e T2
-T1 <- beta1 * ((alpha1 / 2 * Z[, 1] + sqrt((alpha1 / 2 * Z[, 1])^2 + 1))^2)
-T2 <- beta2 * ((alpha2 / 2 * Z[, 2] + sqrt((alpha2 / 2 * Z[, 2])^2 + 1))^2)
+T1 <- beta1 * ((alpha1 / 2 * Z1 + sqrt((alpha1 / 2 *Z1)^2 + 1))^2)
+T2 <- beta2 * ((alpha2 / 2 * Z2 + sqrt((alpha2 / 2 * Z2)^2 + 1))^2)
 
-# Gráfico de dispersão
-plot(T1, T2, main = "Scatter Plot of BVBS Distributed Data", xlab = "T1", ylab = "T2", pch = 19, col = rgb(0.1, 0.2, 0.5, 0.7))
+```
+
+Como disto no artigo, a distribuição bivariada de Birnbaum-Saunders é ideal para modelar dados assimétricos à direita, e a versão bivariada possui como margem a distribuição de Birnbaum-Saunders univariada. Observando o gráfico de dispersão, podemos ver que os dados gerados possuem uma assimetria à direita, o que é esperado para essa distribuição. Também notamos que a novem de pontos está alongada, que representa a correlação entre as duas variáveis. 
+
+```{r}
+df <- data.frame(T1 = T1,
+                 T2 = T2)
+p <-df |>
+  ggplot( aes(T1, T2)) + 
+  geom_jitter(alpha = 0.3) +
+  theme_classic()
+
+ggExtra::ggMarginal(
+  p,
+  type = "histogram",
+  colour = "#D55E00",  # cor da borda dos histogramas
+  fill = "#FECACD",    # preenchimento vertical
+  bins = 40,           # número de bins nos dois eixos
+  xparams = list(
+    colour = "#0072B2",
+    fill = "#B3D7F5",
+    bins = 40,
+    size = 0.3          # linha mais fina no eixo X
+  ),
+  yparams = list(
+    colour = "#D55E00",
+    fill = "#FECACD",
+    bins = 40,
+    size = 0.3          # linha mais fina no eixo Y
+  )
+)
+
 
 ```
 
