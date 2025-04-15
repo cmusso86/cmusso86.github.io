@@ -1,0 +1,189 @@
+---
+title: "Lista 2"
+subtitle: "Otimização e máxima verossimilhança"
+author: 
+  Carolina Musso
+  251103768
+date: today
+institute: "Mestrado Acadêmico em Estatística - UnB"
+lang: pt
+format: 
+  html:
+    toc: true
+    toc-location: left
+    toc-depth: 2
+    number-sections: true
+    self-contained: true
+    embed-resources: true
+editor: source
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+## Exercício 1
+
+Seja $T$ uma variável aleatória seguindo uma distribuição Birnbaum-Saunders. Então, $T$ é definido por:
+
+$$
+T = \beta \left( \frac{\alpha}{2} Z + \sqrt{\left(\frac{\alpha}{2} Z\right)^2 + 1} \right)^2,
+$$ em que $\alpha > 0$ e $\beta > 0$ são parâmetros de forma e escala, respectivamente, e $Z$ é uma variável aleatória com distribuição normal padrão. Temos a notação $T \sim BS(\alpha, \beta)$. O parâmetro $\beta$ é também um parâmetro de localização, pois ele é a mediana da distribuição de $T$.
+
+Note que se $T \sim BS(\alpha, \beta)$, então
+
+$$
+Z = \frac{1}{\alpha} \left( \sqrt{\frac{T}{\beta}} - \sqrt{\frac{\beta}{T}} \right) \sim N(0, 1).
+$$
+
+A função densidade de probabilidade de $T$ é dada por:
+
+$$
+f_T(t) = \frac{1}{\sqrt{2\pi}} \exp\left(-\frac{1}{2\alpha^2}\left[\frac{t}{\beta} + \frac{\beta}{t} - 2\right]\right)  \frac{t^{-\frac{3}{2}}\left[t + \beta\right]}{2\alpha \sqrt{\beta}},
+$$ para $t > 0$.
+
+Uma forma alternativa de expressar a densidade dada na equação anterior é:
+
+$$
+f_T(t) = \phi(a_t) A_t; t >0, \alpha >0, \beta >0
+$$
+
+em que $A_t$ é a derivada de $a_t$ com respeito a $t$,
+
+$$
+a_t(\alpha, \beta) = \frac{1}{\alpha} \left( \sqrt{\frac{t}{\beta}} - \sqrt{\frac{\beta}{t}} \right),
+$$
+
+que é expresso como
+
+$$
+A_t = \frac{d}{dt} a_t = -\frac{t^{-\frac{3}{2}} \left[ t + \beta \right]}{2\alpha \sqrt{\beta}}.
+$$
+
+Seja $T_1, T_2, \ldots, T_n$ uma amostra aleatória de tamanho $n$ de $T \sim BS(\alpha, \beta)$, e seja $t_1, t_2, \ldots, t_n$ as correspondentes observações. A função de log-verossimilhança para $\theta = (\alpha, \beta)$ é dada por
+
+$$
+\ell(\theta) = c_1 + \frac{n}{\alpha^2} - \frac{1}{2\alpha^2} \sum_{i=1}^n \left( \frac{t_i}{\beta} + \frac{\beta}{t_i} \right) - n \log(\alpha) - \frac{n}{2} \log(\beta) + \sum_{i=1}^n \log(t_i + \beta),
+$$
+
+em que $c_1$ é uma constante que não depende de $\theta$.
+
+Para maximizar a função de log-verossimilhança $\ell(\theta)$, precisamos das primeiras derivadas em relação a $\alpha$ e $\beta$ formando o vetor escore definido por
+
+$$
+\dot{\ell} = \begin{pmatrix} \dot{\ell}_\alpha \\ \dot{\ell}_\beta \end{pmatrix},
+$$ 
+
+cujo elementos são dados por:
+
+$$
+\dot{\ell}_\alpha = -\frac{2n}{\alpha^3} + \frac{1}{\alpha^3} \sum_{i=1}^n \left( \frac{t_i}{\beta} + \frac{\beta}{t_i} \right)- \frac{n}{\alpha},
+$$ 
+
+$$
+\dot{\ell}_\beta = -\frac{n}{2\beta} + \sum_{i=1}^n \left( \frac{1}{2\beta^2} - \frac{1}{t_i + \beta} \right).
+$$
+
+A matriz Hessiana é dada por:
+
+$$
+\ddot{\ell} = \begin{pmatrix} \ddot{\ell}_{\alpha\alpha} & \ddot{\ell}_{\alpha\beta} \\ \ddot{\ell}_{\beta\alpha} & \ddot{\ell}_{\beta\beta} \end{pmatrix}, i, j = 1,2
+$$ 
+
+em que 
+
+$$
+\ddot{\ell}_{\alpha\alpha} = \frac{6n}{\alpha^4} - \frac{3}{\alpha^4} \sum_{i=1}^n \left( \frac{t_i}{\beta} + \frac{\beta}{t_i} \right)+\frac{n}{\alpha^2},
+$$ 
+
+$$
+\ddot{\ell}_{\alpha\beta} = \ddot{\ell}_{\beta\alpha} = \frac{1}{\alpha^3} \sum_{i=1}^n \left( \frac{1}{t_i} - \frac{t_i}{\beta^2} \right),
+$$ 
+
+$$
+\ddot{\ell}_{\beta\beta} = -\frac{1}{\alpha^2\beta^3}\sum_{i=1}^nt_i + \frac{n}{2\beta^2}- \sum_{i=1}^n \frac{1}{(t_i + \beta)^2}.
+$$
+
+Gere uma amostra simulada de tamanho $n = 100$ da distribuição Birnbaum-Saunders com $\alpha = 0.5$ e $\beta = 2.0$. Estime os parâmetros $\alpha$ e $\beta$ através do método da máxima verossimilhança (usando o método de Newton) baseado na amostra simulada (pode usar como valores iniciais $\alpha_0 = 0.1$ e $\beta_0 = 1.0$).
+
+### Solução
+
+Primeiramente, geremos uma amostra simulada de tamanho $n = 100$ da distribuição Birnbaum-Saunders com $\alpha = 0.5$ e $\beta = 2.0$.
+
+```{r}
+set.seed(123)
+a <- 0.5
+B <- 2
+n <- 100
+
+Z <- rnorm(n)
+```
+
+Em seguida, com esses elementos, vamos gerar as amostras de $T$.
+
+```{r}
+
+t <- B * ((a / 2) * Z + sqrt(((a/2)*Z)^2+ 1))^2
+plot(density(t), main = "T ~ (afa = 0.5, B = 2)")
+```
+
+Podemos ver que o gráfico de densidade está congruente com os parâmetros, com o pico em torno de 2, sugerindo uma mediana próximo a esse valor, e o pico próximo a 0.5.
+
+Agora, precisaríamos definir a função de log-verossimilhança e calcular suas derivadas. Entretanto, o exercício já forneceu as derivadas necessárias para a implementação do método. Diferentemente do que fizemos em sala, dessa vez faremos para uma matriz (2 entradas) de parâmetros, e não apenas um como nos exemplos das notas de aula. Isso irá afetar a parte final da implementação, onde teremos que inverter a matriz Hessiana (que seria intuitivamente equivalente $\frac{1}{\ddot{l}}$.\
+Usando como inspiração o código implementado em sala, propusemos os seguintes critérios de parada: um $\varepsilon < 1^{-10}$, um máximo de interações de 15.
+
+
+```{r}
+theta <- list()
+theta[[1]] <- c(0.1, 1)
+
+tolerance <- 1e-10
+max.iter <- 15
+i <- 1
+converged <- FALSE
+
+#
+while (i <= max.iter & !converged) {
+  a <- theta[[i]][1]
+  B <- theta[[i]][2]
+  
+  ## Primeiras derivadas
+  d1_a <- ((-2 * n) / (a^3)) + (1 / (a^3)) * sum((t / B) + (B / t)) - (n / a)
+  d1_b <- (1 / (2 * a^2)) * sum((t / B^2) - (1 / t)) - n / (2 * B) + sum(1 / (t + B))
+  l_linha <- c(d1_a, d1_b)
+  
+  ## Segunda derivadas (Hessiana)
+  d2_aa <- ((6 * n) / (a^4)) - (3 / (a^4)) * sum((t / B) + (B / t)) + n / (a^2)
+  d2_ab <- (1 / a^3) * sum((1 / t) - (t / (B^2)))
+  d2_bb <- -1 / ((a^2) * (B^3)) * sum(t) + (n / (2 * (B^2))) - sum(1 / (t + B)^2)
+  
+  hessiana <- matrix(c(d2_aa, d2_ab,
+                       d2_ab, d2_bb), 
+                     nrow = 2, byrow = TRUE)
+  
+  h <- solve(hessiana, l_linha)
+  
+  theta[[i + 1]] <- theta[[i]] - h
+  
+  # Verifica convergência
+  delta <- abs(theta[[i + 1]] - theta[[i]]) / (abs(theta[[i]]) + tolerance)
+  converged <- all(delta < tolerance)
+  
+  i <- i + 1
+}
+
+if (!converged) {
+  warning("O método de Newton terminou sem convergir após 500 iterações.")
+}
+
+
+
+```
+
+Vemos que conseguimos convergir para os parâmetros de forma razoável (mesmo com uma amostra inicial relativamente pequena de T) com `r i` iterações.
+```{r}
+# Resultado final
+theta[[i]]
+i
+```
+
