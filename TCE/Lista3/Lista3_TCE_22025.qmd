@@ -170,5 +170,5 @@ cat("\nEstimativa final de theta:", theta[i], "\n")
 
 ```
 
-Dada essa parametrização, o tempo médio é dado pelo inverso de teta portanto e  **`r round(1/theta[i],0)` dias**. 
+Dada essa parametrização, o tempo médio é dado pelo inverso de theta. Portanto, o tempo médio de desemprego estimado é de  **`r round(1/theta[i],0)` dias**. 
 

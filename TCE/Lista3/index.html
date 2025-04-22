@@ -3135,7 +3135,8 @@ F(t;\theta) = 1 - e^{(-\theta t)}
 \]</span></p>
 <p>Em análise de sobrevivência, confiabilidade ou mesmo economia, um estudo para observar uma amostra aleatória proveniente de uma população pode terminar na prática antes de ser possível observar toda a amostra, ou seja, podemos ter observações censuradas.</p>
 <p>Considere uma amostra referente à duração do desemprego, <span class="math inline">\(t\)</span>, em dias, de 30 indivíduos. A duração do desemprego é o evento de interesse, ou seja, o tempo até o indíviduo deixar a situação de desemprego. No entando, alguns indivíduos podem não experimentar o evento de interesse (não encontrarem emprego ao final do estudo ou podem ter por algum motivo saído do estudo), resultando em censura à direita.</p>
-<p>Considere que temos acesso às observações: {𝑥𝑖=(𝑡𝑖,𝛿𝑖),𝑖=1,…,𝑛}, <span class="math display">\[\{x_i = (t_i, \delta_i), i = 1, ..., n\}\]</span> sendo</p>
+<p>Considere que temos acesso às observações:</p>
+<p><span class="math display">\[\{x_i = (t_i, \delta_i), i = 1, ..., n\}\]</span> sendo</p>
 <p><span class="math inline">\(\delta_i = 1\)</span> se a observação 𝑡𝑖 não é censurada; <span class="math inline">\(\delta_i = 0\)</span> se a observação 𝑡𝑖 é censurada.</p>
 <p>Considere o modelo exponencial com censura e obtenha a estimativa de <span class="math inline">\(\theta\)</span> pelo algoritmo EM baseada nos dados abaixo:</p>
 <div class="cell">
@@ -3155,7 +3156,7 @@ f(z \mid y_i; \theta_0) = \frac{f(z; \theta_0)}{1 - F(y_i; \theta_0)} = \frac{\t
 </ul>
 <p><span class="math display">\[\mathbb{E}_{\theta_0}[Z_i] = y_i + \frac{1}{\theta_0}\]</span></p>
 <ul>
-<li>A verossimilhança da amostra amplicada (completa) <span class="math inline">\((y,z)\)</span> é dada por</li>
+<li>A verossimilhança da amostra ampliada (completa) <span class="math inline">\((y,z)\)</span> é dada por</li>
 </ul>
 <p><span class="math display">\[
 L_c(\theta; \mathbf{y}, \mathbf{z}) = \prod_{i=1}^{m} f(y_i; \theta) \prod_{i=m+1}^{n} f(z_i; \theta)
@@ -3167,57 +3168,44 @@ L_c(\theta; \mathbf{y}, \mathbf{z}) = \prod_{i=1}^{m} f(y_i; \theta) \prod_{i=m+
 <section id="solução" class="level3" data-number="1.1">
 <h3 data-number="1.1" class="anchored" data-anchor-id="solução"><span class="header-section-number">1.1</span> Solução</h3>
 <p>O primeiro passo para a execução do algoritmo é o cálculo da Esperaça <span class="math inline">\(E_{\theta_0}[l^c{(\theta;Z, y)}]\)</span>.</p>
-<p>$$ <span class="math display">\[\begin{align}
+<span class="math display">\[\begin{align}
 \ell_c(\theta; \mathbf{y}, \mathbf{z})
 &amp;= \log L_c(\theta; \mathbf{y}, \mathbf{z}) \\
 &amp;= \log \left( \prod_{i=1}^{m} \theta e^{-\theta y_i} \prod_{i=m+1}^{n} \theta e^{-\theta z_i} \right)\\
 &amp;= n \log(\theta) - \theta \left( \sum_{i=1}^{m} y_i + \sum_{i=m+1}^{n} z_i \right)
-\end{align}\]</span></p>
-<p><span class="math display">\[
-Segundo o exemplo das notas de aula:
-\]</span> <span class="math display">\[\begin{align}
+\end{align}\]</span>
+<p>Segundo o exemplo das notas de aula:</p>
+<span class="math display">\[\begin{align}
 Q(\theta, \theta_0)
 &amp;= \mathbb{E}_{\theta_0} \left[ \ell_c(\theta; \mathbf{y}, \mathbf{z}) \right] \\
 &amp;= n \log(\theta) - \theta \left( \sum_{i=1}^{m} y_i + \sum_{i=m+1}^{n} \mathbb{E}_{\theta_0}[Z_i] \right)
-\end{align}\]</span> $$</p>
-<p><span class="math display">\[
-\text{Como } \mathbb{E}_{\theta_0}[Z_i] = z_i + \frac{1}{\theta_0}, \text{ então:}
-\]</span></p>
-<p><span class="math display">\[
-\begin{align}
+\end{align}\]</span>
+<span class="math display">\[\begin{align}
 Q(\theta, \theta_0)
 &amp;= n \log(\theta) - \theta \left( \bar{y}m + \sum_{i=m+1}^{n} z_i + (n - m) \frac{1}{\theta_0} \right)
-\end{align}
-\]</span></p>
-<p>Agora procedemos com a maximização. Para tal precisamos derivar a função <span class="math inline">\(Q(\theta, \theta_0)\)</span> em relação a <span class="math inline">\(\theta\)</span> e igualar a zero. Como <span class="math inline">\(\theta_0\)</span> é uma dado, podemos tratá-la como uma constante. <span class="math display">\[
-\begin{align}
+\end{align}\]</span>
+<p>Agora procedemos com a maximização. Para tal precisamos derivar a função <span class="math inline">\(Q(\theta, \theta_0)\)</span> em relação a <span class="math inline">\(\theta\)</span> e igualar a zero. Como <span class="math inline">\(\theta_0\)</span> é uma dado, podemos tratá-la como uma constante.</p>
+<span class="math display">\[\begin{align}
 \Rightarrow \quad
 \hat{\theta}
 &amp;= \frac{n}{m \bar{y} + \sum_{i=m+1}^{n} z_i + (n - m) \frac{1}{\theta_0}}
-\end{align}
-\]</span></p>
+\end{align}\]</span>
 <p>Essa será usada como equação de atualização do algoritmo EM.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dados fornecidos</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>time <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">5</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">8</span>, <span class="dv">5</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">12</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">7</span>, <span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">3</span>, <span class="dv">9</span>, <span class="dv">8</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">14</span>, <span class="dv">4</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>status <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>observado <span class="ot">&lt;-</span> time[status <span class="sc">==</span> <span class="dv">1</span>]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>censurado <span class="ot">&lt;-</span> time[status <span class="sc">==</span> <span class="dv">0</span>]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Separar observações censuradas e não censuradas</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>observado <span class="ot">&lt;-</span> time[status <span class="sc">==</span> <span class="dv">1</span>]</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>censurado <span class="ot">&lt;-</span> time[status <span class="sc">==</span> <span class="dv">0</span>]</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">length</span>(observado)   <span class="co"># não censuradas</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(time)       <span class="co"># total</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>ybar <span class="ot">&lt;-</span> <span class="fu">mean</span>(observado)  <span class="co"># média das observações não censuradas</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>ti_cens <span class="ot">&lt;-</span> censurado     <span class="co"># tempos censurados observados (limite inferior dos Z_i)</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Inicialização</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">numeric</span>()</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">425</span>)</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>theta[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> ybar, <span class="at">sd =</span> <span class="fu">sd</span>(observado))</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;theta[1] =&quot;</span>, theta[<span class="dv">1</span>], <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>ybar <span class="ot">&lt;-</span> <span class="fu">mean</span>(observado)  <span class="co"># média das observações não censuradas</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Inicialização</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">numeric</span>()</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>theta[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>,ybar,<span class="fu">sd</span>(observado))</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">&quot;theta[1] =&quot;</span>, <span class="fu">round</span>(theta[<span class="dv">1</span>],<span class="dv">7</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>theta[1] = 5.054012 </code></pre>
+<pre><code>[1] &quot;theta[1] = 8.5175618&quot;</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop EM</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">1</span></span>
@@ -3225,35 +3213,35 @@ Q(\theta, \theta_0)
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>tol <span class="ot">&lt;-</span> <span class="fl">1e-5</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> (nonstop) {</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  numerador <span class="ot">&lt;-</span> n</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  denominador <span class="ot">&lt;-</span> m <span class="sc">*</span> ybar <span class="sc">+</span> <span class="fu">sum</span>(ti_cens) <span class="sc">+</span> (n <span class="sc">-</span> m) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">/</span> theta[i])</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  theta[i <span class="sc">+</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> numerador <span class="sc">/</span> denominador</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  i <span class="ot">&lt;-</span> i <span class="sc">+</span> <span class="dv">1</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;theta[&quot;</span>, i, <span class="st">&quot;] =&quot;</span>, theta[i], <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>theta[i <span class="sc">+</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="dv">30</span> <span class="sc">/</span> (<span class="dv">21</span> <span class="sc">*</span> ybar <span class="sc">+</span> <span class="fu">sum</span>(censurado) <span class="sc">+</span> <span class="dv">9</span><span class="sc">/</span>theta[i])</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  i <span class="ot">&lt;-</span> i <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;theta[&quot;</span>, i, <span class="st">&quot;] =&quot;</span>, theta[i], <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Critério de parada</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  nonstop <span class="ot">&lt;-</span> <span class="fu">abs</span>(theta[i] <span class="sc">-</span> theta[i <span class="sc">-</span> <span class="dv">1</span>]) <span class="sc">&gt;</span> tol</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Critério de parada (duferença absoluta entre iterações, como apresntado no exemplo em aula)</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  nonstop <span class="ot">&lt;-</span> <span class="fu">abs</span>(theta[i]<span class="sc">-</span>theta[i <span class="sc">-</span> <span class="dv">1</span>]) <span class="sc">&gt;</span> tol</span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>theta[ 2 ] = 0.2002927 
-theta[ 3 ] = 0.1554934 
-theta[ 4 ] = 0.1457158 
-theta[ 5 ] = 0.1430178 
-theta[ 6 ] = 0.1422278 
-theta[ 7 ] = 0.1419925 
-theta[ 8 ] = 0.1419221 
-theta[ 9 ] = 0.1419009 
+<pre><code>theta[ 2 ] = 0.2012658 
+theta[ 3 ] = 0.1556687 
+theta[ 4 ] = 0.1457619 
+theta[ 5 ] = 0.1430311 
+theta[ 6 ] = 0.1422318 
+theta[ 7 ] = 0.1419937 
+theta[ 8 ] = 0.1419224 
+theta[ 9 ] = 0.141901 
 theta[ 10 ] = 0.1418946 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimativa final</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Estimativa final de theta:&quot;</span>, theta[i], <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Estimativa final de theta: 0.1418946 </code></pre>
 </div>
 </div>
-<p>Dada essa parametrização, o tempo médio é dado pelo inverso de teta portanto e <strong>7.05 dias</strong>.</p>
+<p>Dada essa parametrização, o tempo médio é dado pelo inverso de theta. Portanto, o tempo médio de desemprego estimado é de <strong>7 dias</strong>.</p>
 </section>
 </section>
 
