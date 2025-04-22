@@ -1,0 +1,169 @@
+---
+title: "Lista 3"
+subtitle: "Algoritmo EM (Expectation–Maximization)"
+author: 
+  Carolina Musso
+  251103768
+date: today
+institute: "Mestrado Acadêmico em Estatística - UnB"
+lang: pt
+format: 
+  html:
+    toc: true
+    toc-location: left
+    toc-depth: 2
+    number-sections: true
+    self-contained: true
+    embed-resources: true
+editor: source
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+## Exercício: Duração do desemprego
+
+Seja $T$ uma variável aleatória exponencial com FDP:
+
+$$
+f(t;\theta) = \theta e^{(-\theta t)}
+$$
+e FDA:
+
+$$
+F(t;\theta) = 1 - e^{(-\theta t)}
+$$
+
+Em análise de sobrevivência, confiabilidade ou mesmo economia, um estudo para observar uma amostra aleatória proveniente de uma população pode terminar na prática antes de ser possível observar toda a amostra, ou seja, podemos ter observações censuradas.
+
+Considere uma amostra referente à duração do desemprego, $t$, em dias, de 30 indivíduos. A duração do desemprego é o evento de interesse, ou seja, o tempo até o indíviduo deixar a situação de desemprego. No entando, alguns indivíduos podem não experimentar o evento de interesse (não encontrarem emprego ao final do estudo ou podem ter por algum motivo saído do estudo), resultando em censura à direita.
+
+Considere que temos acesso às observações:
+{𝑥𝑖=(𝑡𝑖,𝛿𝑖),𝑖=1,…,𝑛},
+$$\{x_i = (t_i, \delta_i), i = 1, ..., n\}$$
+sendo
+
+$\delta_i = 1$ se a observação 𝑡𝑖 não é censurada;
+$\delta_i = 0$ se a observação 𝑡𝑖 é censurada.
+
+Considere o modelo exponencial com censura e obtenha a estimativa de $\theta$ pelo algoritmo EM baseada nos dados abaixo:
+
+```{r}
+time <- c(8,  5,  2,  4,  2,  3,  6,  1,  5,  5, 10,  8,  5,  2,  1, 12,  4,  2, 4,  2,  7,  1,  6,  3,  9,  8,  3,  2, 14,  4)
+  
+status <- c(1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1)  
+```
+Dicas:
+
+- Note que:
+
+$$
+f(z \mid y_i; \theta_0) = \frac{f(z; \theta_0)}{1 - F(y_i; \theta_0)} = \frac{\theta_0 e^{-\theta_0 z}}{e^{-\theta_0 y_i}} = \theta_0 e^{-\theta_0 (z - y_i)}, \quad z > y_i;
+$$
+
+- Note que: 
+
+$$\mathbb{E}_{\theta_0}[Z_i] = y_i + \frac{1}{\theta_0}$$
+
+- A verossimilhança da amostra amplicada (completa) $(y,z)$ é dada por
+
+$$
+L_c(\theta; \mathbf{y}, \mathbf{z}) = \prod_{i=1}^{m} f(y_i; \theta) \prod_{i=m+1}^{n} f(z_i; \theta)
+$$
+
+
+- Note que a estimativa de MV baseada na log-verossimilhança com dados censurados é:
+
+$$\hat{\theta} = \left( \frac{n}{m }\bar{y} \right)^{-1}$$
+
+### Solução
+
+O primeiro passo para a execução do algoritmo é o cálculo da Esperaça $E_{\theta_0}[l^c{(\theta;Z, y)}]$.
+
+
+$$
+\begin{align}
+\ell_c(\theta; \mathbf{y}, \mathbf{z}) 
+&= \log L_c(\theta; \mathbf{y}, \mathbf{z}) \\
+&= \log \left( \prod_{i=1}^{m} \theta e^{-\theta y_i} \prod_{i=m+1}^{n} \theta e^{-\theta z_i} \right)\\
+&= n \log(\theta) - \theta \left( \sum_{i=1}^{m} y_i + \sum_{i=m+1}^{n} z_i \right)
+\end{align}
+
+$$
+Segundo o exemplo das notas de aula:
+$$
+\begin{align}
+Q(\theta, \theta_0) 
+&= \mathbb{E}_{\theta_0} \left[ \ell_c(\theta; \mathbf{y}, \mathbf{z}) \right] \\
+&= n \log(\theta) - \theta \left( \sum_{i=1}^{m} y_i + \sum_{i=m+1}^{n} \mathbb{E}_{\theta_0}[Z_i] \right)
+\end{align}
+$$
+
+
+$$
+\text{Como } \mathbb{E}_{\theta_0}[Z_i] = z_i + \frac{1}{\theta_0}, \text{ então:}
+$$
+
+$$
+\begin{align}
+Q(\theta, \theta_0) 
+&= n \log(\theta) - \theta \left( \bar{y}m + \sum_{i=m+1}^{n} z_i + (n - m) \frac{1}{\theta_0} \right)
+\end{align}
+$$
+
+Agora procedemos com a maximização. Para tal precisamos derivar a função $Q(\theta, \theta_0)$ em relação a $\theta$ e igualar a zero. Como $\theta_0$ é uma dado, podemos tratá-la como uma constante.
+$$
+\begin{align}
+\Rightarrow \quad
+\hat{\theta} 
+&= \frac{n}{m \bar{y} + \sum_{i=m+1}^{n} z_i + (n - m) \frac{1}{\theta_0}}
+\end{align}
+$$
+
+Essa será usada como equação de atualização do algoritmo EM.
+
+```{r}
+# Dados fornecidos
+time <- c(8, 5, 2, 4, 2, 3, 6, 1, 5, 5, 10, 8, 5, 2, 1, 12, 4, 2, 4, 2, 7, 1, 6, 3, 9, 8, 3, 2, 14, 4)
+status <- c(1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1)
+
+# Separar observações censuradas e não censuradas
+observado <- time[status == 1]
+censurado <- time[status == 0]
+
+m <- length(observado)   # não censuradas
+n <- length(time)       # total
+ybar <- mean(observado)  # média das observações não censuradas
+ti_cens <- censurado     # tempos censurados observados (limite inferior dos Z_i)
+
+# Inicialização
+theta <- numeric()
+set.seed(425)
+theta[1] <- rnorm(1, mean = ybar, sd = sd(observado))
+cat("theta[1] =", theta[1], "\n")
+
+# Loop EM
+i <- 1
+nonstop <- TRUE
+tol <- 1e-5
+
+while (nonstop) {
+  numerador <- n
+  denominador <- m * ybar + sum(ti_cens) + (n - m) * (1 / theta[i])
+  theta[i + 1] <- numerador / denominador
+  
+  i <- i + 1
+  cat("theta[", i, "] =", theta[i], "\n")
+  
+  # Critério de parada
+  nonstop <- abs(theta[i] - theta[i - 1]) > tol
+}
+
+# Estimativa final
+cat("\nEstimativa final de theta:", theta[i], "\n")
+
+```
+
+Dada essa parametrização, o tempo médio é dado pelo inverso de teta portanto e  **`r round(1/theta[i],2)` dias**. 
+
