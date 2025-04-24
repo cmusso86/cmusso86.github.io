@@ -1,0 +1,140 @@
+---
+title: "Lista 4"
+subtitle: "Métodos de Monte Carlo"
+author: 
+  Carolina Musso
+  251103768
+date: today
+institute: "Mestrado Acadêmico em Estatística - UnB"
+lang: pt
+format: 
+  html:
+    toc: true
+    toc-location: left
+    toc-depth: 2
+    number-sections: true
+    self-contained: true
+    embed-resources: true
+editor: source
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+# Exercício: Duração do desemprego
+
+Seja $X_1, ..., X_n$ uma a.a. i.i.d. da distribuição 
+$Pois(\lambda)$.
+
+$$
+\hat{\lambda} = \bar{X}=\frac{1}{n} \sum_{i=1}^{n} X_i
+$$
+
+Um intervalo de confiança para $\lambda$ é dado por
+
+$$
+IC(\lambda)= \left(\bar{X} - \frac{p_{n,\alpha} \hat{\sigma}}{\sqrt{n}}, \bar{X} + \frac{p_{n, \alpha} \hat{\sigma}}{\sqrt{n}}\right)
+$$
+
+Em que $\hat{\sigma}^2 = \frac{1}{n-1}\sum_{i=1}^n{(X_i-\bar{X})^2}$ e $p_{n,\alpha}$ pode ser escolhido como o $1-\alpha/2$ quantil da $t$ com $n-1$ graus de liberdade. Escreva um código para calcular a estimativa de Monte Carlo para o coeficiente de confiança do intervalo de confiança acima. Para $n = 10$ e $\alpha = 5%$, usando um valor $p_{10, 0.05} = 2.262157$, estime o coeficiente de confiança para um rol de valores de $\lambda$ (e.g., 0.025-1) e crie um plot dos resultados Comente sobre os resultados obtidos.
+
+### Solução
+
+```{r}
+n_MC <- 1000
+coef_conf <- list()
+
+n <- 10
+lambdas <- c(0.005, 0.01, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 0.9, 1, 5)
+
+for (lambda in lambdas) {
+  esta_em_IC <- logical(n_MC)
+
+  for (i in 1:n_MC) {
+    pois_sim <- rpois(n, lambda)
+    x_barra <- mean(pois_sim)
+    sigma <- sd(pois_sim)
+    p <- 2.262157  # qt(0.975, df = 9)
+
+    IC <- c(x_barra - p * sigma / sqrt(n), x_barra + p * sigma / sqrt(n))
+    esta_em_IC[i] <- lambda >= IC[1] & lambda <= IC[2]
+  }
+
+  coef_conf[[as.character(lambda)]] <- mean(esta_em_IC)
+}
+```
+
+Mesmo com amostras pequenas (n = 10), a partir de um $\lambda$ próximo de 1 o intervalo de confiança passa a ser mais confiável — ou seja, cobre mais vezes o valor verdadeiro. Isso ocorre porque, para valores maiores de $\lambda$, a distribuição amostral da média da Poisson se aproxima bem de uma Normal. Já com valores muito pequenos de $\lambda$ (tipo 0.005 ou 0.01), a distribuição é bem assimétrica e o intervalo simétrico baseado na Normal acaba falhando em capturar essa incerteza.
+
+```{r}
+library(tidyverse)
+
+x <- map_dbl(1:1000, ~mean(rpois(10, 0.01)))
+y <- map_dbl(1:1000, ~mean(rpois(10, 1)))
+
+plot(density(x), main = "Dist. amostral (λ = 0.01)", xlab = "x", ylab = "Densidade")
+plot(density(y), main = "Dist. amostral (λ = 1)", xlab = "x", ylab = "Densidade")
+
+```
+# Exercício: Curva de Potência para uma Normal Contaminada
+
+Considere o teste de comparação de médias:
+
+$$
+\begin{cases}
+H_0 : \mu_1 = \mu_2 = 0 \\
+H_1 : \mu_1 \ne \mu_2
+\end{cases}
+$$
+
+Estude o poder do teste para $\alpha = 0.05$, $n = m \in \{10, 20, 50, 100, 500\}$ e $\sigma_1 = \sigma_2 = 1$. Sob $H_1$, considere uma normal contaminada:
+
+$$
+X,Y \sim (1 - \epsilon) \mathcal{N}(0, 1) + \epsilon \mathcal{N}(50, 1), \quad 0 \leq \epsilon \leq 1
+$$
+
+Use 1000 réplicas de Monte Carlo. Faça o gráfico da curva de potência em função de $\epsilon$ e comente os resultados.
+
+### Solução
+
+```{r}
+library(tidyverse)
+
+n_MC <- 1000
+ns <- c(10, 20, 50, 100, 500)
+es <- c(0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.75, 0.9)
+
+df <- data.frame(n = numeric(), e = numeric(), Beta = numeric())
+
+for (n in ns){
+  for(epsilon in es){
+
+    a <- map_lgl(1:n_MC , ~{ 
+      aa1 <- rnorm(n, 0, 1)
+
+      N_cont <- function(n) {
+        ind <- rbinom(n, 1, epsilon)
+        rnorm(n, mean = ind * 50, sd = 1)
+      }
+
+      aa2 <- N_cont(n)
+      t.test(aa1, aa2, var.equal = TRUE)$p.value < 0.05
+    })
+
+    df <- rbind(df, data.frame(n = n, e = epsilon, Beta = mean(a)))
+  }
+}
+
+df |> 
+  ggplot(aes(x = e, y = Beta)) +
+  geom_line() +
+  facet_wrap(~n)
+```
+
+
+Nesse cenário, a hipótese nula é de fato falsa (sempre há alguma porcentagem de contaminação) e estamos medindo é a potência do teste, ou seja, com que frequência ele acerta ao rejeitar $H_0$.
+
+O gráfico mostra que, quanto maior o valor de $\epsilon$, mais a amostra está "contaminada" com valores vindos da normal com média 50. Isso faz com que a diferença entre os grupos aumente, facilitando a rejeição de $H_0$.
+
+Também podemos ver que amostras maiores aumentam a potência do teste — o que é esperado, já que com mais dados a chance de detectar efeitos reais aumenta.
