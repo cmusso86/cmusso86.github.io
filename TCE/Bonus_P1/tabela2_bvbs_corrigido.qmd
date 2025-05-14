@@ -1,0 +1,119 @@
+---
+title: "Bônus - Prova 1"
+subtitle: "Reprodução da Tabela 2 — BVBS"
+author: 
+  Carolina Musso
+  251103768
+date: today
+institute: "Mestrado Acadêmico em Estatística - UnB"
+lang: pt
+format: 
+  html:
+    toc: true
+    toc-location: left
+    toc-depth: 2
+    number-sections: true
+    self-contained: true
+    embed-resources: true
+editor: source
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+# Exercício
+
+Reproduzir a Tabela 2  do artigo "Bivariate Birnbaum–Saunders distribution and associated inference". 
+
+```{r}
+rm(list=ls())
+if(!requireNamespace("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, MASS, gt, mvtnorm, numDeriv)
+```
+
+## Função para gerar amostras BVBS
+```{r}
+gerar_BVBS <- function(n, alpha1, beta1, alpha2, beta2, rho) {
+  library(mvtnorm)
+  Z <- rmvnorm(n, mean = c(0, 0), sigma = matrix(c(1, rho, rho, 1), 2))
+  T1 <- beta1 * ((alpha1 * Z[, 1] / 2 + sqrt((alpha1 * Z[, 1] / 2)^2 + 1))^2)
+  T2 <- beta2 * ((alpha2 * Z[, 2] / 2 + sqrt((alpha2 * Z[, 2] / 2)^2 + 1))^2)
+  cbind(T1, T2)
+}
+
+```
+
+##  Função de log-verossimilhança
+```{r}
+loglik_BVBS <- function(params, data) {
+  alpha1 <- params[1]; beta1 <- params[2]
+  alpha2 <- params[3]; beta2 <- params[4]; rho <- params[5]
+  
+  if (any(c(alpha1, beta1, alpha2, beta2) <= 0) || abs(rho) >= 1) return(-Inf)
+  
+  t1 <- data[,1]; t2 <- data[,2]
+  z1 <- (sqrt(t1 / beta1) - sqrt(beta1 / t1)) / alpha1
+  z2 <- (sqrt(t2 / beta2) - sqrt(beta2 / t2)) / alpha2
+
+  log_jacobian <- log((t1 + beta1)^2 / (4 * alpha1 * t1 * sqrt(t1 * beta1))) +
+                  log((t2 + beta2)^2 / (4 * alpha2 * t2 * sqrt(t2 * beta2)))
+
+  dens <- dmvnorm(cbind(z1, z2), mean = c(0, 0), sigma = matrix(c(1, rho, rho, 1), 2))
+
+  sum(log(dens) + log_jacobian)
+}
+
+```
+
+## Simulação de Monte Carlo
+```{r}
+#Simulação Monte Carlo
+
+simular_tabela2 <- function(n, rho, B = 1000) {
+  resultados <- matrix(NA, nrow = B, ncol = 5)
+  colnames(resultados) <- c("alpha1", "alpha2", "beta1", "beta2", "rho")
+  
+  for (b in 1:B) {
+    dados <- gerar_BVBS(n, 1, 2, 1, 2, rho)
+    est <- tryCatch({
+      optim(
+        par = c(1, 2, 1, 2, rho),
+        fn = function(par) -loglik_BVBS(par, dados),
+        method = "L-BFGS-B",
+        lower = c(0.01, 0.01, 0.01, 0.01, -0.99),
+        upper = c(5, 5, 5, 5, 0.99)
+      )$par
+    }, error = function(e) rep(NA, 5))
+    
+    resultados[b, ] <- est
+  }
+
+  medias <- colMeans(resultados, na.rm = TRUE)
+ valores_verdadeiros <- c(alpha1 = 1, alpha2 = 1, beta1 = 2, beta2 = 2, rho = rho)
+mses <- colMeans((resultados - matrix(valores_verdadeiros, nrow = nrow(resultados), ncol = 5, byrow = TRUE))^2, na.rm = TRUE)
+
+  
+  list(media = medias, mse = mses)
+}
+
+```
+
+## Executando para diferentes $\nu$
+```{r}
+ns <- c(10, 20, 50, 100)
+rhos <- c(0.95, 0.5, 0.25, 0.0)
+
+resultados <- list()
+
+for (n in ns) {
+  for (rho in rhos) {
+    cat("Simulando para n =", n, "e rho =", rho, "...\n")
+    sim <- simular_tabela2(n, rho, B = 1000)
+    resultados[[paste(n, rho)]] <- sim
+  }
+}
+
+```
+
+
