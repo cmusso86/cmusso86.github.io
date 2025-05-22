@@ -1,0 +1,225 @@
+---
+title: "Lista 5"
+subtitle: "Reamostragem"
+author: 
+  Carolina Musso
+  251103768
+date: today
+institute: "Mestrado Acadêmico em Estatística - UnB"
+lang: pt
+format: 
+  html:
+    toc: true
+    toc-location: left
+    toc-depth: 2
+    number-sections: true
+    self-contained: true
+    embed-resources: true
+editor: source
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+# Exercício
+
+Considere o conjunto de dados de ar condicionado (`aircondit`) disponível no pacote boot do R. São 12 observações dos tempos (em horas) entre falhas do equipamento de ar condicionado:
+
+```{r}
+pacman::p_load(boot,alr4 )
+air <- c(3, 5, 7, 18, 43, 85, 91, 98, 100, 130, 230, 487)
+```
+
+Suponha que os tempos entre falhas sigam um modelo exponencial $Exp(\lambda)$. Calcule intervalos de confiança de bootstrap de 95% para o tempo médio entre falhas $1/\lambda$ pelos métodos normal, básico, percentil e BCa. Considere o estimador de máxima verossimilhança $\hat{\lambda}$ para o problema.
+
+```{r}
+medias <- numeric()
+R <- 10000 # A quantidade de reamostragens
+
+for (i in 1:R) {
+  amostra <- sample(air, replace = TRUE)
+  medias[i] <- mean(amostra)
+}
+```
+
+Com as reamostragens por bootstrap, conseguimos ter uma noção da distribuição amostral da estatística de interesse, que no caso é a média amostral. Para isso, podemos fazer um gráfico de densidade, como abaixo. Vemos que a distribuição se aproxima da normal, mas aparece ser mais assimétrica à direita, o que é esperado, já que veio de uma distribuição exponencial.
+
+```{r}
+plot(density(medias))
+```
+
+
+### Intevalo de confiança Normal
+
+Nesse caso, podemos usar a média e o desvio padrão da distribuição amostral para calcular o intervalo de confiança baseado em uma normal padrão, considerando que a média amostral é aproximadamente normal segundo o Teorema Central do Limite.
+
+
+```{r}
+LI <- mean(medias) + qnorm(0.025) * sd(medias) 
+LS <- mean(medias)- qnorm(0.025) * sd(medias) 
+cat("Intervalo de confiança normal: (", LI, ",", LS, ")\n")
+```
+
+Entretanto, sabemos que nessa situação, a média amostral não é exatamente normal, já que a distribuição original é exponencial. Para verificar isso, podemos fazer o teste de Shapiro-Wilk e o gráfico QQ-plot, que mostram desvios da normalidade. 
+
+
+```{r}
+# testar se o vetor medias é normal
+
+shapiro.test(sample(medias, 500))
+qqnorm(sample(medias, 500))
+```
+
+
+### Intervalo de confiança básico
+
+Nesse caso, o intervalo de confiança básico é dado por:
+
+```{r}
+2*mean(medias) - quantile(medias, probs = c(0.975, 0.025))
+
+```
+
+### Intervalo percentil
+
+Nesse caso, o intervalo de confiança percentil é dado pelo percentil diretamente da distribuição empírica.
+
+
+```{r}
+quantile(medias, probs = c(0.025, 0.975))
+```
+### Intervalo BCa
+
+Esse intervalo é um pouco mais complicado de calcular, pois é um método que corrige a assimetria e a viés da distribuição amostral. Ele usa o método de Jackknife para calcular a correção e fornece um intevalo mais robusto.
+
+```{r}
+prop_menor <- mean(medias< mean(medias))
+z0 <- qnorm(prop_menor)
+n <- length(air)
+
+theta_jack <- numeric(n)
+for (i in 1:n) {
+  theta_jack[i] <- mean(air[-i])
+}
+theta_dot <- mean(theta_jack)
+num <- sum((theta_dot - theta_jack)^3)
+den <- sum((theta_dot - theta_jack)^2)^(3/2)
+a <- num / (6 * den)
+
+
+alpha1 <- 0.025
+alpha2 <- 0.975
+
+z_alpha1 <- qnorm(alpha1)
+z_alpha2 <- qnorm(alpha2)
+
+# Fórmulas do BCa
+adj_alpha1 <- pnorm(z0 + (z0 + z_alpha1) / (1 - a * (z0 + z_alpha1)))
+adj_alpha2 <- pnorm(z0 + (z0 + z_alpha2) / (1 - a * (z0 + z_alpha2)))
+
+
+ic_bca <- quantile(mean(medias), probs = c(adj_alpha1, adj_alpha2))
+ic_bca
+
+
+```
+
+## Solução
+
+# Exercício
+
+ Considere novamnete os dados sobre consumo de combustível nos 50 estados + DC dos Estados Unidos (Federal Highway Administration, 2001). Os dados foram coletados pela Federal Highway Administration dos EUA; ver Weisberg, S. (2014). Applied Linear Regression. John Wiley & Sons, Hoboken, New Jersey, fourth edition.
+ 
+ Temos as seguintes variáveis:
+
+**Drivers:** Número de motoristas com carteira de habilitação no estado.
+**FuelC:** Gasolina vendida para uso rodoviário, milhares de galões.
+**Income:** Renda pessoal por pessoa no ano 2000 em dólares.
+**Miles:** Milhas de rodovias com ajuda federal no estado.
+**Pop:** População de 2001 com 16 anos ou mais.
+**Tax:** Taxa de imposto estadual da gasolina, centavos por galão.
+**MPC:** Milhas estimadas percorridas per capita.
+
+Considere ainda as variáveis:
+
+**Fuel:** 1000 × FuelC/Pop.
+**Dlic:** 1000 × Drivers/Pop.
+**lMiles:** Logaritmo natural de Miles.
+
+Podemos tentar entender como o combustível (Fuel) está relacionado aos preditores (Tax, Dlic, Income e Miles), usando um modelo de regressão linear múltipla.
+
+```{r}
+######################################
+## Código R
+######################################
+
+data(fuel2001)
+fuel2001$lMiles <- log(fuel2001$Miles) 
+fuel2001$Dlic   <- 1000*(fuel2001$Drivers/fuel2001$Pop)
+fuel2001$Fuel   <- 1000*(fuel2001$FuelC/fuel2001$Pop)
+fuel2001$Income <- fuel2001$Income/1000
+```
+
+Problema: Considere os seguintes modelos:
+
+$Fuel = \beta_0 + \beta1Tax + \epsilon$
+
+$Fuel = \beta_0 + \beta1Tax + \beta_2Dlic + \epsilon$
+
+$Fuel = \beta_0 + \beta1Tax + \beta_2Dlic + \beta_3Income + \epsilon$
+
+$Fuel = \beta_0 + \beta1Tax + \beta_2Dlic + \beta_3Income + \beta_4lMiles + \epsilon$
+
+Use o procedimento leave-one-out para estimar os erros das predições e escolher o melhor dos modelos acima. Como critérios, use o RMSE e MAE, dados por:
+
+$$RMSE = \sqrt{\frac{1}{n}\sum_{t=1}^n(y_t-\hat{y_t})^2}\\MAE= \frac{1}{n}\sum_{t=1}^n{|y_t-\hat{y_t}|}$$
+```{r}
+
+# Inicializar erros
+n <- nrow(fuel2001)
+e1 <- e2 <- e3 <- e4 <- numeric(n)
+
+# Leave-one-out
+for (k in 1:n) {
+  train <- fuel2001[-k, ]
+  test  <- fuel2001[k, ]
+
+  # Modelo 1
+  m1 <- lm(Fuel ~ Tax, data = train)
+  yhat1 <- predict(m1, newdata = test)
+  e1[k] <- test$Fuel - yhat1
+
+  # Modelo 2
+  m2 <- lm(Fuel ~ Tax + Dlic, data = train)
+  yhat2 <- predict(m2, newdata = test)
+  e2[k] <- test$Fuel - yhat2
+
+  # Modelo 3
+  m3 <- lm(Fuel ~ Tax + Dlic + Income, data = train)
+  yhat3 <- predict(m3, newdata = test)
+  e3[k] <- test$Fuel - yhat3
+
+  # Modelo 4
+  m4 <- lm(Fuel ~ Tax + Dlic + Income + lMiles, data = train)
+  yhat4 <- predict(m4, newdata = test)
+  e4[k] <- test$Fuel - yhat4
+}
+
+# Cálculo dos critérios
+rmse <- function(e) sqrt(mean(e^2))
+mae  <- function(e) mean(abs(e))
+
+# Comparação dos modelos
+data.frame(
+  Modelo = paste("Modelo", 1:4),
+  RMSE = c(rmse(e1), rmse(e2), rmse(e3), rmse(e4)),
+  MAE  = c(mae(e1), mae(e2), mae(e3), mae(e4))
+)
+
+```
+
+
+Segundo esses critérios, o modelo 4 é o melhor, pois apresenta os menores valores de RMSE e MAE. Isso indica que ele tem um desempenho superior na previsão do consumo de combustível em comparação com os outros modelos.     
+
+
