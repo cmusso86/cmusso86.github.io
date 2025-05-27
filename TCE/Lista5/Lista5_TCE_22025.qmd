@@ -27,23 +27,33 @@ execute:
 Considere o conjunto de dados de ar condicionado (`aircondit`) disponível no pacote boot do R. São 12 observações dos tempos (em horas) entre falhas do equipamento de ar condicionado:
 
 ```{r}
-pacman::p_load(boot,alr4 )
+pacman::p_load(boot,
+               alr4 , 
+               tidyverse,
+               geomtextpath)
 air <- c(3, 5, 7, 18, 43, 85, 91, 98, 100, 130, 230, 487)
 ```
 
 Suponha que os tempos entre falhas sigam um modelo exponencial $Exp(\lambda)$. Calcule intervalos de confiança de bootstrap de 95% para o tempo médio entre falhas $1/\lambda$ pelos métodos normal, básico, percentil e BCa. Considere o estimador de máxima verossimilhança $\hat{\lambda}$ para o problema.
 
+
+### Solução
 ```{r}
 medias <- numeric()
-R <- 10000 # A quantidade de reamostragens
+R <- 100000 # A quantidade de reamostragens
 
+set.seed(123) # Para reprodutibilidade
 for (i in 1:R) {
   amostra <- sample(air, replace = TRUE)
   medias[i] <- mean(amostra)
 }
+
+media_original <- mean(air)
 ```
 
-Com as reamostragens por bootstrap, conseguimos ter uma noção da distribuição amostral da estatística de interesse, que no caso é a média amostral. Para isso, podemos fazer um gráfico de densidade, como abaixo. Vemos que a distribuição se aproxima da normal, mas aparece ser mais assimétrica à direita, o que é esperado, já que veio de uma distribuição exponencial.
+Com as reamostragens por bootstrap, conseguimos ter uma noção da distribuição amostral da estatística de interesse. Nesse caso, o estimador de máxima verosiimilhança será a própria média amostral.  
+
+Ao calcular esse estimador para cada amostra de bootstrap, temos agora uma amostra de estimadores. Com isso, podemos fazer um gráfico de densidade, como abaixo. Vemos que a distribuição se aproxima da normal, mas aparece ser mais assimétrica à direita, o que é esperado, já que veio de uma distribuição exponencial.
 
 ```{r}
 plot(density(medias))
@@ -56,12 +66,26 @@ Nesse caso, podemos usar a média e o desvio padrão da distribuição amostral 
 
 
 ```{r}
-LI <- mean(medias) + qnorm(0.025) * sd(medias) 
-LS <- mean(medias)- qnorm(0.025) * sd(medias) 
+LI <- media_original + qnorm(0.025) * sd(medias) 
+LS <- media_original- qnorm(0.025) * sd(medias) 
 cat("Intervalo de confiança normal: (", LI, ",", LS, ")\n")
 ```
 
-Entretanto, sabemos que nessa situação, a média amostral não é exatamente normal, já que a distribuição original é exponencial. Para verificar isso, podemos fazer o teste de Shapiro-Wilk e o gráfico QQ-plot, que mostram desvios da normalidade. 
+Comparando com o pacote `boot`, podemos usar a função `boot.ci` para calcular o intervalo de confiança baseado na normal. Obtemos valores semelhantes, mas com uma pequena diferença pelo fato de ser um processo aleatório.  
+
+```{r}
+# funcao de media com indice 
+fun <- function(x, i) {
+  mean(x[i])
+}
+
+boot_out <- boot(air, fun, R)
+CI1 <- boot.ci(boot_out,  seed = 123, type = "norm")
+CI1$normal[-1]
+
+```
+
+Entretanto, sabemos que nessa situação, a aproximação da normal pode não ser boa, já vimos que temos uma distribuição assimétrica acima. Para verificar isso, podemos fazer o teste de Shapiro-Wilk e o gráfico QQ-plot, que mostram desvios da normalidade. 
 
 
 ```{r}
@@ -77,8 +101,14 @@ qqnorm(sample(medias, 500))
 Nesse caso, o intervalo de confiança básico é dado por:
 
 ```{r}
-2*mean(medias) - quantile(medias, probs = c(0.975, 0.025))
+2*media_original - quantile(medias, probs = c(0.975, 0.025))
 
+```
+
+Comparando com o pacote boot, podemos usar a função `boot.ci` para calcular o intervalo de confiança básico. 
+```{r}
+CI2 <- boot.ci(boot_out,  seed = 123, type = "basic")
+CI2$basic[-c(1:3)]
 ```
 
 ### Intervalo percentil
@@ -89,43 +119,113 @@ Nesse caso, o intervalo de confiança percentil é dado pelo percentil diretamen
 ```{r}
 quantile(medias, probs = c(0.025, 0.975))
 ```
+
+Comparando com o pacote boot, podemos usar a função `boot.ci` para calcular o intervalo de confiança percentil. 
+
+```{r}
+CI3 <- boot.ci(boot_out,  seed = 123, type = "perc")
+CI3$percent[-c(1:3)]
+```
+
+
 ### Intervalo BCa
 
 Esse intervalo é um pouco mais complicado de calcular, pois é um método que corrige a assimetria e a viés da distribuição amostral. Ele usa o método de Jackknife para calcular a correção e fornece um intevalo mais robusto.
 
+Adaptando o exemplo das notas de aulas,temos:
+
+
 ```{r}
-prop_menor <- mean(medias< mean(medias))
-z0 <- qnorm(prop_menor)
-n <- length(air)
 
-theta_jack <- numeric(n)
-for (i in 1:n) {
-  theta_jack[i] <- mean(air[-i])
-}
-theta_dot <- mean(theta_jack)
-num <- sum((theta_dot - theta_jack)^3)
-den <- sum((theta_dot - theta_jack)^2)^(3/2)
-a <- num / (6 * den)
-
-
-alpha1 <- 0.025
-alpha2 <- 0.975
-
-z_alpha1 <- qnorm(alpha1)
-z_alpha2 <- qnorm(alpha2)
-
-# Fórmulas do BCa
-adj_alpha1 <- pnorm(z0 + (z0 + z_alpha1) / (1 - a * (z0 + z_alpha1)))
-adj_alpha2 <- pnorm(z0 + (z0 + z_alpha2) / (1 - a * (z0 + z_alpha2)))
+boot.BCa <- 
+    function(x, th0, th, stat, conf = .95) {
+      
+        n <- length(x) #observations in rows
+        alpha <- (1 + c(-conf, conf))/2
+        zalpha <- qnorm(alpha)
+        z0 <- qnorm(sum(th < th0) / length(th))
+        th.jack <- numeric(n)
+        for (i in 1:n) { 
+          th.jack[i] <- stat(x[-i ])
+          }
+        L <- mean(th.jack) - th.jack
+        a <- sum(L^3)/(6 * sum(L^2)^1.5)
+        adj.alpha <- pnorm(z0 + (z0+zalpha)/(1-a*(z0+zalpha)))
+        limits <- quantile(th, adj.alpha, type=6)
+        return(list( "BCa"=limits))
+    }
 
 
-ic_bca <- quantile(mean(medias), probs = c(adj_alpha1, adj_alpha2))
-ic_bca
+boot.BCa(air, 
+         th0 = media_original, 
+         th = medias, 
+         stat = mean)
 
+```
+Vemos que o intervalo BCa é mais robusto e leva em consideração a assimetria da distribuição amostral. Novamente, podemos usar o pacote `boot` para calcular o intervalo BCa de forma mais simples, e obtemos valores semelhantes.
+
+```{r}
+# Intervalo de confiança BCa com boot
+
+CI4 <- boot.ci(boot_out,  seed = 123, type = "bca")
+CI4$bca[-c(1:3)]
+```
+
+```{r}
+# Comparando os intervalos de confiança em um grafico
+
+
+IC1 <- CI1$normal[-1]
+IC2 <- CI2$basic[-c(1:3)]
+IC3 <- CI3$percent[-c(1:3)]
+IC4 <- CI4$bca[-c(1:3)]
+
+dados <- data.frame(
+  r = 1:R,
+  medias = medias
+)
+
+library(ggplot2)
+library(dplyr)
+
+# Crie data.frames para cada par de limites com nome e cor
+ic_data <- data.frame(
+  x = c(IC1[1], IC1[2], IC2[1], IC2[2], IC3[1], IC3[2], IC4[1], IC4[2]),
+  tipo = factor(rep(c("Percentil", "Normal", "BCa", "Basic"), each = 2),
+                levels = c("Percentil", "Normal", "BCa", "Basic"))
+)
+
+media_data <- data.frame(
+  x = media_original,
+  tipo = "Média original"
+)
+
+
+ggplot(dados, aes(x = medias)) +
+  geom_density() +
+  geom_vline(data = media_data, aes(xintercept = x, color = tipo), linetype = "dashed") +
+  geom_vline(data = ic_data, aes(xintercept = x, color = tipo), linetype = "dashed") +
+  scale_color_manual(values = c(
+    "Média original" = "red",
+    "Percentil" = "blue",
+    "Normal" = "green",
+    "BCa" = "purple",
+    "Basic" = "orange"
+  )) +
+  labs(
+    title = "Intervalos de Confiança para a Média",
+    x = "Média Amostral",
+    y = "Densidade",
+    color = "Tipo de Intervalo"
+  ) +
+  theme_minimal()
+
+
+
+  
 
 ```
 
-## Solução
 
 # Exercício
 
