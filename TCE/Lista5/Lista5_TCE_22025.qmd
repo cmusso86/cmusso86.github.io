@@ -191,8 +191,8 @@ library(dplyr)
 # Crie data.frames para cada par de limites com nome e cor
 ic_data <- data.frame(
   x = c(IC1[1], IC1[2], IC2[1], IC2[2], IC3[1], IC3[2], IC4[1], IC4[2]),
-  tipo = factor(rep(c("Percentil", "Normal", "BCa", "Basic"), each = 2),
-                levels = c("Percentil", "Normal", "BCa", "Basic"))
+  tipo = factor(rep(c("Basico", "Normal", "Percentil", "BCa"), each = 2),
+                levels = c("Basico", "Normal", "Percentil", "BCa"))
 )
 
 media_data <- data.frame(
@@ -210,7 +210,7 @@ ggplot(dados, aes(x = medias)) +
     "Percentil" = "blue",
     "Normal" = "green",
     "BCa" = "purple",
-    "Basic" = "orange"
+    "Basico" = "orange"
   )) +
   labs(
     title = "Intervalos de Confiança para a Média",
