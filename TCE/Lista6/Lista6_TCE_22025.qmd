@@ -1,0 +1,370 @@
+---
+title: "Lista 6"
+subtitle: "MCMC"
+author: 
+  Carolina Musso
+  251103768
+date: today
+institute: "Mestrado Acadêmico em Estatística - UnB"
+lang: pt
+format: 
+  html:
+    toc: true
+    toc-location: left
+    toc-depth: 2
+    number-sections: true
+    self-contained: true
+    embed-resources: true
+editor: source
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+# Exercício
+
+Considere a distribuição Rayleigh, com densidade
+
+$$
+f(x; \sigma) = \frac{x}{\sigma^2} e^{-\frac{x^2}{2\sigma^2}}, \quad x > 0, \sigma > 0
+$$
+
+Use o algoritmo Metropolis-Hastings para gerar da Rayleigh quando $\sigma=2$. Utilize como candidata $q(.|x_t)$ o modelo $\chi^2_{x_t}$. Use um burn-in de 2000 e compute a taxa de aceitação. Compare através de um QQ plot os quantis amostrais e os quantis teóricos $x_q = F^{-1}(q) = \sigma{-2log(1-q)}^{1/2}, ~0<q<1$.
+
+## Solução
+
+Para ger a Rayleigh usando o algoritmo Metropolis-Hastings, vamos definir a função de densidade Rayleigh e a função de densidade candidata $\chi^2$ e inicializar a cadeia de algum valor.
+```{r}
+
+rey <- function(x, sigma=2){
+  (x/(sigma^2)) * exp(-x^2/(2*sigma^2))
+}
+
+sigma = 2
+nsim=5000
+
+X = rep(runif(1),nsim) # inicializar a cadeia
+```
+
+Tendo definida a função e condições iniciais, precisamos então simular um número de interações desejadas utilizando como probabilidade de seleção o valor fornecido pelo algoritmo Metropolis-Hastings. A cada iteração, vamos gerar uma amostra da candidata $\chi^2$ e calcular a razão de aceitação. Se a razão for maior que 1, aceitamos o novo valor; caso contrário, aceitamos com probabilidade igual à razão. 
+
+```{r}
+for (i in 2:nsim){
+Y = rchisq(1, df=X[i-1]) # amostra da candidata
+alpha = min((rey(Y)*dchisq(X[i-1],Y))/(rey(X[i-1])*dchisq(Y,X[i-1])),1)
+X[i]= X[i-1] + (Y-X[i-1])*(runif(1)<alpha)
+}
+
+```
+
+Vemos pelo gráfico abaixo que a cadeia parece convergir.
+
+```{r}
+plot(3000:5000,X[3000:5000],ty="l",lwd=1,xlab="Iterações",ylab="X")
+title(main="Gerar Beta : MCMC - Metropolis-Hastings")
+```
+
+
+Podemos ainda, calcular a taxa de aceitação do algoritmo Metropolis-Hastings. A taxa de aceitação é dada pelo número de vezes que aceitamos uma nova amostra dividido pelo número total de iterações.
+```{r}
+acceptance_rate <- round(sum(diff(X) != 0) / (nsim - 1),4)*100
+```
+
+Nesse caso a porcentagem de aceitação é de aproximadamente `r acceptance_rate`%, o que é razoável para algoritmos MCMC.
+
+Analisando, como solicitado, o QQ plot dos quantis amostrais e teóricos, vemos que o ajuste é bom, o que indica que a amostra gerada é compatível com a distribuição Rayleigh.
+
+```{r}
+#F^{-1}(q) = \sigma{-2log(1-q)}^{1/2},
+qrey <- function(q, sigma=2){
+  sigma * sqrt(-2 * log(1 - q))}
+  
+#Compare através de um QQ plot os quantis amostrais e os quantis teóricos
+seq <- seq(0.01, 0.99, by=0.01)
+
+real <- qrey(seq, sigma=2)
+amostral <- quantile(X[3000:5000], seq)
+
+qqplot(real, amostral, xlab="Quantis teóricos", ylab="Quantis amostrais")
+```
+Finalmente, podemos comparar a amostra gerada pelo algoritmo Metropolis-Hastings com a amostra gerada diretamente pela distribuição Rayleigh usando o método de inversão. Para isso, vamos gerar uma amostra de 3000 valores da Rayleigh e comparar os histogramas.
+
+```{r}
+ # Função densidade Rayleigh
+dRayleigh <- function(x, sigma=2){
+  ifelse(x > 0, (x/(sigma^2)) * exp(-x^2/(2*sigma^2)), 0)
+}
+
+# Geração direta da Rayleigh usando inversão
+U <- runif(3000)
+X_direct <- sigma * sqrt(-2 * log(1 - U))
+
+# Gráfico comparativo
+par(mfrow=c(1,2), mar=c(2,2,1,1))
+
+# Histograma da amostra M-H
+hist(X[3000:5000], breaks=50, col="blue", main="Metropolis-Hastings", freq=FALSE, xlim=c(0,10))
+curve(dRayleigh(x), col="sienna", lwd=2, add=TRUE)
+
+# Histograma da geração direta
+hist(X_direct, breaks=50, col="grey",
+     main="Geração directa", freq=FALSE, xlim=c(0,10))
+curve(dRayleigh(x), col="sienna", lwd=2, add=TRUE)
+
+```
+# Exercício
+
+Considere o modelo normal multivariado
+$$X_1, X_2, ..., X_p \sim N_p(0,(1-\rho)I + \rho J)$$
+em que $I$ é a matriz identidade $p \times p$ e $J$ é uma matriz de uns $p \times p$. Esse é o chamado modelo *equicorrelation*, uma vez que $Cor(X_i, X_j) = \rho$ para todo i e j. Note que:
+
+$$
+X_i \mid x_{(-i)} \sim \mathcal{N} \left( 
+\frac{(p-1)\rho}{1 + (p-2)\rho} \, \overline{x}_{(-i)}, \;
+\frac{1 + (p-2)\rho - (p-1)\rho^2}{1 + (p-2)\rho}
+\right)
+$$
+
+em que $x_{(-i)} = (x_1, x_2, ..., x_{i-1}, x_{i+1}, ..., x_n)$ e $\bar{x}_{(-i)}$ é a média desse vetor.  Implemente um amostrador Gibbs usando a condicional acima. Execute o código R para $p = 5, \rho =0.25$  e verifique graficamente que as marginais são todas N(0,1).
+
+
+## Solução
+
+Para implementar o amostrador Gibbs, precisamos das condicionais completas de cada variável dada as outras. A condicional foi dada no exercício, e vamos usar essa informação para gerar as amostras. 
+
+
+```{r}
+nsim <- 5000;
+X=array(0,dim=c(nsim,5))
+
+rho =.25
+p = 5 
+
+Std = sqrt((1 + (p-2)*rho - (p-1)*rho^2) / (1 + (p-2)*rho))
+
+X[,]=rnorm(1) # inicializar a cadeia
+
+for(i in 2:nsim){
+  for (j in 1:p){
+    Y = X[i-1, -j] # vetor sem o j-ésimo elemento
+    mean_cond = ( (p-1)*rho / (1 + (p-2)*rho) ) * mean(Y) # média condicional
+    X[i-1,j] = rnorm(1, mean=mean_cond, sd=Std) # amostra condicional
+  }
+
+}
+
+```
+
+Abaixo podemos ver o gráfico das marginais, que devem ser N(0,1) para cada variável. Também caulculou-se o p-valor do teste de normalidade de Shapiro-Wilk para cada marginal, que mostrou que todas as marginais são compatíveis com a normalidade.
+
+
+```{r}
+# Gráfico das marginais com p-valor shapiro
+
+
+par(mfrow=c(2,3), mar=c(2,2,1,1))
+for (j in 1:p) {
+  # Teste de normalidade Shapiro-Wilk
+  shapiro_test <- round(shapiro.test(X[,j])$p.value,3)
+  hist(X[,j], breaks=30, main=paste("X", j,", p = ",shapiro_test), xlab="", ylab="", freq=FALSE)
+  curve(dnorm(x, mean=0, sd=1), col="red", lwd=2, add=TRUE)
+}
+
+```
+Por fim, analisando o gráfico de correlação 2 a 2 das variáveis, podemos ver que as variáveis estão correlacionadas conforme esperado pelo modelo (uma correlação positiva, mas fraca). A linha vermelha representa a reta de regressão entre as variáveis.
+
+```{r}
+# crafico de correlação 2 a 2 das pargunais
+
+par(mfrow=c(2,5), mar=c(2,2,1,1))
+for (i in 1:(p-1)) {
+  for (j in (i+1):p) {
+    plot(X[,i], X[,j], xlab=paste("X", i), ylab=paste("X", j), main=paste("Correlação entre X", i, "e X", j))
+    abline(lm(X[,j] ~ X[,i]), col="red")
+  }
+}
+```
+
+
+
+# Exercicio 
+
+Considere o seguinte modelo.
+$y_i \sim i.i.d. ~N(\mu, \tau-1)(i = 1, ..., n)$ 
+
+em que $\mu \sim N(0, \beta-1)$ e $\beta \sim Gamma(2,1)$ e $\tau \sim Gamma(2,1)$. Implemente um amostrador Gibbs que pode ser usado para estimar $\mu, \beta, \tau$, em que a amostra observada é dada por:
+
+```{r}
+######################################
+## Código R
+######################################
+y=c(2.34, 2.55, 1.91, 2.42, 2.26, 1.82, 2.04, 1.88, 2.03, 2.28, 2.16, 2.19, 
+    1.89, 1.38, 1.95, 2.50, 1.16, 2.09, 1.46, 0.97, 1.68, 1.89, 2.06, 2.07, 
+    1.72, 1.01, 2.96, 2.84, 2.03, 3.08, 1.80, 2.76, 2.04, 2.05, 1.91, 1.51, 
+    2.00, 0.77, 1.92, 1.54, 2.29, 2.28, 2.20, 1.60, 2.11, 1.36, 1.46, 2.53, 
+    1.89, 1.98)
+```
+
+## Solução
+
+Um dos grandes desafios em modelos bayesianos é a amostragem de parâmetros. O amostrador Gibbs é uma técnica poderosa para gerar amostras de distribuições conjuntas complexas, especialmente quando as condicionais completas são conhecidas.
+Para o modelo dado, as condicionais completas são:
+
+$$
+\beta \mid \mu, \tau \sim \text{Gamma} \left( \frac{5}{2},\ 1 + \frac{1}{2} \mu^2 \right)
+$$
+
+$$
+\tau \mid \mu, \beta \sim \text{Gamma} \left( \frac{n}{2} + 2,\ 1 + \frac{1}{2}(n - 1)\, s_y^2 + \frac{1}{2} n \left( \overline{y} - \mu \right)^2 \right)
+$$
+
+
+$$
+\mu \mid \tau, \beta \sim \mathcal{N} \left( \frac{n \overline{y} \tau}{n \tau + \beta},\ \frac{1}{n \tau + \beta} \right)
+$$
+As funções de amostragem para cada parâmetro são definidas abaixo. A função `Gibbs_sampler` executa o algoritmo Gibbs, gerando amostras de $\mu$, $\beta$ e $\tau$.
+
+
+```{r}
+Beta_cond <- function(mu) {
+  shape1 <- 5/2
+  shape2 <- 1 + (1/2) * mu^2
+  rgamma(1, shape=shape1, rate=shape2)
+}
+
+Tau_cond <- function(mu, y) {
+  n <- length(y)
+  s_y2 <- var(y)
+  shape1 <- n/2 + 2
+  shape2 <- 1 + (1/2) * (n - 1) * s_y2 + (1/2) * n * (mean(y) - mu)^2
+  rgamma(1, shape=shape1, rate=shape2)
+}
+
+Mu_cond <- function(tau, beta, y) {
+  n <- length(y)
+  mean_y <- mean(y)
+  mean_cond <- (n * mean_y * tau) / (n * tau + beta)
+  sd_cond <- sqrt(1 / (n * tau + beta))
+  rnorm(1, mean=mean_cond, sd=sd_cond)
+}
+
+
+Gibbs_sampler <- function(y, nsim=1000) {
+  n <- length(y)
+  mu <- numeric(nsim)
+  beta <- numeric(nsim)
+  tau <- numeric(nsim)
+  
+  # Inicialização
+  mu[1] <- mean(y)
+  beta[1] <- 1
+  tau[1] <- 1
+  
+  for (i in 2:nsim) {
+    mu[i] <- Mu_cond(tau[i-1], beta[i-1], y)
+    beta[i] <- Beta_cond(mu[i])
+    tau[i] <- Tau_cond(mu[i], y)
+  }
+  
+  return(data.frame(mu, beta, tau))
+}
+
+parametros <- Gibbs_sampler(y)
+```
+
+Os trace-plots abaixo mostram a evolução dos parâmetros $\mu$, $\beta$ e $\tau$ ao longo das iterações do algoritmo Gibbs. Esses gráficos são úteis para diagnosticar a convergência.
+
+```{r}
+# Gráficos para diagnostico 
+par(mfrow=c(2,2), mar=c(2,2,1,1))
+plot(parametros$beta, type="l", main="beta", lwd=1, xlab="Iterações", ylab="Beta")
+plot(parametros$tau, type="l", main="tau", lwd=1, xlab="Iterações", ylab="Tau")
+plot(parametros$mu, type="l", main="mu", lwd=1, xlab="Iterações", ylab="Mu")
+
+```
+Abaixo podemos observar a distribuição de cada um dos parâmetros após a execução do amostrador Gibbs. A partir dessas amostras agora podemos fazer inferências sobre os parâmetros do modelo. 
+
+```{r}
+# Histogramas das marginais
+par(mfrow=c(2,2), mar=c(2,2,1,1))
+hist(parametros$mu, breaks=30, main="Marginal de Mu", xlab="", ylab="", freq=FALSE)
+
+hist(parametros$beta, breaks=30, main="Marginal de Beta", xlab="", ylab="", freq=FALSE)
+
+hist(parametros$tau, breaks=30, main="Marginal de Tau", xlab="", ylab="", freq=FALSE)
+
+
+```
+Podemos observar a trajetória dos parâmetros $\mu$, $\beta$ e $\tau$ em gráficos 2D, onde cada ponto representa uma iteração do algoritmo Gibbs. As linhas conectam os pontos consecutivos, mostrando a evolução dos parâmetros ao longo das iterações.
+
+
+```{r}
+# Suponha que você já rodou:
+# parametros <- Gibbs_sampler(y)
+
+mu <- parametros$mu
+beta <- parametros$beta
+tau <- parametros$tau
+
+nsim <- length(mu)
+
+par(mfrow=c(1,3), mar=c(4,4,2,1))
+
+##### 1) mu vs beta #####
+plot(mu, beta, pch="", xlab=expression(mu), ylab=expression(beta), 
+     main=expression(paste("Trajetória: ", mu, " vs ", beta)))
+
+for (i in 1:(nsim-1)) {
+  lines(c(mu[i], mu[i]), c(beta[i], beta[i+1]), lwd=1)  # movimento vertical
+  lines(c(mu[i], mu[i+1]), c(beta[i+1], beta[i+1]), lwd=1)  # movimento horizontal
+}
+
+##### 2) mu vs tau #####
+plot(mu, tau, pch="", xlab=expression(mu), ylab=expression(tau), 
+     main=expression(paste("Trajetória: ", mu, " vs ", tau)))
+
+for (i in 1:(nsim-1)) {
+  lines(c(mu[i], mu[i]), c(tau[i], tau[i+1]), lwd=1)
+  lines(c(mu[i], mu[i+1]), c(tau[i+1], tau[i+1]), lwd=1)
+}
+
+##### 3) beta vs tau #####
+plot(beta, tau, pch="", xlab=expression(beta), ylab=expression(tau), 
+     main=expression(paste("Trajetória: ", beta, " vs ", tau)))
+
+for (i in 1:(nsim-1)) {
+  lines(c(beta[i], beta[i]), c(tau[i], tau[i+1]), lwd=1)
+  lines(c(beta[i], beta[i+1]), c(tau[i+1], tau[i+1]), lwd=1)
+}
+
+```
+
+Por fim, vamos observar as amostras geradas pelo algoritmo Gibbs em um gráfico 3D interativo. Isso nos permite visualizar a relação entre os três parâmetros $\mu$, $\beta$ e $\tau$ de forma completa e entender a região do espaço de parâmetros onde as amostras estão concentradas. 
+
+```{r}
+# Remover burn-in (exemplo: 200 primeiros)
+burnin <- 200
+mu_post <- parametros$mu[(burnin+1):nsim]
+beta_post <- parametros$beta[(burnin+1):nsim]
+tau_post <- parametros$tau[(burnin+1):nsim]
+
+
+# install.packages("plotly")
+
+library(plotly)
+
+# Data frame com as amostras
+df_post <- data.frame(mu=mu_post, beta=beta_post, tau=tau_post)
+
+# Gráfico interativo 3D
+plot_ly(df_post, x = ~mu, y = ~beta, z = ~tau,
+        type = "scatter3d", mode = "markers",
+        marker = list(size = 2, color = "blue")) %>%
+  layout(title = "Amostras Gibbs: mu vs beta vs tau",
+         scene = list(xaxis = list(title = "mu"),
+                      yaxis = list(title = "beta"),
+                      zaxis = list(title = "tau")))
+
+```
+
