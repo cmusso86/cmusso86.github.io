@@ -1,0 +1,151 @@
+---
+title: "Bônus - Prova 2"
+subtitle: "Amostrador de Gibbs"
+author: 
+  Carolina Musso
+  251103768
+date: today
+institute: "Mestrado Acadêmico em Estatística - UnB"
+lang: pt
+format: 
+  html:
+    toc: true
+    toc-location: left
+    toc-depth: 2
+    number-sections: true
+    self-contained: true
+    embed-resources: true
+editor: source
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+## Modelo
+
+Considere o modelo de regressão linear dado por:
+
+$$
+Y_t | x_t \sim \mathcal{N}(\beta_0 + \beta_1 x_t, \sigma^2)
+$$
+
+Seja $\phi = 1/\sigma^2, \beta_0, \beta_1 \sim N(0,1000)$ e $\phi \sim Gamma (0.01, 0.01. Obtenha as condicitionais completas e desenvolva um algoritmo Gibbs para estimar os parâmetros.  Ilustre a metodologia com os dados “cars” do R, em que “dist” é a variável dependente e “speed” é a variável explicativa. Assuma independência das distribuições das prioris.
+
+
+## Condicionais Completas
+Para $\phi$
+
+$$
+\phi | \cdot \sim \text{Gamma}\left(\alpha, \theta\right)
+$$
+com 
+
+$$
+\alpha = 0.01 + \frac{n}{2},\\ \theta = 0.01 + \frac{1}{2} \sum (y_t - \beta_0 - \beta_1 x_t)^2
+$$
+
+
+Para $\beta_0 e \beta_1$
+
+$$
+\beta | \cdot \sim \mathcal{N} \left( \mu_{\beta}, \sigma^2_{\beta} \right)
+$$
+com:
+$$
+\sigma^2_{\beta} = \left( n\phi + \frac{1}{1000} \right)^{-1}
+$$
+
+e 
+$$
+\mu_{\beta_0} = \sigma^2_{\beta} \cdot \phi \sum (y_t - \beta_1 x_t)
+$$
+
+```{r}
+# Carregar os dados
+data(cars)
+y <- cars$dist
+x <- cars$speed
+n <- length(y)
+
+# Hiperparâmetros das priors
+mu_beta <- 0
+var_beta <- 1000
+a_phi <- 0.01
+b_phi <- 0.01
+
+# Inicialização
+n_iter <- 5000
+beta0 <- beta1 <- rep(NA, n_iter)
+phi <- rep(NA, n_iter)
+
+# Valores iniciais
+beta0[1] <- 0
+beta1[1] <- 0
+phi[1] <- 1
+```
+
+## Algoritmo de Gibbs
+
+```{r}
+
+for (i in 2:n_iter) {
+  # Atualiza beta0
+  var_beta0 <- 1 / (n * phi[i-1] + 1/var_beta)
+  mu_beta0 <- var_beta0 * (phi[i-1] * sum(y - beta1[i-1] * x))
+  beta0[i] <- rnorm(1, mu_beta0, sqrt(var_beta0))
+  
+  # Atualiza beta1
+  var_beta1 <- 1 / (phi[i-1] * sum(x^2) + 1/var_beta)
+  mu_beta1 <- var_beta1 * (phi[i-1] * sum(x * (y - beta0[i])))
+  beta1[i] <- rnorm(1, mu_beta1, sqrt(var_beta1))
+  
+  # Atualiza phi
+  res <- y - beta0[i] - beta1[i] * x
+  a_post <- a_phi + n / 2
+  b_post <- b_phi + sum(res^2) / 2
+  phi[i] <- rgamma(1, shape = a_post, rate = b_post)
+}
+```
+
+Observamos no espaço abaixo podemos ver a trajetoria percorrida pelos parâmetros conjuntamente com a evolução do algoritmo de Gibbs.
+
+```{r}
+## 3D plot com a trajetoria dos tres parametros
+library(scatterplot3d)
+scatterplot3d(beta0, beta1, phi, pch=20, color=rgb(0.3, 0.2, 1, 0.1), xlab=expression(beta[0]), ylab=expression(beta[1]), zlab=expression(phi), main="Trajetória de Gibbs")
+
+```
+
+
+## Análise dos Resultados
+
+```{r}
+burnin <- 1000
+beta0_post <- beta0[-(1:burnin)]
+beta1_post <- beta1[-(1:burnin)]
+phi_post <- phi[-(1:burnin)]
+
+par(mfrow = c(3, 2))
+plot(beta0_post, type='l', main=expression(beta[0]), ylab="", xlab="Iterações")
+hist(beta0_post, main=expression(beta[0]), xlab="", col="gray")
+
+plot(beta1_post, type='l', main=expression(beta[1]), ylab="", xlab="Iterações")
+hist(beta1_post, main=expression(beta[1]), xlab="", col="gray")
+
+plot(phi_post, type='l', main=expression(phi), ylab="", xlab="Iterações")
+hist(phi_post, main=expression(phi), xlab="", col="gray")
+
+```
+
+# Comparando com a cássica
+
+```{r}
+# Ajuste do modelo de regressão linear clássico
+modelo_clasico <- lm(dist ~ speed, data = cars)
+mod <- summary(modelo_clasico)$coefficients
+mod[1]
+mod[2]
+1/(summary(modelo_clasico)$sigma)^2
+```
+Vemos que em comparação a regressão clássica, os parâmetros estimados pelo método de Gibbs são consistentes. A média dos parâmetros $\beta_0$ e $\beta_1$ converge para os valores obtidos pelo modelo clássico, e a estimativa de $\phi$ (variância) também é coerente com a variância residual do modelo clássico.
+A diferença é que o método de Gibbs fornece uma distribuição posterior para os parâmetros, permitindo uma análise mais probabilística da incerteza associada às estimativas.
